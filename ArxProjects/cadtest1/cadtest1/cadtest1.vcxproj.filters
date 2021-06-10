@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="props">
+      <UniqueIdentifier>{47c0f736-a353-4335-848a-8c9f4f909537}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="rxentrypoint.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="cadtest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="helloworld.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CADUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="LineJigTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="PmDbLinetmpJig.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCreatePNG2021.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="zrxsamples.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SelEntOnUnLockLayer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DocManReactor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorReactor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="CustEntities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="testDrawOrderCtl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="addCmd_try_catch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="testheaders.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="PM_WBlockClone.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="tools.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DragMultiEntities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="PMTestWblock0603.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="PMTestWblock0604.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="cadtest.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\AutoAAD.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\AutoAAD2.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\AutoAAD3.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\CADUtils.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="PmDbLinetmpJig.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DocManReactor.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorReactor.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="CustEntities.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DragMultiEntities.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\cadtest.ico">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\cadtest.rc2">
+      <Filter>res</Filter>
+    </None>
+    <None Include="cadtest.def">
+      <Filter>src</Filter>
+    </None>
+    <None Include="props\arx2013.props">
+      <Filter>props</Filter>
+    </None>
+    <None Include="props\arx2019.props">
+      <Filter>props</Filter>
+    </None>
+    <None Include="props\arx2020.props">
+      <Filter>props</Filter>
+    </None>
+    <None Include="props\zrx2020.props">
+      <Filter>props</Filter>
+    </None>
+    <None Include="props\zrx2021.props">
+      <Filter>props</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="cadtest.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
