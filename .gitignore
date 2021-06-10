@@ -30,3 +30,23 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio C++ 
+.vs
+debug/
+release/
+*.user  
+bin/
+tmp/
+x64/
+win32/
+*.props
+*.tlog
+*.log
+*.idb
+*.pdb
+*.exp
+*.obj
+*.pch
+*.cur
+
