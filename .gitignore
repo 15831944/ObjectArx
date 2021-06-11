@@ -40,7 +40,6 @@ bin/
 tmp/
 x64/
 win32/
-*.props
 *.tlog
 *.log
 *.idb

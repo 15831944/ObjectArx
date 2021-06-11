@@ -9,7 +9,7 @@
 #include "acestext.h"
 #include "tchar.h"
 
-
+#pragma region CusEntity
 ACRX_DXF_DEFINE_MEMBERS(CusEntity, AcDbEntity,
 	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,
 	AcDbProxyEntity::kTransformAllowed |
@@ -167,8 +167,9 @@ Acad::ErrorStatus CusEntity::dwgOutFields(AcDbDwgFiler* filer) const
 	return filer->filerStatus();
 }
 
+#pragma endregion 
 
-
+#pragma region CusEntityByBlkRef
 ACRX_DXF_DEFINE_MEMBERS(CusEntityByBlkRef, AcDbEntity,
 	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,
 	AcDbProxyEntity::kTransformAllowed |
@@ -209,6 +210,9 @@ Adesk::Boolean CusEntityByBlkRef::subWorldDraw(AcGiWorldDraw* wd)
 	return Adesk::kTrue;
 }
 
+#pragma endregion
+
+#pragma region CusEntity01
 ACRX_DXF_DEFINE_MEMBERS(CusEntity01,
 	AcDbEntity,
 	AcDb::kDHL_CURRENT,
@@ -323,7 +327,9 @@ ARXCMD3(CusEntity01Test)
 	//AppendEntityToModelSpace(CEnt01);
 }
 
+#pragma endregion 
 
+#pragma region 
 ACRX_DXF_DEFINE_MEMBERS(PMACLINAGA_SIMULATION,
 	AcDbEntity,
 	AcDb::kDHL_CURRENT,
@@ -584,17 +590,18 @@ ARXCMD3(testDimaligned)
 	pCusEnt2->close();
 }
 
+#pragma endregion Test PM dim err
 
-
-ACRX_DXF_DEFINE_MEMBERS(CusPolylineFromCurve,
+#pragma region CusEntity02
+ACRX_DXF_DEFINE_MEMBERS(CusEntity02,
 	AcDbEntity,
 	AcDb::kDHL_CURRENT,
 	AcDb::kMReleaseCurrent,
 	AcDbProxyEntity::kAllAllowedBits,
-	CusPolylineFromCurve,
+	CusEntity02,
 	TdmHoldEntity);
 
-CusPolylineFromCurve::CusPolylineFromCurve()
+CusEntity02::CusEntity02()
 	//:m_pCurve(new AcDbLine(AcGePoint3d(200, 40, 0), AcGePoint3d(400, 40, 0)))
 	:m_pPolyline(new AcDbPolyline(2))
 {
@@ -602,7 +609,7 @@ CusPolylineFromCurve::CusPolylineFromCurve()
 	m_pPolyline->addVertexAt(1, AcGePoint2d(400, 40));
 }
 
-CusPolylineFromCurve::~CusPolylineFromCurve()
+CusEntity02::~CusEntity02()
 {
 	if (m_pPolyline)
 	{
@@ -611,18 +618,18 @@ CusPolylineFromCurve::~CusPolylineFromCurve()
 	}
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::subGetGripPoints(AcGePoint3dArray &gripPoints, AcDbIntArray &osnapModes, AcDbIntArray &geomIds) const
+Acad::ErrorStatus CusEntity02::subGetGripPoints(AcGePoint3dArray &gripPoints, AcDbIntArray &osnapModes, AcDbIntArray &geomIds) const
 {
 	assertReadEnabled();
 	return m_pPolyline->getGripPoints(gripPoints, osnapModes, geomIds);
 }
-Acad::ErrorStatus CusPolylineFromCurve::subMoveGripPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset)
+Acad::ErrorStatus CusEntity02::subMoveGripPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset)
 {
 	assertReadEnabled();
 	return m_pPolyline->moveGripPointsAt(indices, offset);
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::subGetOsnapPoints(
+Acad::ErrorStatus CusEntity02::subGetOsnapPoints(
 	AcDb::OsnapMode       osnapMode,
 	Adesk::GsMarker       gsSelectionMark,
 	const AcGePoint3d&    pickPoint,
@@ -635,7 +642,7 @@ Acad::ErrorStatus CusPolylineFromCurve::subGetOsnapPoints(
 	return m_pPolyline->getOsnapPoints(osnapMode, gsSelectionMark, pickPoint, lastPoint, viewXform, snapPoints, geomIds);
 }
 
-Adesk::Boolean CusPolylineFromCurve::subWorldDraw(AcGiWorldDraw* wd)
+Adesk::Boolean CusEntity02::subWorldDraw(AcGiWorldDraw* wd)
 {
 	assertReadEnabled();    // Its purpose is to make sure that the object is open AcDb::kForRead.
 	m_pPolyline->worldDraw(wd);
@@ -643,7 +650,7 @@ Adesk::Boolean CusPolylineFromCurve::subWorldDraw(AcGiWorldDraw* wd)
 	return Adesk::kTrue;
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::subIntersectWith(const AcDbEntity* ent,
+Acad::ErrorStatus CusEntity02::subIntersectWith(const AcDbEntity* ent,
 	AcDb::Intersect intType,
 	AcGePoint3dArray& points,
 	Adesk::GsMarker thisGsMarker,
@@ -653,7 +660,7 @@ Acad::ErrorStatus CusPolylineFromCurve::subIntersectWith(const AcDbEntity* ent,
 
 	return m_pPolyline->intersectWith(ent, intType, points, thisGsMarker, otherGsMarker);
 }
-Acad::ErrorStatus CusPolylineFromCurve::subIntersectWith(const AcDbEntity* pEnt,
+Acad::ErrorStatus CusEntity02::subIntersectWith(const AcDbEntity* pEnt,
 	AcDb::Intersect intType,
 	const AcGePlane& projPlane,
 	AcGePoint3dArray& points,
@@ -664,30 +671,30 @@ Acad::ErrorStatus CusPolylineFromCurve::subIntersectWith(const AcDbEntity* pEnt,
 	return m_pPolyline->intersectWith(pEnt, intType, projPlane, points, thisGsMarker, otherGsMarker);
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::extend(double newParam)
+Acad::ErrorStatus CusEntity02::extend(double newParam)
 {
 	assertWriteEnabled();
 	return m_pPolyline->extend(newParam);
 }
-Acad::ErrorStatus CusPolylineFromCurve::extend(Adesk::Boolean extendStart,
+Acad::ErrorStatus CusEntity02::extend(Adesk::Boolean extendStart,
 	const AcGePoint3d& toPoint)
 {
 	assertWriteEnabled();
 	return m_pPolyline->extend(extendStart, toPoint);
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::subGetStretchPoints(AcGePoint3dArray& stretchPoints) const
+Acad::ErrorStatus CusEntity02::subGetStretchPoints(AcGePoint3dArray& stretchPoints) const
 {
 	assertReadEnabled();;
 	return m_pPolyline->getStretchPoints(stretchPoints);
 }
-Acad::ErrorStatus CusPolylineFromCurve::subMoveStretchPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset)
+Acad::ErrorStatus CusEntity02::subMoveStretchPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset)
 {
 	assertReadEnabled();;
 	return m_pPolyline->moveStretchPointsAt(indices, offset);
 }
 
-Acad::ErrorStatus CusPolylineFromCurve::subGetSubentPathsAtGsMarker(
+Acad::ErrorStatus CusEntity02::subGetSubentPathsAtGsMarker(
 	AcDb::SubentType       type,
 	Adesk::GsMarker        gsMark,
 	const AcGePoint3d&     pickPoint,
@@ -702,7 +709,7 @@ Acad::ErrorStatus CusPolylineFromCurve::subGetSubentPathsAtGsMarker(
 	return m_pPolyline->getSubentPathsAtGsMarker(type, gsMark, pickPoint, viewXform, numPaths, subentPaths, numInserts, entAndInsertStack);
 }
 
-//Acad::ErrorStatus CusPolylineFromCurve::subExplode(AcDbVoidPtrArray& entitySet) const
+//Acad::ErrorStatus CusEntity02::subExplode(AcDbVoidPtrArray& entitySet) const
 //{
 //	assertReadEnabled();
 //		
@@ -711,10 +718,10 @@ Acad::ErrorStatus CusPolylineFromCurve::subGetSubentPathsAtGsMarker(
 //	return Acad::eOk;
 //}
 
-REGISTER_OBJECT(CusPolylineFromCurve);
-ARXCMD3(CusPolylineFromCurveTest)
+REGISTER_OBJECT(CusEntity02);
+ARXCMD3(CusEntity02Test)
 {
-	CusPolylineFromCurve *pCusEnt = new CusPolylineFromCurve();
+	CusEntity02 *pCusEnt = new CusEntity02();
 	AcDbObjectId id;
 	CADUtils::AppendToModalSpace(pCusEnt, id);
 
@@ -733,8 +740,70 @@ ARXCMD3(CusPolylineFromCurveTest)
 
 	pCusEnt->close();
 #ifndef ARX
-	acedCommand(RTSTR, _T("zoom e "), RTNONE);
+	acedCommand(RTSTR, _T("zoom e"), RTNONE);
 #else
 	acedCommandS(RTSTR, _T("zoom e"), RTNONE);
 #endif
 }
+#pragma endregion Test Extend custom entity
+
+#pragma region CusEntity03
+
+ACRX_DXF_DEFINE_MEMBERS(CusEntity03, AcDbEntity,
+	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,
+	AcDbProxyEntity::kAllAllowedBits,
+	CusEntity03Test, "CusEntity03-Test");
+
+CusEntity03::CusEntity03() {}
+
+CusEntity03::CusEntity03(AcGePoint3d ptPos ,AcDbObjectId blkRecId) 
+	:m_ptPos(ptPos), m_blkRecId(blkRecId)
+{}
+
+CusEntity03::~CusEntity03() {}
+
+Adesk::Boolean CusEntity03::subWorldDraw(AcGiWorldDraw* pWd)
+{
+	assertReadEnabled();   
+
+	AcDbBlockReference *pBlockRef = new AcDbBlockReference(m_ptPos, m_blkRecId);
+	pBlockRef->worldDraw(pWd);
+
+	delete pBlockRef;
+	pBlockRef = nullptr;
+
+	return Adesk::kTrue;
+}
+
+REGISTER_OBJECT(CusEntity03)
+ARXCMD3(CusEntity03Test)
+{
+	AcDbObjectId cusEntId, blkRecId;
+
+#if 0
+	if (Acad::eOk != CADUtils::GetBlockRecordId(curDoc()->database(), _T("aaa"), blkRecId))
+		return;
+#endif
+
+	AcDbDatabase *extDb = new AcDbDatabase(false);
+	Acad::ErrorStatus es = Acad::eOk;
+	TCHAR  blkName[256] = { 0 };
+	if (Acad::eOk != extDb->readDwgFile(_T("D:\\dwgfiles\\1137.dwg")))
+	{
+		acedAlert(_T("读取dwg文件失败！"));
+		return;
+	}
+	es = acdbCurDwg()->insert(blkRecId, blkName, extDb, false);
+	if (Acad::eOk != es)
+		acedAlert(_T("插入块操作失败"));
+
+	delete extDb;
+	extDb = NULL;
+
+	CusEntity03 *pCusEnt03 = new CusEntity03(AcGePoint3d(0, 0, 0) ,blkRecId);
+	CADUtils::AppendToModalSpace(pCusEnt03, cusEntId);
+	pCusEnt03->close();
+}
+
+#pragma endregion Test blockreference in subWorldDraw
+

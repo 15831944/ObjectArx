@@ -81,6 +81,9 @@
     <ClCompile Include="PMTestWblock0604.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="AcCusPoly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -120,6 +123,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="DragMultiEntities.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="AcCusPoly.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

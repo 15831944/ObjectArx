@@ -5,6 +5,14 @@
 #include "migrtion.h"
 #include "acestext.h"
 
+#ifdef ARX 
+#include "acedCmdNF.h"
+#undef  acedCommand
+#undef  ads_command
+#define acedCommand acedCommandS
+#define ads_command acedCommandS
+#endif
+
 #define printEs(val){acutPrintf(_T("\n%s = %s"),_T(#val),acadErrorStatusText(val));}
 
 ARXCMD3(HelloWorld)
@@ -136,12 +144,8 @@ ARXCMD3(testVector)
 #include "aced.h"
 #include "acadi.h"
 
-#ifdef ARX 
-#include "acedCmdNF.h"
-#define acedCommand acedCommandS
 //#include "D:\DDDD\cadtest1\Out\tmp\cadtest1_AR2020_x64\acax23chs.tlh"
 //#import "C:\\Program Files\\Common Files\\Autodesk Shared\\acax23chs.tlb" raw_interfaces_only no_namespace
-#endif
 ARXCMD3(testsendStringToExecute)
 {
 	CString cmd = _T("zoom w 0,0 500,500 ");
@@ -234,11 +238,6 @@ ARXCMD3(CmdLayer)
 			sLockLay += _T(",");
 		sLockLay += arrLayer[i];
 	}
-
-#ifdef ARX
-#include "acedCmdNF.h"
-#define ads_command acedCommandS
-#endif
 	
 	ads_command(RTSTR, _T("_-LAYER"), RTSTR, sCmd, RTSTR, (LPCTSTR)sLockLay, RTSTR, _T(""), NULL);
 	//acutPrintf(_T("\nlen:%d"), wcslen(sLockLay));
@@ -276,11 +275,6 @@ ARXCMD3(CmdLayer3)
 			sLockLay += _T(",");
 		sLockLay += arrLayer[i];
 	}
-#endif
-
-#ifdef ARX
-#include "acedCmdNF.h"
-#define ads_command acedCommandS
 #endif
 
 	sLockLay += _T("b00a");
@@ -1224,13 +1218,13 @@ ARXCMD3(CusSaveAs)
 	es = pDb->saveAs(_T("D:\test.dwg"), false, AcDb::AcDbDwgVersion::kDHL_1021, 0/*, false*/);
 
 	CFile f;
-	bool b = f.Open(L"C:\\test.txt", CFile::modeReadWrite);
-	int nLength = f.GetLength();
+	BOOL b = f.Open(L"C:\\test.txt", CFile::modeReadWrite);
+	ULONGLONG nLength = f.GetLength();
 	BYTE* buffer = new BYTE[nLength];
-	f.Read((void*)buffer, nLength);
+	f.Read((void*)buffer, (UINT)nLength);
 	f.Close();
 	CMemFile memFile;
-	memFile.Attach(buffer, nLength);
+	memFile.Attach(buffer, (UINT)nLength);
 }
 
 ARXCMD3(CMemFileTest)
@@ -1238,13 +1232,13 @@ ARXCMD3(CMemFileTest)
 	//打开一个文件，读入 内存buffer中
 	CFile file;
 	file.Open(_T("D:\\test.txt"), CFile::modeReadWrite, NULL);
-	ULONG ulLen = file.GetLength();
+	ULONGLONG ulLen = file.GetLength();
 	BYTE* buffer = (BYTE*)malloc(file.GetLength());
-	file.Read(buffer, file.GetLength());
+	file.Read(buffer, (UINT)file.GetLength());
 
 	//将buffer与 memfile关联起来
 	CMemFile memfile;
-	memfile.Attach(buffer, file.GetLength(), 1024);
+	memfile.Attach(buffer, (UINT)file.GetLength(), 1024);
 	memfile.SetLength(file.GetLength());
 
 	//将头200的数据 加入的末尾，重复100次
@@ -1259,7 +1253,7 @@ ARXCMD3(CMemFileTest)
 	// testover
 
 	//存回文件
-	int size = memfile.GetLength();
+	UINT size = (UINT)memfile.GetLength();
 	//memfile.Detach();
 	file.Seek(0, CFile::begin);
 

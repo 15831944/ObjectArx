@@ -1,4 +1,11 @@
+// CusEntities.h
+
+#if _MSC_VER > 1000
 #pragma once
+#endif
+
+#ifndef _CUSENTITIES_H_
+#define _CUSENTITIES_H_
 
 #include "dbents.h"
 #include "gepent3d.h"
@@ -143,12 +150,12 @@ private:
 	std::vector<AcDbPolyline*> m_plVec;
 };
 
-class CusPolylineFromCurve :public AcDbCurve
+class CusEntity02 :public AcDbCurve
 {
 public:
-	CusPolylineFromCurve();
-	~CusPolylineFromCurve();
-	ACRX_DECLARE_MEMBERS(CusPolylineFromCurve);       //declare desc(),cast(),isA()
+	CusEntity02();
+	~CusEntity02();
+	ACRX_DECLARE_MEMBERS(CusEntity02);       //declare desc(),cast(),isA()
 public:
 	virtual Acad::ErrorStatus subGetGripPoints(AcGePoint3dArray &gripPoints, AcDbIntArray &osnapModes, AcDbIntArray &geomIds) const;
 	virtual Acad::ErrorStatus subMoveGripPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset);
@@ -200,3 +207,30 @@ private:
 	//AcDbCurve *m_pCurve;
 	AcDbPolyline *m_pPolyline;
 };
+
+/**
+ * @brief CusEntity03
+ * Show block-reference in subWorldDraw
+ */
+class CusEntity03 : public AcDbPolyline
+{
+public:
+	ACRX_DECLARE_MEMBERS(CusEntity03);
+
+	CusEntity03();
+	CusEntity03(AcGePoint3d ptPos ,AcDbObjectId blkRecId);
+	~CusEntity03();
+
+#if (defined(ARX) && ARX < 2010) || (defined(ZRX) && ZRX < 2021)
+public:
+	virtual Adesk::Boolean subWorldDraw(AcGiWorldDraw* wd);
+#else
+protected:
+	virtual Adesk::Boolean subWorldDraw(AcGiWorldDraw* pWd);
+#endif
+private:
+	AcGePoint3d m_ptPos;
+	AcDbObjectId m_blkRecId;
+};
+
+#endif /*_CUSENTITIES_H_*/

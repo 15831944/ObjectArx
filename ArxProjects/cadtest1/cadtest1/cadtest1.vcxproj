@@ -637,6 +637,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AcCusPoly.cpp" />
     <ClCompile Include="addCmd_try_catch.cpp" />
     <ClCompile Include="cadtest.cpp" />
     <ClCompile Include="CustEntities.cpp" />
@@ -675,6 +676,7 @@
     <ClCompile Include="zrxsamples.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AcCusPoly.h" />
     <ClInclude Include="cadtest.h" />
     <ClInclude Include="CustEntities.h" />
     <ClInclude Include="DocManReactor.h" />

@@ -294,3 +294,17 @@ AcDbExtents CADUtils::GetExtentsInModalSpace()
 	return extRet;
 }
 
+ Acad::ErrorStatus CADUtils::GetBlockRecordId(AcDbDatabase *pDb, TCHAR *szBlkName, AcDbObjectId &blkRecId)
+{
+	Acad::ErrorStatus es;
+	AcDbBlockTable *pBlkTbl = nullptr;
+
+	es = pDb->getBlockTable(pBlkTbl, AcDb::kForRead);
+	pBlkTbl->close();
+	if (es != Acad::eOk)
+		return es;
+
+	return pBlkTbl->getAt(szBlkName, blkRecId);
+}
+
+

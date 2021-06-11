@@ -33,5 +33,6 @@ public:
 //////////////////////////////////////////////////////////////////////////
 public:
 	static AcDbExtents GetExtentsInModalSpace();
+	static  Acad::ErrorStatus GetBlockRecordId(AcDbDatabase *pDb, TCHAR *szBlkName, AcDbObjectId &blkRecId);
 };
 
