@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1231
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CurveTextUI", "CurveText_UI\CurveTextUI.vcxproj", "{6D98F60D-B477-4463-94D4-86C5492EEAFF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curveText DB", "CurveText_DB\curveTextDB.vcxproj", "{E00DE720-51A9-4B10-980E-979B26F3DAA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D98F60D-B477-4463-94D4-86C5492EEAFF}.Debug|x86.ActiveCfg = Debug|Win32
+		{6D98F60D-B477-4463-94D4-86C5492EEAFF}.Debug|x86.Build.0 = Debug|Win32
+		{6D98F60D-B477-4463-94D4-86C5492EEAFF}.Release|x86.ActiveCfg = Release|Win32
+		{6D98F60D-B477-4463-94D4-86C5492EEAFF}.Release|x86.Build.0 = Release|Win32
+		{E00DE720-51A9-4B10-980E-979B26F3DAA2}.Debug|x86.ActiveCfg = Debug|Win32
+		{E00DE720-51A9-4B10-980E-979B26F3DAA2}.Debug|x86.Build.0 = Debug|Win32
+		{E00DE720-51A9-4B10-980E-979B26F3DAA2}.Release|x86.ActiveCfg = Release|Win32
+		{E00DE720-51A9-4B10-980E-979B26F3DAA2}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACA41AAE-043D-4AAB-A443-FA530295EE52}
+	EndGlobalSection
+EndGlobal

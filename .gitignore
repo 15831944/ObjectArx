@@ -38,8 +38,6 @@ release/
 *.user  
 bin/
 tmp/
-x64/
-win32/
 *.tlog
 *.log
 *.idb

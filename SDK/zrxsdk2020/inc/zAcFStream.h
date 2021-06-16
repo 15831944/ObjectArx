@@ -129,7 +129,8 @@ inline void ZcOfstream::open(const wchar_t *pName)
 	this->imbue(ZcFStream_curLocale());
 #else
 	STUB_WARNING(ZcOfstream::open);
-#endif}
+#endif
+}
 
 inline void ZcOfstream::open(const wchar_t *pName, ios_base::openmode nMode)
 {

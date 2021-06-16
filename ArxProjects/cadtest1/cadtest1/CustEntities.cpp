@@ -8,6 +8,7 @@
 #include "dbapserv.h"
 #include "acestext.h"
 #include "tchar.h"
+#include "dbxutil.h"
 
 #pragma region CusEntity
 ACRX_DXF_DEFINE_MEMBERS(CusEntity, AcDbEntity,
@@ -807,3 +808,744 @@ ARXCMD3(CusEntity03Test)
 
 #pragma endregion Test blockreference in subWorldDraw
 
+#pragma region LbCusPolyline
+//__declspec(dllexport) bool g_bQuYuXiaoYan = false;//标识是否是区域校验
+
+#define VERSION_LbCusPolyline 1
+
+ACRX_DXF_DEFINE_MEMBERS(LbCusPolyline, AcDbLine,
+	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,
+	AcDbProxyEntity::kNoOperation,
+	LbCusPolyline, LbAzObject);
+
+// Constructor/Destructor
+LbCusPolyline::LbCusPolyline()
+{
+}
+
+LbCusPolyline::~LbCusPolyline()
+{
+}
+
+Acad::ErrorStatus LbCusPolyline::dwgInFields(AcDbDwgFiler* pFiler)
+{
+	assertWriteEnabled();
+	Acad::ErrorStatus es;
+
+	// Call dwgInFields from LbAzPolyLine
+	if ((es = __super::dwgInFields(pFiler)) != Acad::eOk)
+	{
+		return es;
+	}
+
+	// Read version number.
+	Adesk::UInt16 version;
+	pFiler->readItem(&version);
+	if (version > VERSION_LbCusPolyline)
+		return Acad::eMakeMeProxy;
+
+	// Read the data members.
+	switch (version)
+	{
+	case (1):
+	{
+		Acad::ErrorStatus es1 = m_pPolyline.dwgInFields(pFiler);
+	}
+	break;
+	}
+
+	return pFiler->filerStatus();
+}
+
+Acad::ErrorStatus LbCusPolyline::dwgOutFields(AcDbDwgFiler* pFiler) const
+{
+	assertReadEnabled();
+	Acad::ErrorStatus es;
+
+	// Call dwgOutFields from LbAzPolyLine
+	if ((es = __super::dwgOutFields(pFiler)) != Acad::eOk)
+	{
+		return es;
+	}
+
+	// Write version number.
+	pFiler->writeItem((Adesk::UInt16) VERSION_LbCusPolyline);
+
+	// Write the data members.
+	///////////////
+	Acad::ErrorStatus es1 = m_pPolyline.dwgOutFields(pFiler);
+
+	return pFiler->filerStatus();
+}
+
+AcGePoint3d LbCusPolyline::startPoint() const
+{
+	assertReadEnabled();
+	//return __super::startPoint();
+	AcGePoint3d pnt;
+	m_pPolyline.getStartPoint(pnt);
+	return pnt;
+}
+
+AcGePoint3d LbCusPolyline::endPoint() const
+{
+	assertReadEnabled();
+	//return __super::endPoint();
+	AcGePoint3d pnt;
+	m_pPolyline.getEndPoint(pnt);
+	return pnt;
+}
+
+bool /*CGloblFun::*/SetPolyPt(AcDbPolyline* pPoly, AcGePoint3d pntSt, AcGePoint3d pntEnd, AcGeVector3d vecNormal, double dBulge)
+{
+	if (pPoly == NULL)
+		return false;
+	int nNumVer = pPoly->numVerts();
+	for (int i = nNumVer; i < 2; i++)
+	{
+		pPoly->addVertexAt(i, AcGePoint2d::kOrigin);
+	}
+	if (fabs(dBulge) < 1e-8)//表明是直线　
+	{
+		double dDist = pntEnd.distanceTo(pntSt);
+		AcGeVector3d vecX;
+		if (dDist < 1e-8)
+			vecX = AcGeVector3d::kZAxis;//2006/5/8wzq
+		else
+			vecX = (pntEnd - pntSt).normalize();
+
+		AcGeVector3d vecY = vecX.perpVector();
+		AcGeVector3d vecZ = vecX.crossProduct(vecY);
+		acdbWcs2Ecs(asDblArray(pntSt), asDblArray(pntSt), asDblArray(vecZ), Adesk::kFalse);
+		acdbWcs2Ecs(asDblArray(pntEnd), asDblArray(pntEnd), asDblArray(vecZ), Adesk::kFalse);
+
+		pPoly->setBulgeAt(0, 0);
+		pPoly->setNormal(vecZ);
+		pPoly->setElevation(pntSt.z);
+
+		pPoly->setPointAt(0, AcGePoint2d(pntSt.x, pntSt.y));
+		pPoly->setPointAt(1, AcGePoint2d(pntEnd.x, pntEnd.y));
+	}
+	else//圆弧
+	{
+		acdbWcs2Ecs(asDblArray(pntSt), asDblArray(pntSt), asDblArray(vecNormal), Adesk::kFalse);
+		acdbWcs2Ecs(asDblArray(pntEnd), asDblArray(pntEnd), asDblArray(vecNormal), Adesk::kFalse);
+
+		pPoly->setBulgeAt(0, dBulge);
+		pPoly->setNormal(vecNormal);
+		pPoly->setElevation(pntSt.z);
+		pPoly->setPointAt(0, AcGePoint2d(pntSt.x, pntSt.y));
+		pPoly->setPointAt(1, AcGePoint2d(pntEnd.x, pntEnd.y));
+	}
+	return true;
+}
+
+Acad::ErrorStatus LbCusPolyline::setStartPoint(const AcGePoint3d& pntSt)
+{
+	assertWriteEnabled();
+	//return __super::setStartPoint(pntSt);
+
+	AcGePoint3d pnt0, pnt1;
+	AcGeVector3d vecNormal;
+	double dBulge(0);
+	//CGloblFun::GetPolyPt(&m_pPolyline,pnt0,pnt1,vecNormal,dBulge);	
+
+	//#bug 61057 保证z值精度Bug #80192
+	if (fabs(pnt1.z - pntSt.z) < 0.1)
+	{
+		pnt1.z = pntSt.z;
+	}
+
+	///*CGloblFun::*/SetPolyPt(&m_pPolyline, pntSt, pnt1, vecNormal, dBulge);
+	m_pPolyline.addVertexAt(0, AcGePoint2d(pntSt.x, pntSt.y));
+	return Acad::eOk;
+}
+
+Acad::ErrorStatus LbCusPolyline::setEndPoint(const AcGePoint3d& pntEnd)
+{
+	assertWriteEnabled();
+	//return __super::setEndPoint(pntEnd);
+
+	AcGePoint3d pnt0, pnt1;
+	AcGeVector3d vecNormal;
+	double dBulge(0);
+	//CGloblFun::GetPolyPt(&m_pPolyline,pnt0,pnt1,vecNormal,dBulge);	
+
+	//#bug 61057 保证z值精度Bug #80192
+	if (fabs(pnt0.z - pntEnd.z) < 0.1)
+	{
+		pnt0.z = pntEnd.z;
+	}
+
+	//CGloblFun::SetPolyPt(&m_pPolyline,pnt0,pntEnd,vecNormal,dBulge);	
+	m_pPolyline.addVertexAt(1, AcGePoint2d(pntEnd.x, pntEnd.y));
+	return Acad::eOk;
+}
+
+void LbCusPolyline::subList() const
+{
+	assertReadEnabled();
+	__super::subList();
+
+	AcGeVector3d normal = GetNormal();
+
+	acutPrintf(_T("\n Normal:%.2f,%.2f,%.2f "), normal.x, normal.y, normal.z);
+}
+
+AcGeVector3d LbCusPolyline::GetNormal() const
+{
+	assertReadEnabled();
+	//return AcGeVector3d(0, 0, 1);
+	return m_pPolyline.normal();
+}
+
+void LbCusPolyline::SetNormal(AcGeVector3d vecNormal)
+{
+	assertWriteEnabled();
+
+	double dBulge = GetBulge();
+	if (fabs(dBulge) > 1e-8)
+	{
+		m_pPolyline.setNormal(vecNormal);
+	}
+}
+
+double LbCusPolyline::GetBulge() const
+{
+	assertReadEnabled();
+	//return 0;
+	double dBulge(0);
+	m_pPolyline.getBulgeAt(0, dBulge);
+	return dBulge;
+}
+
+void LbCusPolyline::SetBulge(double dBulge)
+{
+	assertWriteEnabled();
+	m_pPolyline.setBulgeAt(0, dBulge);
+}
+
+const AcDbPolyline& LbCusPolyline::GetPoly() const
+{
+	assertReadEnabled();
+
+	return m_pPolyline;
+}
+
+Acad::ErrorStatus LbCusPolyline::getStartPoint(AcGePoint3d& x0) const
+{
+	assertReadEnabled();
+
+	//return __super::getStartPoint(x0);
+	return m_pPolyline.getStartPoint(x0);
+}
+
+Acad::ErrorStatus LbCusPolyline::getEndPoint(AcGePoint3d& x0) const
+{
+	assertReadEnabled();
+	//return __super::getEndPoint(x0);
+
+	return m_pPolyline.getEndPoint(x0);
+}
+
+Acad::ErrorStatus LbCusPolyline::getStartParam(double& x0) const
+{
+	assertReadEnabled();
+	//return __super::getStartParam(x0);
+
+	return m_pPolyline.getStartParam(x0);
+}
+
+Acad::ErrorStatus LbCusPolyline::getEndParam(double& x0) const
+{
+	assertReadEnabled();
+	//return __super::getEndParam(x0);
+
+	return m_pPolyline.getEndParam(x0);
+}
+
+Acad::ErrorStatus LbCusPolyline::getPointAtParam(double param, AcGePoint3d& point) const
+{
+	assertReadEnabled();
+	//return __super::getPointAtParam(param, point);
+
+	return m_pPolyline.getPointAtParam(param, point);
+}
+
+Acad::ErrorStatus LbCusPolyline::getParamAtPoint(const AcGePoint3d& x0, double& x1)const
+{
+	assertReadEnabled();
+	//return __super::getParamAtPoint(x0, x1);
+
+	return m_pPolyline.getParamAtPoint(x0, x1);
+}
+
+Acad::ErrorStatus LbCusPolyline::getDistAtParam(double param, double& dist) const
+{
+	assertReadEnabled();
+	//return __super::getDistAtParam(param, dist);
+
+	return m_pPolyline.getDistAtParam(param, dist);
+}
+
+Acad::ErrorStatus LbCusPolyline::getParamAtDist(double dist, double& param) const
+{
+	assertReadEnabled();
+	//return __super::getParamAtDist(dist, param);
+
+	return m_pPolyline.getParamAtDist(dist, param);
+}
+
+Acad::ErrorStatus LbCusPolyline::getDistAtPoint(const AcGePoint3d& x0, double& x1)const
+{
+	assertReadEnabled();
+	//return __super::getDistAtPoint(x0, x1);
+
+	return m_pPolyline.getDistAtPoint(x0, x1);
+}
+
+Acad::ErrorStatus LbCusPolyline::getPointAtDist(double x0, AcGePoint3d& x1) const
+{
+	assertReadEnabled();
+	//return __super::getPointAtDist(x0, x1);
+
+	return m_pPolyline.getPointAtDist(x0, x1);
+}
+
+Acad::ErrorStatus LbCusPolyline::extend(Adesk::Boolean extendStart, const AcGePoint3d& toPoint)
+{
+	assertWriteEnabled();
+	//return __super::extend(extendStart, toPoint);
+
+	return m_pPolyline.extend(extendStart, toPoint);
+}
+
+Acad::ErrorStatus LbCusPolyline::extend(double newParam)
+{
+	assertWriteEnabled();
+	//return __super::extend(newParam);
+
+	return m_pPolyline.extend(newParam);
+}
+
+Acad::ErrorStatus LbCusPolyline::getClosestPointTo(const AcGePoint3d& givenPnt, AcGePoint3d& pointOnCurve, Adesk::Boolean extend) const
+{
+	assertReadEnabled();
+	//return __super::getClosestPointTo(givenPnt, pointOnCurve, extend);
+
+	return m_pPolyline.getClosestPointTo(givenPnt, pointOnCurve, extend);
+}
+
+Acad::ErrorStatus LbCusPolyline::getClosestPointTo(const AcGePoint3d& givenPnt, const AcGeVector3d& direction, AcGePoint3d& pointOnCurve, Adesk::Boolean extend) const
+{
+	assertReadEnabled();
+	//return __super::getClosestPointTo(givenPnt, direction, pointOnCurve, extend);
+
+	return m_pPolyline.getClosestPointTo(givenPnt, direction, pointOnCurve, extend);
+}
+
+Acad::ErrorStatus LbCusPolyline::getFirstDeriv(const AcGePoint3d& x0, AcGeVector3d& firstDeriv) const
+{
+	assertReadEnabled();
+	//return __super::getFirstDeriv(x0, firstDeriv);
+
+	return m_pPolyline.getFirstDeriv(x0, firstDeriv);
+}
+
+Acad::ErrorStatus LbCusPolyline::getProjectedCurve(const AcGePlane& plane, const AcGeVector3d& projDir, AcDbCurve*& projectedCurve) const
+{
+	assertReadEnabled();
+	//return __super::getProjectedCurve(plane, projDir, projectedCurve);
+
+	return m_pPolyline.getProjectedCurve(plane, projDir, projectedCurve);
+}
+
+#if 0
+#include "relation.h"
+bool g_bUserHighlight = true;
+Acad::ErrorStatus LbCusPolyline::subHighlight(const AcDbFullSubentPath& subId,
+	const Adesk::Boolean highlightAll) const
+{
+	if (g_bUserHighlight == true)
+	{
+		if (g_bQuYuXiaoYan == true)
+		{
+			AcDbObjectIdArray idArray;
+			vector<CString> strHandleAry;
+			if (CLinkInfos::Instance()->IsEntLinked(this->objectId(), idArray, strHandleAry) == TRUE)
+			{
+				for (int i = 0; i < idArray.length(); i++)
+				{
+					Acad::ErrorStatus es;
+					LbAzEntity* pEntity = NULL;
+					es = acdbOpenObject(pEntity, idArray[i], AcDb::kForWrite, Adesk::kTrue);
+					if (es != Acad::eOk)
+						continue;
+					g_bUserHighlight = false;
+					pEntity->highlight();
+					g_bUserHighlight = true;
+					pEntity->close();
+
+					if (CLinkInfos::Instance()->GetLinkJiaoyan())//连续校验
+					{
+						CLinkInfos::Instance()->m_removeIds.erase(
+							remove(CLinkInfos::Instance()->m_removeIds.begin(),
+								CLinkInfos::Instance()->m_removeIds.end(), idArray[i]),
+							CLinkInfos::Instance()->m_removeIds.end());
+					}
+				}
+			}
+		}
+	}
+	return __super::subHighlight(subId, highlightAll);
+}
+
+bool g_bUserUnHighlight = true;
+Acad::ErrorStatus LbCusPolyline::subUnhighlight(const AcDbFullSubentPath& subId,
+	const Adesk::Boolean highlightAll) const
+{
+	if (g_bUserUnHighlight == true)
+	{
+		if (g_bQuYuXiaoYan == true)
+		{
+			AcDbObjectIdArray idArray;
+			vector<CString> strHandleAry;
+			if (CLinkInfos::Instance()->IsEntLinked(this->objectId(), idArray, strHandleAry) == TRUE)
+			{
+				for (int i = 0; i < idArray.length(); i++)
+				{
+					Acad::ErrorStatus es;
+					LbAzEntity* pEntity = NULL;
+					es = acdbOpenObject(pEntity, idArray[i], AcDb::kForWrite, Adesk::kTrue);
+					if (es != Acad::eOk)
+						continue;
+					g_bUserUnHighlight = false;
+					pEntity->unhighlight();
+					g_bUserUnHighlight = true;
+					pEntity->close();
+
+					if (CLinkInfos::Instance()->GetLinkJiaoyan())//连续校验
+					{
+						CLinkInfos::Instance()->m_removeIds.push_back(idArray[i]);
+					}
+				}
+			}
+		}
+	}
+	return __super::subUnhighlight(subId, highlightAll);
+}
+#endif
+
+Acad::ErrorStatus LbCusPolyline::getFirstDeriv(double param, AcGeVector3d& firstDeriv) const
+{
+	assertReadEnabled();
+	//return __super::getFirstDeriv(param, firstDeriv);
+
+	return m_pPolyline.getFirstDeriv(param, firstDeriv);
+}
+
+Acad::ErrorStatus LbCusPolyline::subGetGeomExtents(AcDbExtents& extents) const
+{
+	assertReadEnabled();
+	//return __super::getGeomExtents(extents);
+
+	return m_pPolyline.getGeomExtents(extents);
+}
+
+Acad::ErrorStatus LbCusPolyline::getOffsetCurves(double offsetDist, AcDbVoidPtrArray& offsetCurves) const
+{
+	assertReadEnabled();
+	//return __super::getOffsetCurves(offsetDist, offsetCurves);
+
+	return m_pPolyline.getOffsetCurves(offsetDist, offsetCurves);
+}
+
+Acad::ErrorStatus LbCusPolyline::getOffsetCurvesGivenPlaneNormal(const AcGeVector3d& normal, double offsetDist, AcDbVoidPtrArray& offsetCurves) const
+{
+	assertReadEnabled();
+	//return __super::getOffsetCurvesGivenPlaneNormal(normal, offsetDist, offsetCurves);
+
+	return m_pPolyline.getOffsetCurvesGivenPlaneNormal(normal, offsetDist, offsetCurves);
+}
+
+Acad::ErrorStatus LbCusPolyline::subExplode(AcDbVoidPtrArray& entitySet) const
+{
+	assertReadEnabled();
+
+	return __super::subExplode(entitySet);
+}
+
+Acad::ErrorStatus LbCusPolyline::subGetOsnapPoints(AcDb::OsnapMode osnapMode,
+	Adesk::GsMarker gsSelectionMark,
+	const AcGePoint3d& pickPoint,
+	const AcGePoint3d& lastPoint,
+	const AcGeMatrix3d& viewXform,
+	AcGePoint3dArray& snapPoints,
+	AcDbIntArray& geomIds) const
+{
+	assertReadEnabled();
+	//return __super::subGetOsnapPoints(osnapMode, gsSelectionMark, pickPoint, lastPoint, viewXform, snapPoints, geomIds);
+
+	Acad::ErrorStatus es = m_pPolyline.getOsnapPoints(osnapMode, gsSelectionMark, pickPoint, lastPoint, viewXform, snapPoints, geomIds);
+
+	//if(LbCommonTool::IsCur2dShow())//目前是2d图,则返回点的Z坐标为0
+	{
+		int nLength = snapPoints.length();
+		AcGePoint3d snapPoint;
+		for (int i = 0; i < nLength; i++)
+		{
+			snapPoint = snapPoints[i];
+			snapPoint.z = 0;
+			snapPoints.setAt(i, snapPoint);
+		}
+	}
+	return es;
+}
+
+Acad::ErrorStatus LbCusPolyline::getSecondDeriv(const AcGePoint3d& x0, AcGeVector3d& secDeriv) const
+{
+	assertReadEnabled();
+	//return __super::getSecondDeriv(x0, secDeriv);
+
+	return m_pPolyline.getSecondDeriv(x0, secDeriv);
+}
+
+Acad::ErrorStatus LbCusPolyline::getSecondDeriv(double param, AcGeVector3d& secDeriv) const
+{
+	assertReadEnabled();
+	//return __super::getSecondDeriv(param, secDeriv);
+
+	return m_pPolyline.getSecondDeriv(param, secDeriv);
+}
+
+Acad::ErrorStatus LbCusPolyline::getSplitCurves(const AcGeDoubleArray& params, AcDbVoidPtrArray& curveSegments) const
+{
+	assertReadEnabled();
+	//return __super::getSplitCurves(params, curveSegments);
+
+	Acad::ErrorStatus es = m_pPolyline.getSplitCurves(params, curveSegments);
+
+	AcGePoint3d pnt0, pnt1;
+	AcGeVector3d vecNormal;
+	double dBulge(0);
+	AcDbPolyline* pPoly = NULL;
+
+	AcDbVoidPtrArray newSegments;
+	int nLength = curveSegments.length();
+	for (int i = 0; i < nLength; i++)
+	{
+		pPoly = AcDbPolyline::cast((AcDbEntity*)curveSegments[i]);
+		if (pPoly == NULL)
+			continue;
+		//CGloblFun::GetPolyPt(pPoly,pnt0,pnt1,vecNormal,dBulge);	
+
+		LbCusPolyline* pNew = (LbCusPolyline*)(clone());
+		if (pNew == NULL)
+			continue;
+		//CGloblFun::SetPolyPt(&pNew->m_pPolyline,pnt0,pnt1,vecNormal,dBulge);	
+		newSegments.append(pNew);
+	}
+
+	//LBToolKit::ReleaseVoidArray(curveSegments);
+	curveSegments.append(newSegments);
+
+	return es;
+}
+
+Acad::ErrorStatus LbCusPolyline::getSplitCurves(const AcGePoint3dArray& points, AcDbVoidPtrArray& curveSegments) const
+{
+	assertReadEnabled();
+
+	AcGeDoubleArray params;
+	params.setLogicalLength(points.length());
+	for (int i = 0; i < points.length(); i++)
+	{
+		getParamAtPoint(points[i], params[i]);
+	}
+
+	return getSplitCurves(params, curveSegments);
+}
+
+Acad::ErrorStatus LbCusPolyline::subIntersectWith(
+	const AcDbEntity* pEnt,
+	AcDb::Intersect intType,
+	AcGePoint3dArray& points,
+	Adesk::GsMarker thisGsMarker,
+	Adesk::GsMarker otherGsMarker) const
+{
+	assertReadEnabled();
+	//return __super::subIntersectWith(pEnt, intType, points, thisGsMarker, otherGsMarker);
+
+	return m_pPolyline.intersectWith(pEnt, intType, points, thisGsMarker, otherGsMarker);
+}
+
+Acad::ErrorStatus LbCusPolyline::subIntersectWith(
+	const AcDbEntity* pEnt,
+	AcDb::Intersect intType,
+	const AcGePlane& projPlane,
+	AcGePoint3dArray& points,
+	Adesk::GsMarker thisGsMarker,
+	Adesk::GsMarker otherGsMarker) const
+{
+	assertReadEnabled();
+	//return __super::subIntersectWith(pEnt, intType, projPlane, points, thisGsMarker, otherGsMarker);
+
+	acutPrintf(_T("\n pEnt.name: %s"), pEnt->isA()->name());
+
+	Acad::ErrorStatus es = m_pPolyline.intersectWith(pEnt, intType, projPlane, points, thisGsMarker, otherGsMarker);
+	return es;
+}
+
+Acad::ErrorStatus LbCusPolyline::subGetStretchPoints(AcGePoint3dArray& stretchPoints) const
+{
+	assertReadEnabled();
+	//return __super::subGetStretchPoints(stretchPoints);
+
+	Acad::ErrorStatus es = m_pPolyline.getStretchPoints(stretchPoints);
+	return es;
+}
+
+Adesk::Boolean LbCusPolyline::subWorldDraw(AcGiWorldDraw* wd)
+{
+	assertReadEnabled();    // Its purpose is to make sure that the object is open AcDb::kForRead.
+
+	m_pPolyline.worldDraw(wd);
+
+	return Adesk::kTrue;
+}
+
+Acad::ErrorStatus   LbCusPolyline::getAzPolyGripPoints_2d(AcGePoint3dArray&  gripPoints)const
+{
+	AcGePoint3d startPt, endPt;
+	m_pPolyline.getStartPoint(startPt);
+	m_pPolyline.getEndPoint(endPt);
+	// AcGePoint3d midPoint = CGloblFun::GetPolyMovePt(&m_pPolyline);
+
+	gripPoints.append(startPt);
+	gripPoints.append(endPt);
+	// gripPoints.append(midPoint);
+
+	return Acad::eOk;
+}
+
+
+//-----------------------------------------------------------------------------
+Acad::ErrorStatus LbCusPolyline::subGetGripPoints(AcGePoint3dArray& gripPoints,
+	AcDbIntArray& osnapModes,
+	AcDbIntArray& geomIds) const
+{
+	assertReadEnabled();
+
+	Acad::ErrorStatus es = m_pPolyline.getGripPoints(gripPoints, osnapModes, geomIds);
+	//AcGePoint3d point = CGloblFun::GetPolyMovePt(&m_pPolyline);
+	//gripPoints.append(point);
+	return es;
+	return __super::subGetGripPoints(gripPoints, osnapModes, geomIds);
+	//return getAzPolyGripPoints_2d(gripPoints);
+}
+
+Acad::ErrorStatus LbCusPolyline::moveGripPointsAt_2d(const AcDbIntArray& indices, const AcGeVector3d& offset)
+{
+	if (indices.length() < 1)
+	{
+		return Acad::eInvalidIndex;
+	}
+
+	int nd = indices.at(0);
+	if (nd >= 2)
+	{
+		return Acad::eInvalidIndex;
+	}
+
+	AcGePoint3d startPt, endPt;
+	m_pPolyline.getStartPoint(startPt);
+	m_pPolyline.getEndPoint(endPt);
+
+	//trans
+	if (nd == 0)
+	{
+		AcGePoint3d newStartPt = startPt + offset;
+		//if (LbCommonTool::IsCur2dShow()) // 二维状态下，z不变
+		{
+			newStartPt.z = startPt.z;
+		}
+		setStartPoint(newStartPt);
+	}
+	else if (nd == 1)
+	{
+		AcGePoint3d newEndPt = endPt + offset;
+		//if (LbCommonTool::IsCur2dShow()) // 二维状态下，z不变
+		{
+			newEndPt.z = endPt.z;
+		}
+		setEndPoint(newEndPt);
+	}
+
+	return Acad::eOk;
+}
+
+//-----------------------------------------------------------------------------
+Acad::ErrorStatus LbCusPolyline::subMoveGripPointsAt(const AcDbIntArray& indices,
+	const AcGeVector3d& offset)
+{
+	assertWriteEnabled();
+
+	//return __super::subMoveGripPointsAt(indices, offset);
+	if (__super::subMoveGripPointsAt(indices, offset) == Acad::eOk)
+	{
+		return Acad::eOk;
+	}
+
+	int indiceslen = indices.length();
+	if (indiceslen == 0 || offset.isZeroLength())
+	{
+		return Acad::eOk;
+	}
+
+	AcGePoint3dArray gripPoints;
+	//AcDbIntArray osnapModes; 
+	//AcDbIntArray geomIds;
+	//m_pPolyline.getGripPoints(gripPoints,osnapModes,geomIds);
+	getAzPolyGripPoints_2d(gripPoints);
+
+	int nd = indices.at(0);
+	if (nd == 2)//夹点为poly线后面的夹点,表明整体移动
+	{
+		AcGeMatrix3d  xform;
+		xform.setTranslation(offset);
+		subTransformBy(xform);
+		return Acad::eOk;
+	}
+
+	return moveGripPointsAt_2d(indices, offset);
+	//return m_pPolyline.moveGripPointsAt(indices, offset);
+}
+
+//-----------------------------------------------------------------------------
+Acad::ErrorStatus LbCusPolyline::subMoveStretchPointsAt(const AcDbIntArray& indices,
+	const AcGeVector3d& offset)
+{
+	assertWriteEnabled();
+	return m_pPolyline.moveStretchPointsAt(indices, offset);
+}
+
+Adesk::Boolean LbCusPolyline::isClosed() const
+{
+	AcGePoint3d stPt, endPt;
+	getStartPoint(stPt);
+	getEndPoint(endPt);
+	return stPt.isEqualTo(endPt);
+}
+
+REGISTER_OBJECT(LbCusPolyline)
+ARXCMD3(LbCusPolylineTest)
+{
+	LbCusPolyline *pEnt = new LbCusPolyline;
+	pEnt->setStartPoint(AcGePoint3d(0, 0, 0));
+	pEnt->setEndPoint(AcGePoint3d(100, 100, 0));
+
+	AcDbObjectId id;
+	CADUtils::AppendToModalSpace(pEnt, id);
+	pEnt->close();
+}
+#pragma endregion

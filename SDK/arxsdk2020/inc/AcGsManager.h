@@ -69,7 +69,7 @@ public:
     /// <param name="pDrawable">Input drawable to be associated with the view.</param>
     /// <returns>
     /// The new AcGsView.
-    /// </returns>
+    /// </returns>createAutoCADDevice
     virtual AcGsView*   createAutoCADView           (AcGsGraphicsKernel &kernel, AcGiDrawable *pDrawable)       = 0;
 
     /// <description>
