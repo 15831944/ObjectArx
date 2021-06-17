@@ -807,7 +807,7 @@ ARXCMD3(CusEntity03Test)
 }
 
 #pragma endregion Test blockreference in subWorldDraw
-
+#if 0
 #pragma region LbCusPolyline
 //__declspec(dllexport) bool g_bQuYuXiaoYan = false;//标识是否是区域校验
 
@@ -1549,3 +1549,4 @@ ARXCMD3(LbCusPolylineTest)
 	pEnt->close();
 }
 #pragma endregion
+#endif

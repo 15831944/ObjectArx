@@ -8,7 +8,6 @@
 #include "dbidmap.h"
 #include "acedxref.h"
 
-#if 0
 bool IsBlkHasAttrib(AcDbBlockReference* blkPtr)
 {
 	bool bRet = false;
@@ -255,7 +254,7 @@ void ExplodeNoAttributeBlock(AcDbDatabase* pWorkDb)
 	OpenBlkEntForRead(blkPtrs, blkIds);
 
 	AcDbObjectId id;
-	AcDbEntity* pEnt = nullptr;
+	AcDbEntity* pEnt;
 
 	AcDbExtents exts;
 
@@ -494,7 +493,6 @@ bool MotifyExtBlkPath(AcDbBlockTableRecord* pBlkTabRcdXRef, const CString& strFi
 	if (esUp == Acad::eOk)
 	{
 		pBlkTabRcdXRef->setPathName(strNewFilePath.GetBuffer());
-		AcDbObjectIdArray XrefBTRids;
 
 		AcDb::XrefStatus xsXref = pBlkTabRcdXRef->xrefStatus();
 		if (xsXref != AcDb::kXrfResolved)
@@ -624,7 +622,7 @@ ARXCMD3(WblockTest)
 
 			AcGeMatrix3d xform;
 			xform.setToTranslation(vecMove);
-			//MoveEntInModelSpace(pDb, xform);
+			MoveEntInModelSpace(pDb, xform);
 
 			getMsEnts(pDb, ids);
 
@@ -653,11 +651,7 @@ ARXCMD3(WblockTest)
 			pDb = NULL;
 		}
 		
-		//DelaXRefV2(curDoc()->database(), CString(result));
-
-		// 修改路径后重载外部参照
-		//acedXrefReload(_T("暖通培训图纸"), true, curDoc()->database());
-		//acedXrefReload(_T("Drawing1"), true, curDoc()->database());
+		DelaXRefV2(curDoc()->database(), CString(result));
 		
 		acutRelRb(rb);
 	}
@@ -669,4 +663,3 @@ ARXCMD3(WblockTest)
 
 	return;
 }
-#endif

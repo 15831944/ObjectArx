@@ -649,6 +649,7 @@
     <ClCompile Include="PmDbLinetmpJig.cpp" />
     <ClCompile Include="PMTestWblock0603.cpp" />
     <ClCompile Include="PMTestWblock0604.cpp" />
+    <ClCompile Include="PMTestWblock0617.cpp" />
     <ClCompile Include="PM_WBlockClone.cpp" />
     <ClCompile Include="rxentrypoint.cpp" />
     <ClCompile Include="SelEntOnUnLockLayer.cpp" />

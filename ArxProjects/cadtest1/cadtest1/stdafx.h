@@ -187,7 +187,7 @@ extern "C" {
 //》有没有响应器，是在undo实体之前的？
 //没有。编辑反应器的commandwillstart可以监听在undo执行之前，但是对于undo实体之前就不能准确监听了。
 //对象反应器的unappended和数据库反应器的objectUnAppended触发时机在之后。（看代码fire_objectUnAppended在哪里调用）
-//》U命令已禁用，使用UNDO命令将其打开   UNDO　c,n分支
+//》U命令已禁用，使用UNDO命令将其打开   UNDO　执行c,n分支禁用，c,o分支打开
 //》启动zwcad Fail to load one of SCLAD's module, the install maybe incomplete提示框     vc2010框架缺失
 //》启动zwcad 1、弹出空白提示框 2、Exception processing Message 0xc000005 Parameters系统错误提示框  .NET Firework 4.0缺失
 //》Coudn't find any installed languages!提示框 语言包没安装上，重装一次

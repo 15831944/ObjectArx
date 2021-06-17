@@ -1338,3 +1338,111 @@ ARXCMD3(test_insertDwgWithXref)
 	// test ids
 	//acedXrefReload(ids);
 }
+
+ARXCMD3(delExtensionDicOfLineType)
+{
+	Acad::ErrorStatus es;
+	AcDbDatabase *pDadabase = acdbHostApplicationServices()->workingDatabase();
+	AcDbLinetypeTable* pLineTypeTable = NULL;
+	if (Acad::eOk != pDadabase->getLinetypeTable(pLineTypeTable, AcDb::kForWrite))
+		return;
+
+	AcDbLinetypeTableRecord *pLineTypeRec = nullptr;
+	if (Acad::eOk == pLineTypeTable->getAt(_T("EXT-P771 -PH 9-FP01-30%$0${ Offset Lines }"), pLineTypeRec))
+	{
+		AcDbObjectId dictObjId = pLineTypeRec->extensionDictionary();
+		pLineTypeRec->close();
+		if (dictObjId == NULL)
+		{
+			acutPrintf(_T("\n该实体不存在扩展词典"));
+			return;
+		}
+
+		AcDbDictionary* pDict = nullptr;
+		acdbOpenObject(pDict, dictObjId, AcDb::kForWrite);
+		if (pDict)
+		{
+			if (pDict->has(_T("DGNLSDEF")))
+			{
+				pDict->remove(_T("DGNLSDEF"));
+				acutPrintf(_T("\n已删除扩展词典DGNLSDEF"));
+			}
+			else
+			{
+				acutPrintf(_T("\n不存在扩展词典DGNLSDEF"));
+			}
+		}
+		pDict->close();
+		pLineTypeTable->close();
+	}
+}
+
+ARXCMD3(CusFilter)
+{
+	Adesk::Int32 len = 0;
+	ads_name selSet;
+	resbuf *rb = acutBuildList(RTDXF0, _T("LINE,ARC"), 8, _T("图层1"), 62, 1, -3, 1001, _T("XData"), -3, 1000, _T("ASCII"), RTNONE);
+
+	if (RTNORM == ads_ssget(_T("A"), NULL, NULL, rb, selSet))
+	{
+		acedSSLength(selSet, &len);
+		acutPrintf(_T("\nLen: %d"), len);
+	}
+	acedSSFree(selSet);
+	acutRelRb(rb);
+}
+
+ARXCMD3(tranformTest)
+{
+	AcDbDatabase *pDb = curDoc()->database();
+
+	AcGePoint3d ptCurDbMin = curDoc()->database()->extmin();
+	AcGePoint3d ptCurDbMax = curDoc()->database()->extmax();
+
+	AcGePoint3d ptOrigin(AcGePoint3d::kOrigin);
+	//if (iWBlockCount != 0)
+	//{
+	//	double dXMove = 9999;
+	//	ptOrigin = AcGePoint3d(acdbCurDwg()->extmax().x + dXMove, acdbCurDwg()->extmin().y, 0.0);
+	//}
+
+	AcGePoint3d ptExtMin = pDb->extmin();
+	AcGeVector3d vecMove = ptOrigin - ptExtMin;
+
+	AcGeMatrix3d xform;
+	xform.setToTranslation(vecMove);
+
+	AcAxDocLock DbLock(pDb);
+	AcDbBlockTable *pBlkTbl = NULL;
+	Acad::ErrorStatus esGet = pDb->getBlockTable(pBlkTbl, AcDb::kForRead);
+	if (esGet != Acad::eOk)
+	{
+		return;
+	}
+	pBlkTbl->close();
+
+	AcDbBlockTableRecord *pBlkTblRcd = NULL;
+	esGet = pBlkTbl->getAt(ACDB_MODEL_SPACE, pBlkTblRcd, AcDb::kForRead);
+	if (esGet != Acad::eOk)
+	{
+		return;
+	}
+
+	//遍历模型空间的实体
+	AcDbBlockTableRecordIterator *it(NULL);
+	pBlkTblRcd->newIterator(it);
+	for (it->start(); !it->done(); it->step())
+	{
+		AcDbEntity *pEntity = NULL;
+		if (it->getEntity(pEntity, AcDb::kForWrite) != Acad::eOk)
+		{
+			continue;
+		}
+
+		pEntity->transformBy(xform);
+		pEntity->close();
+	}
+
+	delete it;
+	pBlkTblRcd->close();
+}

@@ -236,7 +236,7 @@ private:
 	AcGePoint3d m_ptPos;
 	AcDbObjectId m_blkRecId;
 };
-
+#if 0
 class
 	//#ifdef _LBAZOBJECT_
 	//	__declspec(dllexport)
@@ -375,6 +375,7 @@ private:
 	void *operator new[](size_t nSize, const TCHAR *file, int line) { return 0; }
 
 };
+#endif
 
 
 
