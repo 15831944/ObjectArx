@@ -60,11 +60,20 @@ ARXCMD3(ModXRecord)
 		acutPrintf(_T("\n该实体不存在扩展词典"));
 		return;
 	}
+
 	AcDbDictionary* pDict = NULL;
 	AcDbXrecord* pXRecord = NULL;
+#if ZRX == 2020
+	AcDbObject *pTmpObj = nullptr;
+	acdbOpenObject(pDict, dictObjId, AcDb::kForWrite);
+	pDict->getAt(_T("XRecord"), pTmpObj, AcDb::kForWrite);
+	pXRecord = (AcDbXrecord*)pTmpObj;
+#else
 	acdbOpenObject(pDict, dictObjId, AcDb::kForWrite);
 	pDict->getAt(_T("XRecord"), pXRecord, AcDb::kForWrite);
+#endif
 	pDict->close();
+
 	if (pXRecord)
 	{
 		struct resbuf* pRb;

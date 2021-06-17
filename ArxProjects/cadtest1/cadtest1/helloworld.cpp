@@ -1348,7 +1348,7 @@ ARXCMD3(delExtensionDicOfLineType)
 		return;
 
 	AcDbLinetypeTableRecord *pLineTypeRec = nullptr;
-	if (Acad::eOk == pLineTypeTable->getAt(_T("EXT-P771 -PH 9-FP01-30%$0${ Offset Lines }"), pLineTypeRec))
+	if (Acad::eOk == pLineTypeTable->getAt(_T("EXT-P771 -PH 9-FP01-30%$0${ Offset Lines }"), pLineTypeRec, AcDb::kForWrite))
 	{
 		AcDbObjectId dictObjId = pLineTypeRec->extensionDictionary();
 		pLineTypeRec->close();
