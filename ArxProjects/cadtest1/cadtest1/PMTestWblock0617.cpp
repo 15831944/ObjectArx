@@ -616,6 +616,7 @@ ARXCMD3(WblockTest)
 				double dXMove = 9999;
 				ptOrigin = AcGePoint3d(acdbCurDwg()->extmax().x + dXMove, acdbCurDwg()->extmin().y, 0.0);
 			}
+			acutPrintf(_T("\niWBlockCount: %d\n"), iWBlockCount);  // Added for test
 
 			AcGePoint3d ptExtMin = pDb->extmin();
 			AcGeVector3d vecMove = ptOrigin - ptExtMin;

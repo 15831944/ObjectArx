@@ -1392,9 +1392,21 @@ ARXCMD3(CusFilter)
 	acutRelRb(rb);
 }
 
-ARXCMD3(tranformTest)
+ARXCMD3(transformTest)
 {
-	AcDbDatabase *pDb = curDoc()->database();
+	resbuf* rb = acutNewRb(RTSTR);
+
+	if (RTNORM != acedGetFileNavDialog(_T("选择DWG文件"), NULL, _T("dwg"), NULL, 0, &rb))
+		//if (RTNORM != acedGetFileD(_T("选择DWG文件"), NULL, _T("dwg"), 0, rb))
+	{
+		return;
+	}
+	ACHAR result[MAX_PATH];
+	AcDbDatabase* pDb = new AcDbDatabase(Adesk::kFalse, Adesk::kTrue);
+	if (RTNORM == acedFindFile(rb->resval.rstring, result))
+	{
+		pDb->readDwgFile(result);
+	}
 
 	AcGePoint3d ptCurDbMin = curDoc()->database()->extmin();
 	AcGePoint3d ptCurDbMax = curDoc()->database()->extmax();
@@ -1445,4 +1457,112 @@ ARXCMD3(tranformTest)
 
 	delete it;
 	pBlkTblRcd->close();
+
+	delete pDb;
+	acutRelRb(rb);
+}
+
+#include "geplin2d.h"
+/*
+	其中 ptOut为ext外一点,
+	错误: ptSide结果总是(0,0,0)
+*/
+ARXCMD3(GePLine2dClosestPointTo)
+{
+	AcGePoint2d ptOut(50, 150);
+	AcDbExtents ext(AcGePoint3d(0, 0, 0), AcGePoint3d(100, 100, 0));
+	AcGePoint2dArray ptArry;
+	ptArry.append(AcGePoint2d(ext.minPoint().x, ext.minPoint().y));
+	ptArry.append(AcGePoint2d(ext.maxPoint().x, ext.minPoint().y));
+	ptArry.append(AcGePoint2d(ext.maxPoint().x, ext.maxPoint().y));
+	ptArry.append(AcGePoint2d(ext.minPoint().x, ext.maxPoint().y));
+	ptArry.append(AcGePoint2d(ext.minPoint().x, ext.minPoint().y));
+
+	AcGePolyline2d pl(ptArry);
+	AcGePoint2d ptSide = pl.closestPointTo(ptOut);
+	acutPrintf(_T("\nptSide(%g, %g)"), ptSide.x, ptSide.y);
+}
+
+ARXCMD3(Arc3dDistanceTo)
+{
+	AcGeCircArc3d circArc1(AcGePoint3d(190.81547751101971, 407.06703093969554, 0.00000000000000000), AcGeVector3d::kZAxis, 43512.922060250123);
+	AcGeCircArc3d circArc2(AcGePoint3d(190.81507521302410, 407.06710967360141, 0.00000000000000000), AcGeVector3d::kZAxis, 43512.921650317447);
+	double dis = circArc1.distanceTo(circArc2);
+	acutPrintf(_T("dis = %g"), dis);
+}
+
+#include "AcPlPlotEngine.h"
+#include "dbplotsettings.h"
+#include "dbplotsetval.h"
+#include "AcPlPlotFactory.h"
+#include "dblayout.h"
+#include "AcPlPlotInfo.h"
+#include "AcDbLMgr.h"
+#include "AcPlPlotInfoValidator.h"
+void Test_plot()
+{
+	AcPlPlotEngine* PlotEngine = NULL;
+	AcDbPlotSettingsValidator* PlotSettingsValidator = NULL;
+	Acad::ErrorStatus es = Acad::eOk;
+	AcDbObjectId ObjectId = AcDbObjectId::kNull;
+	//创建打印引擎
+	es = AcPlPlotFactory::createPublishEngine(PlotEngine);
+	if (es == Acad::eOk)
+	{
+		//获取当前活动的Layout和打印设置
+		AcPlPlotPageInfo PlotPageInfo;
+		AcPlPlotInfo PlotInfo;
+		AcDbLayout* Layout = NULL;
+		AcDbPlotSettings* PlotSettings = NULL;
+		AcDbLayoutManager* LayoutManager = acdbHostApplicationServices()->layoutManager();
+		AcDbObjectId ObjectId = LayoutManager->getActiveLayoutBTRId();
+		AcDbBlockTableRecord* BlockTableRecord;
+		es = acdbOpenObject(BlockTableRecord, ObjectId, AcDb::kForRead);
+		ObjectId = BlockTableRecord->getLayoutId();
+		es = acdbOpenObject(Layout, ObjectId, AcDb::kForWrite);
+		PlotSettings = new AcDbPlotSettings(Layout->modelType());
+		PlotSettings->copyFrom(Layout);
+		Layout->close();
+		BlockTableRecord->close();
+		//获取打印机验证器对象
+		PlotSettingsValidator = (AcDbPlotSettingsValidator*)acdbHostApplicationServices()->plotSettingsValidator();
+		//设置打印机(这个打印机为zwcad开放的高DPI的打印机)
+		PlotSettingsValidator->setPlotCfgName(PlotSettings, _T("ZWCAD PDF(High Quality Print).pc5"));
+		PlotSettingsValidator->refreshLists(PlotSettings);
+		//设置纸张
+		es = PlotSettingsValidator->setCanonicalMediaName(PlotSettings, _T("ISO_A4(210.00_x_297.00_MM)"));
+		//设置打印比例为标准布满
+		es = PlotSettingsValidator->setUseStandardScale(PlotSettings, Adesk::kTrue);
+		es = PlotSettingsValidator->setStdScaleType(PlotSettings, AcDbPlotSettings::kScaleToFit);
+		//打印区域为按显示范围(当前屏幕显示范围)
+		PlotSettingsValidator->setPlotType(PlotSettings, AcDbPlotSettings::kDisplay);
+		//居中打印
+		PlotSettingsValidator->setPlotCentered(PlotSettings, true);
+		//取消打印线宽（由于图纸字体的精度问题，打印线宽会导致精度上的损失，显得十分模糊）
+		PlotSettings->setPrintLineweights(false);
+		//开始打印
+		PlotInfo.setLayout(ObjectId);
+		PlotInfo.setOverrideSettings(PlotSettings);
+		AcPlPlotInfoValidator validator;
+		validator.setMediaMatchingPolicy(AcPlPlotInfoValidator::kMatchEnabled);
+		es = validator.validate(PlotInfo);
+		if (es == Acad::eOk)
+		{
+			const ACHAR* filename = acDocManager->curDocument()->fileName();
+			PlotEngine->beginPlot(NULL);
+			PlotEngine->beginDocument(PlotInfo, filename, NULL, 1, true, _T("D:\\Drawing1.pdf"));
+			PlotEngine->beginPage(PlotPageInfo, PlotInfo, true);
+			PlotEngine->beginGenerateGraphics();
+			PlotEngine->endGenerateGraphics();
+			PlotEngine->endPage();
+			PlotEngine->endDocument();
+			PlotEngine->endPlot();
+		}
+		PlotEngine->destroy();
+		PlotEngine = NULL;
+
+	}
+	else
+		acutPrintf(_T("fail"));
+
 }
