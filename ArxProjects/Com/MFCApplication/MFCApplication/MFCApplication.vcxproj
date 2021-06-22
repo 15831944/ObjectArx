@@ -191,6 +191,7 @@
     <ClInclude Include="CZcadDocument.h" />
     <ClInclude Include="CZcadDocuments.h" />
     <ClInclude Include="CZcadLayout.h" />
+    <ClInclude Include="CZcadLayouts.h" />
     <ClInclude Include="CZcadPlot.h" />
     <ClInclude Include="CZcadPlotConfiguration.h" />
     <ClInclude Include="CZcadPlotConfigurations.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="MFCApplicationDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -223,4 +225,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties _x007B_EC9231A5-5A21-11E7-B72E-BC5FF42AC839_x007D_="CZcadPlotConfiguration0" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

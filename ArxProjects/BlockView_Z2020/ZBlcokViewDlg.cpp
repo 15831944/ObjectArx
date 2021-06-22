@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "stdafx.h"
 #include "ZBlockViewDlg.h"
 #include "rxmfcapi.h"
 #include "dbvisualstyle.h"
@@ -361,11 +361,7 @@ Acad::ErrorStatus CBlockViewDlg::InitDrawingControl(AcDbDatabase *pDb, const TCH
 		mPreviewCtrl.view()->add(spaceRec, mPreviewCtrl.model());
 		// finally, tell the AcGsView what style to display in
 		mPreviewCtrl.mpView->setVisualStyle(currentVsId);
-#ifndef ARX
 		mPreviewCtrl.mpView->setMode(AcGsView::kGouraudShaded);
-#else
-		mPreviewCtrl.mpView->setVisualStyle(AcGiVisualStyle::k3DWireframe);
-#endif
 	}
 	return spaceRec.openStatus();
 }
@@ -736,28 +732,21 @@ void CBlockViewDlg::OnFileOutput()
 // display the gs config dialog
 void CBlockViewDlg::OnFileAcGsConfig()
 {
-	//const TCHAR *regEntry = NULL;
-	//TCHAR regPath[2024];
+	const TCHAR *regEntry = NULL;
+	TCHAR regPath[2024];
 
 	// Get the current AutoCAD registry path 
 	// e.g. Software\Autodesk\AutoCAD\R17.0\ACAD-301:409 
     //regEntry = acrxProductKey();
 	// this is the path we want	
-	//_stprintf_s(regPath, _T("%s\\3DGS Configuration\\GSHEIDI10"), regEntry);
+	_stprintf_s(regPath, _T("%s\\3DGS Configuration\\GSHEIDI10"), regEntry);
 	// get the GsManager from current MDI Client Window 
 	AcGsManager *pGsMgr = acgsGetGsManager(NULL);
 	// if we go the gs manager ok
 	if (pGsMgr != NULL)
 	{
 		// get the GsClass factory
-#if ZRX == 2021
-		AcGsGraphicsKernel *pClassFactory = pGsMgr->getGSClassFactory();
-#endif
-#if ARX == 2020
-		AcGsKernelDescriptor keyDescriptor;
-		keyDescriptor.addRequirement(AcGsKernelDescriptor::k3DDrawing);
-		AcGsGraphicsKernel *pClassFactory = AcGsManager::acquireGraphicsKernel(keyDescriptor);
-#endif
+		AcGsClassFactory *pClassFactory = pGsMgr->getGSClassFactory();
 		// if we got it ok
 		if (pClassFactory != NULL)
 		{
@@ -767,7 +756,7 @@ void CBlockViewDlg::OnFileAcGsConfig()
 			if (pConfig != NULL)
 			{
 				// display the config dialog
-				if (pConfig->configure())
+				if (pConfig->configure(regPath, true))
 				{
 					// update the gsView
 					refreshView(mPreviewCtrl.mpView);

@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "stdafx.h"
 #include "ZGsPreviewCtrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -112,19 +112,12 @@ void CGsPreviewCtrl::init(HMODULE hRes, bool bCreateModel)
 		mpManager = acgsGetGsManager();
 		//RXASSERT(mpManager);
 		// get the GS class factory
-#if ZRX == 2021
 		mpFactory = mpManager->getGSClassFactory();
-#endif
-#if ARX == 2020
-		AcGsKernelDescriptor keyDescriptor;
-		keyDescriptor.addRequirement(AcGsKernelDescriptor::k3DDrawing);
-		mpFactory = AcGsManager::acquireGraphicsKernel(keyDescriptor);
-#endif
 		//RXASSERT(mpFactory);
 		// create an AcGsDevice object. The window handle passed in to this 
 		// function is the display surface onto which the graphics system draws
 		//a device with standard autocad color palette
-		mpDevice = mpManager->createAutoCADDevice(*mpFactory, m_hWnd);
+		mpDevice = mpManager->createAutoCADDevice(m_hWnd);
 		//RXASSERT(mpDevice);
 
 		// get the size of the window that we are going to draw in
@@ -141,7 +134,7 @@ void CGsPreviewCtrl::init(HMODULE hRes, bool bCreateModel)
 			// (which is a hint to the graphics system that the geometry in this 
 			// model should be rasterized into its main frame buffer). This 
 			// AcGsModel is created with get and release functions that will open and close AcDb objects.
-			mpModel = mpManager->createAutoCADModel(*mpFactory);
+			mpModel = mpManager->createAutoCADModel();
 			//RXASSERT(mpModel);
 			mbModelCreated = true;
 		}

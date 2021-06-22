@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CMFCApplicationDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CMFCApplicationDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CMFCApplicationDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -159,6 +160,7 @@ HCURSOR CMFCApplicationDlg::OnQueryDragIcon()
 #include "CZcadDocument.h"
 #include "CZcadDocuments.h"
 #include "CZcadLayout.h"
+#include "CZcadLayouts.h"
 #include "CZcadPlot.h"
 #include "CZcadPlotConfiguration.h"
 #include "CZcadPlotConfigurations.h"
@@ -187,52 +189,146 @@ void CMFCApplicationDlg::OnBnClickedButton1()
 
 	// 设置显示状态
 	pZwcad.put_Visible(TRUE);
+
 	// 设置显示最大化
 	pZwcad.put_WindowState(zcMax);
-
-	// 加载功能zrx
-	pZwcad.LoadZrx(_T("D:\\temp\\HelloWorld.zrx"));
 
 	// 获取文档集
 	CZcadDocuments docs;
 	docs = pZwcad.get_Documents();
-	// 打开图纸
-	CComVariant v1(true), v2(false);
-	docs.Open(LPCTSTR(_T("D:\\temp\\test.dwg")), v1, v2);
 
-	// 执行命令
+	// 获取当前文档
 	CZcadDocument doc = pZwcad.get_ActiveDocument();
-	//doc.SendCommand(_T("Zoom e "));
+
+	// 源文件
+	CString szSrcFile = _T("D:\\temp\\test.dwg");
+
+	// 如果当前存在源文件则不打开
+	long lCount = docs.get_Count();
+	bool bIsExist(false);
+	for (int i = 0; i < lCount; i++)
+	{
+		VARIANT index;
+		VariantInit(&index);
+		V_VT(&index) = VT_I4;
+		V_I4(&index) = i;
+		CZcadDocument docTemp = docs.Item(index);
+
+		if (docTemp.get_FullName().Compare(szSrcFile) == 0)  
+		{
+			bIsExist = true;
+			doc = docTemp;
+			break;
+		}
+	}
+	if (!bIsExist)
+	{
+		// 打开图纸
+		CComVariant v1(true), v2(false);
+		doc = docs.Open(LPCTSTR(szSrcFile), v1, v2);
+	}
+
+	// 激活要打印的文档
+	doc.Activate();
+
+	//可以加载之前的提供的zrx，执行命令进行打印
+#if 0  
+	// 加载功能zrx
+	//pZwcad.LoadZrx(_T("D:\\temp\\HelloWorld.zrx"));
+	// 执行命令
 	//doc.SendCommand(_T("Test_plot "));
+#endif
 
+	// 获取当前布局
+	CZcadLayout cadLayout = doc.get_ActiveLayout();
 
-
-	//CZcadLayouts cadLayouts = doc.get_Layouts(); //定义布局集
-	//CZcadLayout cadLayout = cadLayouts.Add("jpglayout"); //添加一个布局
-	CZcadLayout cadLayout = doc.get_ActiveLayout(); //获得当前布局
-	CZcadPlotConfigurations cadConfigs; //定义打印配置集
-	VARIANT modelType;
-	modelType.vt = VT_BOOL;
-	modelType.boolVal = true;
-	CZcadPlotConfiguration cadConfig = cadConfigs.Add(_T("jpg"), modelType);//定义打印设置
-	cadConfig.put_PaperUnits(1);  //设置打印纸张度量单位
-	cadConfig.put_PlotWithPlotStyles(true); //定义打印风格
-	cadConfig.put_StyleSheet(_T("acad.ctb"));//打印颜色
 	// 设置打印机(这个打印机为zwcad开放的高DPI的打印机)
-	cadConfig.put_ConfigName(_T("ZWCAD PDF(High Quality Print).pc5")); 
-	cadConfig.put_UseStandardScale(true); //打印比例
-	cadConfig.put_StandardScale(cadLayout.get_StandardScale());//打印缩放比例
-	cadConfig.put_PlotType(cadLayout.get_PlotType());
-	cadConfig.put_CenterPlot(true);
-	CZcadPlot cadPlot = doc.get_Plot();;
+	cadLayout.put_ConfigName(_T("ZWCAD PDF(High Quality Print).pc5"));
+	// 设置纸张
+	cadLayout.put_CanonicalMediaName(_T("ISO_A4(210.00_x_297.00_MM)"));
+	// 居中打印
+	cadLayout.put_CenterPlot(true);
+	// 取消打印线宽（由于图纸字体的精度问题，打印线宽会导致精度上的损失，显得十分模糊）
+	cadLayout.put_PlotWithLineweights(false);
+	// 打印区域为按显示范围(当前屏幕显示范围)
+	cadLayout.put_PlotType(zcDisplay);
+	//设置打印比例为标准布满
+	cadLayout.put_UseStandardScale(true);
+	cadLayout.put_StandardScale(zcScaleToFit); 
+
+	CZcadPlot cadPlot = doc.get_Plot();
 	VARIANT config;
-	config.vt = VT_LPSTR;
-	config.pcVal = "DWG To PDFpc3";
-	cadPlot.PlotToFile(_T("D:\\Temp\\test.pdf"), config);//输出目录
+	config.vt = VT_BSTR;
+	config.bstrVal = _T("ZWCAD PDF(High Quality Print).pc5");
+	// 输出为pdf
+	cadPlot.PlotToFile(_T("D:\\Temp\\test.pdf"), config);
 
 	//pZwcad.Quit();
-	doc.ReleaseDispatch();
-	docs.ReleaseDispatch();
+	//doc.ReleaseDispatch();
+	//docs.ReleaseDispatch();
 
+	::AfxMessageBox(_T("Finished!"));
+}
+
+
+void CMFCApplicationDlg::OnBnClickedButton2()
+{
+	// 通过COM获取当前存在的ZWCAD，若不存在，则创建
+	CZcadApplication pZwcad;
+	LPUNKNOWN pUnk;
+	LPDISPATCH pDisp;
+	CLSID clsid;
+	::CLSIDFromProgID(L"ZWCAD.Application.2021", &clsid);
+	if (::GetActiveObject(clsid, NULL, &pUnk) == S_OK)   //判断ZWCAD是否已启动
+	{
+		// CAD已经启动，则连接CAD即可
+		if (pUnk->QueryInterface(IID_IDispatch, (void**)&pDisp) == S_OK)
+		{
+			pZwcad.AttachDispatch(pDisp, FALSE);
+			pUnk->Release();
+		}
+	}
+	// CAD没有启动，启动CAD
+	else if (pZwcad.CreateDispatch(_T("ZWCAD.Application.2021"), NULL) == FALSE)
+	{
+		::AfxMessageBox(_T("启动ZWCAD 失败!"));
+	}
+
+	// 设置显示状态
+	pZwcad.put_Visible(TRUE);
+
+	// 设置显示最大化
+	pZwcad.put_WindowState(zcMax);
+
+	// 创建一个新的文档
+	CZcadDocuments docs = pZwcad.get_Documents();
+	VARIANT newFile;
+	newFile.vt = VT_BSTR;
+	newFile.bstrVal = _T("C:\\Users\\Admin\\AppData\\Local\\ZWSOFT\\ZWCAD\\2021\\zh-CN\Template\\zwcadiso.dwt");
+	docs.Add(newFile);
+
+	// 获取当前文档
+	CZcadDocument doc = pZwcad.get_ActiveDocument();
+
+	// 不显示文件对话框
+	doc.SendCommand(_T("filedia 0 "));
+	// pdf以块的方式导入
+	doc.SendCommand(_T("PDFIMPORTMODE 1 "));
+	// 通过pdfimport命令插入pdf
+	doc.SendCommand(_T("-pdfimport f D:\\Temp\\test.pdf     "));
+	// 还原
+	doc.SendCommand(_T("filedia 1 "));
+	doc.SendCommand(_T("PDFIMPORTMODE 6 "));
+
+	// 保存文件
+	VARIANT saveAsType, vSecurityParams;
+	saveAsType.vt = VT_I4;
+	saveAsType.iVal = zc2013_dwg;
+	vSecurityParams.vt = VT_I4;
+	vSecurityParams.iVal = 0;
+
+	// 需要关闭同名文件后保存
+	doc.SaveAs(_T("D:\\Temp\\pdfImportTest.dwg"), saveAsType, vSecurityParams);
+	
 	::AfxMessageBox(_T("Finished!"));
 }

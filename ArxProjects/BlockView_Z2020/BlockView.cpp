@@ -1,7 +1,7 @@
 // ZrxProject.cpp : Defines the initialization routines for the DLL.
 //
 
-#include "pch.h"
+#include "stdafx.h"
 #include "framework.h"
 #include "BlockView.h"
 

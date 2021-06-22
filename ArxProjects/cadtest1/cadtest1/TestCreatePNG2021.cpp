@@ -153,7 +153,8 @@ AcDbObjectId SetViewTo(AcGsView *pView, AcDbDatabase *pDb, AcGeMatrix3d& viewMat
 
 	ads_real height = 0.0, width = 0.0, viewTwist = 0.0;
 	AcDbObjectId currentVsId;
-	AcGeVector3d viewDir = AcGeVector3d(0 , 0 , 1) ;
+	//AcGeVector3d viewDir = AcGeVector3d(0 , 0 , 1) ;
+	AcGeVector3d viewDir = AcGeVector3d(1 , 1 , 1) ;   // add for test: a new view direction
 
 	AcGeVector3d viewXDir = viewDir.perpVector ().normal();
 	viewXDir = viewXDir.rotateBy (viewTwist, -viewDir);
@@ -390,6 +391,15 @@ void CreatePNG(const AcDbObjectId& idBlkTabRcd)
 	offDevice->onSize(iWidth, iHeight);
 	AcGsView *pView = pGsKernal->createView();
 	
+	// add for test
+#if ARX
+	//pView->setVisualStyle(AcGiVisualStyle::k3DWireframe);
+	pView->setVisualStyle(AcGiVisualStyle::kGouraud);  // The default in autoCad is kGouraud ?
+#else
+	//pView->setVisualStyle(AcGiVisualStyle::kGouraud);
+	pView->setMode(AcGsView::kGouraudShaded);
+#endif
+
 	offDevice->add(pView);
 
 	AcDbBlockTableRecordPointer annonblk(idBlkTabRcd, AcDb::kForRead);
@@ -417,6 +427,7 @@ void CreatePNG(const AcDbObjectId& idBlkTabRcd)
 
 	/// 临时文件保存到临时目录
 	CString strFilePath = _T("E:");
+	//CString strFilePath = _T("D:");
 	strTempPng = strFilePath + _T("\\Temp\\tl1.png");
 
 	int colorDepth = 32;

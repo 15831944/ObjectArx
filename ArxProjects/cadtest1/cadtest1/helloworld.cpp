@@ -1566,3 +1566,42 @@ void Test_plot()
 		acutPrintf(_T("fail"));
 
 }
+ARXCMD3(createProcessTest)
+{
+	// 进程信息结构
+	PROCESS_INFORMATION ProInfo;    
+
+	STARTUPINFO    StartInfo;
+	ZeroMemory(&StartInfo, sizeof(StartInfo));
+
+	// 命令行命令及参数
+	//LPTSTR   szPrameter = TEXT("\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\" www.baidu.com");
+	LPTSTR   szPrameter = TEXT("\"C:\\Program Files\\ZWSOFT\\ZWCAD 2020\\zwcad.exe\" /p default /nologo");
+	TCHAR szCmdLine[2048] = { 0 };
+	CopyMemory(szCmdLine, szPrameter, 2 * _tcslen(szPrameter));
+
+	ZeroMemory(&ProInfo, sizeof(ProInfo));
+
+	if (!CreateProcess(
+		NULL,                    // 执行的程序名
+		szCmdLine,               // 命令行指定
+		NULL,                    // 进程安全属性, NULL时使用默认安全属性
+		NULL,                    // 线程安全属性, NULL时使用默认安全属性
+		FALSE,                   // 不继承句柄
+		0,                       // 进程创建标志
+		NULL,                    // 环境变量块, NULL时使用父进程环境变量
+		NULL,                    // 新进程目录
+		&StartInfo,              // 启动信息结构
+		&ProInfo)                // 进程信息结构
+		) 
+	{
+		acutPrintf(TEXT("CreateProcess failed : %d\n"), GetLastError());
+		return ;
+	}
+
+	// 等待子进程结束
+	WaitForSingleObject(ProInfo.hProcess, INFINITE);
+
+	CloseHandle(ProInfo.hProcess);
+	CloseHandle(ProInfo.hThread);
+}

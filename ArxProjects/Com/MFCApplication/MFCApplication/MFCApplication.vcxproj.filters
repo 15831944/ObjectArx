@@ -54,6 +54,12 @@
     <ClInclude Include="CZcadLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CZcadLayouts.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication.cpp">

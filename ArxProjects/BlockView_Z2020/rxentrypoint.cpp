@@ -1,5 +1,4 @@
-#pragma once
-#include "pch.h"
+#include "stdafx.h"
 #include "adsmigr.h"
 #include "adsdef.h"
 #include "adscodes.h"
@@ -41,7 +40,7 @@ void Zsdk_BlockView()
 {
 	//switch our resources to the foreground
 	CAcModuleResourceOverride overr;
-	//construct and display the preview dialog
+	////construct and display the preview dialog
 	CBlockViewDlg dlg;
 	dlg.DoModal();
 }
@@ -63,7 +62,7 @@ void Zsdk_RenderOffScreen()
 	//// if ok
 	//if (gsManager)
 	//{
-	//	AcGsGraphicsKernel *factory = gsManager->getGSClassFactory();
+	//	AcGsClassFactory *factory = gsManager->getGSClassFactory();
 	//	// if ok
 	//	if (factory)
 	//	{
@@ -91,7 +90,7 @@ void Zsdk_RenderOffScreen()
 	//				// force update calls to all gsviews
 	//				offDevice->update();
 
-	//				AcGsModel *pModel = gsManager->createAutoCADModel(*factory);
+	//				AcGsModel *pModel = gsManager->createAutoCADModel();
 	//				// if ok
 	//				if (pModel)
 	//				{
@@ -171,7 +170,7 @@ void Zsdk_ConfigGS()
 	//// if we go the gs manager ok
 	//if (pGsMgr != NULL)
 	//{
-	//	AcGsGraphicsKernel* pClassFactory = pGsMgr->getGSClassFactory();
+	//	AcGsClassFactory* pClassFactory = pGsMgr->getGSClassFactory();
 	//	// if we got it ok
 	//	if (pClassFactory != NULL)
 	//	{
@@ -180,7 +179,7 @@ void Zsdk_ConfigGS()
 	//		// if we got this ok too
 	//		if (pConfig != NULL)
 	//		{
-	//			pConfig->configure();
+	//			pConfig->configure(regPath, true);
 	//		}
 	//	}
 
@@ -212,11 +211,8 @@ BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID /*lpReserved*/)
 	}
 	return TRUE;    // ok
 }
-#if ARX
-extern "C" AcRx::AppRetCode acrxEntryPoint(AcRx::AppMsgCode msg, void* appId)
-#else
+
 extern "C" AcRx::AppRetCode zcrxEntryPoint(AcRx::AppMsgCode msg, void* appId)
-#endif
 {
 	switch (msg)
 	{
@@ -256,13 +252,8 @@ extern "C" AcRx::AppRetCode zcrxEntryPoint(AcRx::AppMsgCode msg, void* appId)
 
 
 #ifdef _WIN64
-#if ARX
-#pragma comment(linker, "/export:acrxEntryPoint,PRIVATE")
-#pragma comment(linker, "/export:acrxGetApiVersion,PRIVATE")
-#else
 #pragma comment(linker, "/export:zcrxEntryPoint,PRIVATE")
 #pragma comment(linker, "/export:zcrxGetApiVersion,PRIVATE")
-#endif
 #else // WIN32
 #pragma comment(linker, "/export:_zcrxEntryPoint,PRIVATE")
 #pragma comment(linker, "/export:_zcrxGetApiVersion,PRIVATE")

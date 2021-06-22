@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="BlockView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rxentrypoint.cpp">
@@ -38,10 +41,10 @@
     <None Include="idi_cros.cur">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="idi_pan.cur">
+    <None Include="idi_orbi.cur">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="idi_orbi.cur">
+    <None Include="idi_pan.cur">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -55,16 +58,19 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="BlockView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPalette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZBlockViewDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZGsPreviewCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorPalette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
