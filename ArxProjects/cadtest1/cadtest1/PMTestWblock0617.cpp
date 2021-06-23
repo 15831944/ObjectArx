@@ -578,6 +578,29 @@ bool DelaXRefV2(AcDbDatabase* pWorkDb, const CString& strFilePath)
 	return bRet;
 }
 
+BOOL SaveDb(AcDbDatabase * pToDataBase)
+{
+	if (NULL == pToDataBase)
+		return FALSE;
+
+	//
+	AcAxDocLock lock(pToDataBase);
+	//CString strToDwgFilePath = pToDataBase->originalFileName();  //获取到模板名保存为模板
+	CString strToDwgFilePath = _T("D:\\temp\\wbsaveastest.dwg");
+
+	//
+	if (Acad::eOk == pToDataBase->saveAs(strToDwgFilePath))
+	{
+		CString	strTemMsgInfo = _T("保存图纸: ") + strToDwgFilePath;
+		////PMERROR::PrintInfo(strTemMsgInfo, 1002);
+		acutPrintf(strTemMsgInfo);
+		return TRUE;
+	}
+
+	//
+	return FALSE;
+}
+
 ARXCMD3(WblockTest)
 {
 	static int iWBlockCount = 0;
@@ -657,7 +680,7 @@ ARXCMD3(WblockTest)
 		acutRelRb(rb);
 	}
 
-	//SaveDb(acdbHostApplicationServices()->workingDatabase()/*curDoc()->database()*/);
+	SaveDb(acdbHostApplicationServices()->workingDatabase()/*curDoc()->database()*/);
 	acDocManager->sendStringToExecute(curDoc(), _T("zoom e "));
 
 	//ExplodeNoAttributeBlock(curDoc()->database());

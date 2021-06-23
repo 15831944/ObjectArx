@@ -1605,3 +1605,51 @@ ARXCMD3(createProcessTest)
 	CloseHandle(ProInfo.hProcess);
 	CloseHandle(ProInfo.hThread);
 }
+
+#pragma region PM_LAYLOCKFADECTL
+#include "dbxutil.h"
+int ChangeSS2ID(ads_name ssname, AcDbObjectIdArray & objs)
+{
+	int rc;
+	Adesk::Int32 lngLeng = 0;
+
+	int  iNum = 0;
+	if ((rc = acedSSLength(ssname, &lngLeng)) != RTNORM)
+		return rc;
+	//
+	for (int i = 0; i < lngLeng; i++)
+	{
+		AcDbObjectId objId;
+		ads_name ent;
+		acedSSName(ssname, i, ent);
+		acdbGetObjectId(objId, ent);
+		objs.insertAt(objs.length(), objId);
+	}
+
+	//
+	return RTNORM;
+}
+
+ARXCMD3(Test_QueueForRegen)
+{
+	CString strLayerName(_T("nolock"));
+	//获取筛选范围
+	struct resbuf eb1;
+	eb1.restype = 8; // Layer
+	eb1.resval.rstring = strLayerName.GetBuffer(0); // Layer name
+	eb1.rbnext = NULL;
+
+	//获取层上的所有对象
+	ads_name ssname;
+	int rc = acedSSGet(_T("X"), NULL, NULL, &eb1, ssname);
+	if (rc == RTNORM)
+	{
+		AcDbObjectIdArray objIds;
+		rc = ChangeSS2ID(ssname, objIds);
+
+		acdbQueueForRegen(objIds.asArrayPtr(), objIds.length());
+	}
+
+}
+
+#pragma endregion

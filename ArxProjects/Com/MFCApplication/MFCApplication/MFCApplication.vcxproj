@@ -195,6 +195,7 @@
     <ClInclude Include="CZcadPlot.h" />
     <ClInclude Include="CZcadPlotConfiguration.h" />
     <ClInclude Include="CZcadPlotConfigurations.h" />
+    <ClInclude Include="CZcadState.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MFCApplication.h" />
     <ClInclude Include="MFCApplicationDlg.h" />

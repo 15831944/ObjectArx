@@ -164,6 +164,7 @@ HCURSOR CMFCApplicationDlg::OnQueryDragIcon()
 #include "CZcadPlot.h"
 #include "CZcadPlotConfiguration.h"
 #include "CZcadPlotConfigurations.h"
+#include "CZcadState.h"
 void CMFCApplicationDlg::OnBnClickedButton1()
 {
 	// 通过COM获取当前存在的ZWCAD，若不存在，则创建
@@ -188,10 +189,10 @@ void CMFCApplicationDlg::OnBnClickedButton1()
 	}
 
 	// 设置显示状态
-	pZwcad.put_Visible(TRUE);
+	pZwcad.put_Visible(/*TRUE*/FALSE);
 
 	// 设置显示最大化
-	pZwcad.put_WindowState(zcMax);
+	pZwcad.put_WindowState(/*zcMax*/zcMin);
 
 	// 获取文档集
 	CZcadDocuments docs;
@@ -314,8 +315,16 @@ void CMFCApplicationDlg::OnBnClickedButton2()
 	doc.SendCommand(_T("filedia 0 "));
 	// pdf以块的方式导入
 	doc.SendCommand(_T("PDFIMPORTMODE 1 "));
+
 	// 通过pdfimport命令插入pdf
-	doc.SendCommand(_T("-pdfimport f D:\\Temp\\test.pdf     "));
+	doc.SendCommand(_T("-pdfimport f D:\\Temp\\test.pdf 8    "));
+
+	//CZcadState cadState = pZwcad.GetZcadState();
+	//if (!cadState.get_IsQuiescent())
+	//{
+	//	::AfxMessageBox(_T("11111"));
+	//}
+
 	// 还原
 	doc.SendCommand(_T("filedia 1 "));
 	doc.SendCommand(_T("PDFIMPORTMODE 6 "));
@@ -329,6 +338,14 @@ void CMFCApplicationDlg::OnBnClickedButton2()
 
 	// 需要关闭同名文件后保存
 	doc.SaveAs(_T("D:\\Temp\\pdfImportTest.dwg"), saveAsType, vSecurityParams);
+	DWORD err = GetLastError();
+
+	//VARIANT sType, fName;
+	//sType.vt = VT_BOOL;
+	//sType.boolVal = VARIANT_FALSE;
+	//fName.vt = VT_BSTR;
+	//fName.bstrVal = _T("D:\\Temp\\pdfImportTest.dwg");
+	//doc.Close(sType, fName);
 	
 	::AfxMessageBox(_T("Finished!"));
 }
