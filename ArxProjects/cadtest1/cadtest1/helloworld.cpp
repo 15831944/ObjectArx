@@ -1653,3 +1653,45 @@ ARXCMD3(Test_QueueForRegen)
 }
 
 #pragma endregion
+
+#pragma region Get text of Clipboard
+ARXCMD3(clearClipboard)
+{
+	OpenClipboard(GetDesktopWindow()); // Open the clipboard
+	EmptyClipboard();        // Clear the clipboard (WIN+V still exist but no effect(CTRL+V))
+	CloseClipboard();        // Close the clipboard
+} 
+
+ARXCMD3(GetTextOfClipboard)
+{
+	HGLOBAL hGlobal;
+	static wchar_t* pText;
+	wchar_t* pGlobal;
+
+	OpenClipboard(GetDesktopWindow()); // Open the clipboard
+
+	hGlobal = GetClipboardData(CF_UNICODETEXT);
+	if (hGlobal == FALSE)		
+		acutPrintf(_T("\nNo text in the clipboard!"));
+	else
+	{
+		// Allocation memory 
+		pText = new wchar_t[(GlobalSize(hGlobal) + 1) * sizeof(wchar_t)];
+
+		// lock and get the clipboard text address.
+		pGlobal = (wchar_t*)GlobalLock(hGlobal);
+
+		lstrcpy(pText, pGlobal); // copy string
+
+		GlobalUnlock(hGlobal);   // Unlock
+		CloseClipboard();        // Close the clipboard
+
+		acutPrintf(_T("\n%s"), pText);
+	}
+	if (pText) 
+	{
+		delete[]pText;
+		pText = NULL;
+	}
+}
+#pragma endregion

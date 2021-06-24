@@ -165,6 +165,7 @@ HCURSOR CMFCApplicationDlg::OnQueryDragIcon()
 #include "CZcadPlotConfiguration.h"
 #include "CZcadPlotConfigurations.h"
 #include "CZcadState.h"
+#include "CZcadPViewport.h"
 void CMFCApplicationDlg::OnBnClickedButton1()
 {
 	// 通过COM获取当前存在的ZWCAD，若不存在，则创建
@@ -240,8 +241,21 @@ void CMFCApplicationDlg::OnBnClickedButton1()
 	//doc.SendCommand(_T("Test_plot "));
 #endif
 
+	// 设置为消隐模式
+	doc.SendCommand(_T("shademode H "));
+
+	//CZcadLayouts cadLayouts = doc.get_Layouts(); 
+	// 添加一个布局
+	//CZcadLayout cadLayout = cadLayouts.Add(_T("new_layout")); 
+	//doc.put_ActiveLayout(cadLayout);
+
+	//CZcadPViewport pViewport = doc.get_ActivePViewport(); // err
+	//pViewport.put_ShadePlot(zcShadePlotHidden);
+
 	// 获取当前布局
 	CZcadLayout cadLayout = doc.get_ActiveLayout();
+	//CZcadPViewport pViewport = doc.get_ActivePViewport(); // err
+	//pViewport.put_ShadePlot(zcShadePlotHidden);
 
 	// 设置打印机(这个打印机为zwcad开放的高DPI的打印机)
 	cadLayout.put_ConfigName(_T("ZWCAD PDF(High Quality Print).pc5"));

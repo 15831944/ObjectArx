@@ -586,7 +586,7 @@ BOOL SaveDb(AcDbDatabase * pToDataBase)
 	//
 	AcAxDocLock lock(pToDataBase);
 	//CString strToDwgFilePath = pToDataBase->originalFileName();  //获取到模板名保存为模板
-	CString strToDwgFilePath = _T("D:\\temp\\wbsaveastest.dwg");
+	CString strToDwgFilePath = _T("C:\\wbsaveastest.dwg");
 
 	//
 	if (Acad::eOk == pToDataBase->saveAs(strToDwgFilePath))

@@ -63,6 +63,9 @@
     <ClInclude Include="CZcadState.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CZcadPViewport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication.cpp">

@@ -398,8 +398,8 @@ void CreatePNG(const AcDbObjectId& idBlkTabRcd)
 	//pView->setVisualStyle(AcGiVisualStyle::k3DWireframe);
 #else
 	//pView->setVisualStyle(AcGiVisualStyle::kGouraud);
-	//pView->setMode(AcGsView::kGouraudShaded);
-	pView->setMode(AcGsView::kWireframe);
+	pView->setMode(AcGsView::kGouraudShaded);
+	//pView->setMode(AcGsView::kWireframe);
 #endif
 
 	offDevice->add(pView);
@@ -428,8 +428,7 @@ void CreatePNG(const AcDbObjectId& idBlkTabRcd)
 	//strTempPng.Format(_T("C:\\tl%d.png"), sPos);
 
 	/// 临时文件保存到临时目录
-	//CString strFilePath = _T("E:");
-	CString strFilePath = _T("D:");
+	CString strFilePath = _T("E:");
 	strTempPng = strFilePath + _T("\\Temp\\tl1.png");
 
 	int colorDepth = 32;

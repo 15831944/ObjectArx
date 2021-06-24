@@ -33,3 +33,23 @@ ARXCMD3(unlockAllLayer)
 
 	pLyrTable->close();
 }
+
+CString GetCurrentAccessVersion()
+{
+	HKEY hKey = 0;
+	// Open the "ACCESS CURRENT APPLICATION VERSION KEY"
+	// AutoCAD.Application.23 ZWCAD.Application.2021
+	if (ERROR_SUCCESS != ::RegOpenKeyEx(HKEY_CLASSES_ROOT, _T("AutoCAD.Application\\CurVer"), 0, KEY_QUERY_VALUE, &hKey))
+		return _T("");
+	// Read the default value
+	DWORD dwType = 0;
+	DWORD dwSize = 256;
+	BYTE buffer[256];
+	VERIFY(ERROR_SUCCESS == ::RegQueryValueEx(hKey, 0, 0, &dwType, buffer, &dwSize));
+	// It should be a string
+	ASSERT(REG_SZ == dwType);
+	// Close the key
+	::RegCloseKey(hKey);
+	// Return string value of Access current application version
+	return CString((TCHAR*)buffer);
+}
