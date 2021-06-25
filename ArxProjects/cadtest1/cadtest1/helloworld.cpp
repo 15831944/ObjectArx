@@ -614,7 +614,7 @@ int SelectEntities(AcDbObjectIdArray & entIdArray)
 // 对于同一个边界树，按面积从大到小构建，然后根据depth确定style，0--kExternal， 1--kOutermost，other--kDefault
 #include <map>
 #include <vector>
-#include <algorithm>
+//#include <algorithm>
 ARXCMD3(hatch_2)
 {
 	AcDbObjectIdArray ids, idsRet;
@@ -637,7 +637,7 @@ ARXCMD3(hatch_2)
 	for (std::map<AcDbObjectId, double>::iterator iter = idsMap.begin(); iter != idsMap.end(); iter++)
 		vec.push_back(std::pair<AcDbObjectId, double>(iter->first, iter->second));
 	// 同一类型 边界按面积排序
-	//sort(vec.begin(), vec.end(), [](std::pair<AcDbObjectId, double>&a, std::pair<AcDbObjectId, double>&b) {return a.second > b.second; });
+	std::sort(vec.begin(), vec.end(), [](std::pair<AcDbObjectId, double>&a, std::pair<AcDbObjectId, double>&b) {return a.second < b.second; });
 
 	AcDbHatch *pHatch = new AcDbHatch();
 	pHatch->setNormal(AcGeVector3d::kZAxis);
@@ -646,7 +646,7 @@ ARXCMD3(hatch_2)
 	pHatch->setPattern(AcDbHatch::kPreDefined, _T("SOLID"));
 	acedInitGet(NULL, _T("N O I"));
 	TCHAR szRet[32] = { 0 };
-	acedGetKword(_T("Style type:"), szRet);
+	acedGetKword(_T("Style type [Normal(N)/Outer(O)/Ignore(I)]:"), szRet);
 	if (_tcscmp(_T("N"), szRet) == 0)
 		pHatch->setHatchStyle(AcDbHatch::kNormal);
 	else if (_tcscmp(_T("O"), szRet) == 0)
@@ -1341,7 +1341,6 @@ ARXCMD3(test_insertDwgWithXref)
 
 ARXCMD3(delExtensionDicOfLineType)
 {
-	Acad::ErrorStatus es;
 	AcDbDatabase *pDadabase = acdbHostApplicationServices()->workingDatabase();
 	AcDbLinetypeTable* pLineTypeTable = NULL;
 	if (Acad::eOk != pDadabase->getLinetypeTable(pLineTypeTable, AcDb::kForWrite))
@@ -1695,3 +1694,47 @@ ARXCMD3(GetTextOfClipboard)
 	}
 }
 #pragma endregion
+
+/**
+   @brief: 随机数测试(每次启动ZUXXXXXXXX.zw$相同)
+   @param: void
+   @ret: void
+   @birth: created by ... on ...
+*/
+ARXCMD3(srandTest)
+{
+	int nRandVal = 0;
+	TCHAR szRand[6] = { 0 };
+
+	CString szRetFileName = _T("D:\\ZU");
+	int nLen = szRetFileName.GetLength();
+	szRetFileName += _T("XXXXXXXX.zw$");
+
+	const TCHAR* szNewName = szRetFileName.GetBuffer();
+	szNewName += nLen;
+
+	srand(unsigned int(time(NULL)));
+	for (int i = 0; i < 500; i++)
+	{
+		nRandVal = rand() % RAND_MAX;
+		_stprintf(szRand, _T("%0*X"), 4, nRandVal);
+		memcpy((TCHAR*)szNewName, szRand, 4 * sizeof(TCHAR));
+
+		nRandVal = rand() % RAND_MAX;
+		_stprintf(szRand, _T("%0*X"), 4, nRandVal);
+		memcpy((TCHAR*)szNewName + 4, szRand, 4 * sizeof(TCHAR));
+
+		DWORD dwFileAttr = GetFileAttributes(szRetFileName.GetBuffer());
+		// INVALID_FILE_ATTRIBUTES failed
+		if (0xFFFFFFFF == dwFileAttr)
+		{
+			acutPrintf(_T("\n%s"), szRetFileName);
+			return;
+		}
+	}
+	acutPrintf(_T("\nNULL"));
+}
+ARXCMD3(t111)
+{
+	DWORD d = GetFileAttributes(_T("d:\\test.dwg"));
+}

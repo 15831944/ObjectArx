@@ -325,6 +325,8 @@ void CMFCApplicationDlg::OnBnClickedButton2()
 	// 获取当前文档
 	CZcadDocument doc = pZwcad.get_ActiveDocument();
 
+	doc.SendCommand(_T("filedia puase"));
+#if 0
 	// 不显示文件对话框
 	doc.SendCommand(_T("filedia 0 "));
 	// pdf以块的方式导入
@@ -362,4 +364,5 @@ void CMFCApplicationDlg::OnBnClickedButton2()
 	//doc.Close(sType, fName);
 	
 	::AfxMessageBox(_T("Finished!"));
+#endif
 }

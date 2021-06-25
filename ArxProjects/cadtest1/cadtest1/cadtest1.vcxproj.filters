@@ -87,6 +87,9 @@
     <ClCompile Include="PMTestWblock0617.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="OverruleTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -129,6 +132,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="AcCusPoly.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="OverruleTest.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

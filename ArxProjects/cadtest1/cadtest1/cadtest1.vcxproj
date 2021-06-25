@@ -646,6 +646,7 @@
     <ClCompile Include="EditorReactor.cpp" />
     <ClCompile Include="helloworld.cpp" />
     <ClCompile Include="LineJigTest.cpp" />
+    <ClCompile Include="OverruleTest.cpp" />
     <ClCompile Include="PmDbLinetmpJig.cpp" />
     <ClCompile Include="PMTestWblock0603.cpp" />
     <ClCompile Include="PMTestWblock0604.cpp" />
@@ -687,6 +688,7 @@
     <ClInclude Include="inc\AutoAAD2.h" />
     <ClInclude Include="inc\AutoAAD3.h" />
     <ClInclude Include="inc\CADUtils.h" />
+    <ClInclude Include="OverruleTest.h" />
     <ClInclude Include="PmDbLinetmpJig.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
