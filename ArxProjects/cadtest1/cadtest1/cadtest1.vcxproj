@@ -638,6 +638,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AcCusPoly.cpp" />
+    <ClCompile Include="AcEdJigTest.cpp" />
     <ClCompile Include="addCmd_try_catch.cpp" />
     <ClCompile Include="cadtest.cpp" />
     <ClCompile Include="CustEntities.cpp" />
@@ -646,6 +647,7 @@
     <ClCompile Include="EditorReactor.cpp" />
     <ClCompile Include="helloworld.cpp" />
     <ClCompile Include="LineJigTest.cpp" />
+    <ClCompile Include="myline.cpp" />
     <ClCompile Include="OverruleTest.cpp" />
     <ClCompile Include="PmDbLinetmpJig.cpp" />
     <ClCompile Include="PMTestWblock0603.cpp" />
@@ -679,6 +681,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcCusPoly.h" />
+    <ClInclude Include="AcEdJigTest.h" />
     <ClInclude Include="cadtest.h" />
     <ClInclude Include="CustEntities.h" />
     <ClInclude Include="DocManReactor.h" />

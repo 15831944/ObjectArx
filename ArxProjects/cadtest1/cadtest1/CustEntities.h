@@ -58,6 +58,95 @@ private:
 	std::vector<AcDbPolyline*> m_plVec;
 };
 
+#define POINTCOUNT 10
+struct AcCusEntData
+{
+	AcGePoint3d points[POINTCOUNT];
+	AcGeVector3d vecNormal;
+	double dHeight;
+	double dAngle;
+	bool bFillTriangle;
+	AcString szTextContent;
+};
+
+class CusRefSymbol :public AcDbEntity
+{
+public:
+	// declare desc(),cast(),isA()
+	ACRX_DECLARE_MEMBERS(CusEntity);
+
+	// Construction and destruction
+	CusRefSymbol();
+	CusRefSymbol(AcCusEntData *pData);
+	~CusRefSymbol();
+
+	virtual Acad::ErrorStatus dwgInFields(AcDbDwgFiler* filer);
+	virtual Acad::ErrorStatus dwgOutFields(AcDbDwgFiler* filer) const;
+	virtual Acad::ErrorStatus dxfInFields(AcDbDxfFiler* filer);
+	virtual Acad::ErrorStatus dxfOutFields(AcDbDxfFiler* filer) const;
+
+public:
+
+#if (defined(ARX) && ARX < 2010) || (defined(ZRX) && ZRX < 2021)
+public:
+	// AcGiDrawable interface
+	virtual Adesk::Boolean subWorldDraw(AcGiWorldDraw* wd);
+	//virtual void subViewportDraw(AcGiViewportDraw* pVd);
+
+	// AcDbGripOverrule
+	virtual Acad::ErrorStatus subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray& osnapModes, AcDbIntArray& geomIds) const;
+	virtual Acad::ErrorStatus subMoveGripPointsAt(const AcDbIntArray& indices, const AcGeVector3d& offset);
+	//virtual Acad::ErrorStatus subGetStretchPoints(AcGePoint3dArray& stretchPoints) const;
+	//virtual Acad::ErrorStatus subMoveStretchPointsAt(const AcDbIntArray& indices, const AcGeVector3d& offset);
+	//virtual Acad::ErrorStatus subGetGeomExtents(AcDbExtents& extents) const;
+
+	// AcDbOsnapOverrule
+	virtual Acad::ErrorStatus subGetOsnapPoints(
+		AcDb::OsnapMode       osnapMode,
+		Adesk::GsMarker       gsSelectionMark,
+		const AcGePoint3d&    pickPoint,
+		const AcGePoint3d&    lastPoint,
+		const AcGeMatrix3d&   viewXform,
+		AcGePoint3dArray&     snapPoints,
+		AcDbIntArray&         geomIds) const;
+
+	// AcDbTransformOverrule
+	//virtual Acad::ErrorStatus subTransformBy(const AcGeMatrix3d& xform);
+	//virtual Acad::ErrorStatus subGetTransformedCopy(const AcGeMatrix3d& xform, AcDbEntity*& pEnt) const;
+#else
+protected:
+	// AcGiDrawable interface
+	virtual Adesk::Boolean subWorldDraw(AcGiWorldDraw* wd);
+	//virtual void subViewportDraw(AcGiViewportDraw* pVd);
+
+	// AcDbGripOverrule
+	virtual Acad::ErrorStatus subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray& osnapModes, AcDbIntArray& geomIds) const;
+	virtual Acad::ErrorStatus subMoveGripPointsAt(const AcDbIntArray& indices, const AcGeVector3d& offset);
+	//virtual Acad::ErrorStatus subGetStretchPoints(AcGePoint3dArray& stretchPoints) const;
+	//virtual Acad::ErrorStatus subMoveStretchPointsAt(const AcDbIntArray& indices, const AcGeVector3d& offset);
+	//virtual Acad::ErrorStatus subGetGeomExtents(AcDbExtents& extents) const;
+
+	// AcDbOsnapOverrule
+	virtual Acad::ErrorStatus subGetOsnapPoints(
+		AcDb::OsnapMode       osnapMode,
+		Adesk::GsMarker       gsSelectionMark,
+		const AcGePoint3d&    pickPoint,
+		const AcGePoint3d&    lastPoint,
+		const AcGeMatrix3d&   viewXform,
+		AcGePoint3dArray&     snapPoints,
+		AcDbIntArray&         geomIds) const;
+
+	// AcDbTransformOverrule
+	//virtual Acad::ErrorStatus subTransformBy(const AcGeMatrix3d& xform);
+	//virtual Acad::ErrorStatus subGetTransformedCopy(const AcGeMatrix3d& xform, AcDbEntity*& pEnt) const;
+#endif
+
+private:
+	/** points[0] -- Midpoint of triangle base
+	*/
+	AcCusEntData *m_pEntData;
+	static const double PI;
+};
 
 class CusEntityByBlkRef :public AcDbEntity
 {

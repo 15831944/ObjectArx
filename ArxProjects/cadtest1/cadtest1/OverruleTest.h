@@ -7,6 +7,8 @@
 #define _OVERRULETEST_H_	
 
 #include "dbents.h"
+
+#if ARX == 2020 || ZRX == 2021
 #include "dbentityoverrule.h"
 
 class HighlightOverrule : public AcDbHighlightOverrule
@@ -25,6 +27,17 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
+#endif
+
+#if ZRX == 2020 || ARX == 2013
+#define subWorldDraw worldDraw
+#define subViewportDraw viewportDraw
+#define subGetGripPoints getGripPoints
+#define subMoveGripPointsAt moveGripPointsAt
+#define subGetOsnapPoints getOsnapPoints
+#define subTransformBy transformBy
+#endif
+
 class CustomLine : public AcDbEntity
 {
 public:
@@ -35,8 +48,8 @@ public:
 
 	virtual Adesk::Boolean subWorldDraw(AcGiWorldDraw* pWd);
 	virtual Acad::ErrorStatus dwgInFields(AcDbDwgFiler* pFiler);
-	virtual Acad::ErrorStatus dwgOutFields(AcDbDwgFiler* pFiler);
-	virtual Acad::ErrorStatus subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray & osnapModes, AcDbIntArray & geomIds) const;
+	virtual Acad::ErrorStatus dwgOutFields(AcDbDwgFiler* pFiler) const; 
+	virtual Acad::ErrorStatus subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray& osnapModes, AcDbIntArray& geomIds) const;
 	virtual Acad::ErrorStatus subMoveGripPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset);
 	virtual Acad::ErrorStatus subGetOsnapPoints(
 		AcDb::OsnapMode osnapMode,
@@ -46,19 +59,14 @@ public:
 		const AcGeMatrix3d& viewXform,
 		AcGePoint3dArray& snapPoints,
 		AcDbIntArray & geomIds) const;
+	virtual Acad::ErrorStatus subTransformBy(const AcGeMatrix3d& xform);
 
+public:
     inline double length() const { return m_ptStart.distanceTo(m_ptEnd); }
-
-	Acad::ErrorStatus subTransformBy(const AcGeMatrix3d& xform);
-	Acad::ErrorStatus subGetTransformedCopy(const AcGeMatrix3d& xform, AcDbEntity*& pEnt) const;
-
-	virtual Adesk::Boolean subCloneMeForDragging() override;
-	virtual bool subHideMeForDragging() const override;
-
+private:
 	AcGePoint3d m_ptStart;
 	AcGePoint3d m_ptEnd;
 };
-
 
 
 #endif  /* _OVERRULETEST_H_ */

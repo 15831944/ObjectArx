@@ -2,28 +2,26 @@
 #include "stdafx.h"
 #include "OverruleTest.h"
 
+#include "dbproxy.h"
 #pragma region  HighlightOverrule
-
+#if ARX == 2020 || ZRX == 2021
 Acad::ErrorStatus HighlightOverrule::highlight(
 	const AcDbEntity*      pSubject,
 	const AcDbFullSubentPath& subId/* = kNullSubent*/,
 	const Adesk::Boolean highlightAll/* = false*/)
 {
-	acutPrintf(_T("\nHighlightOverrule::highlight"));
-
 	if (isApplicable(pSubject))
 	{
-		if (pSubject->isKindOf(CustomLine::desc()))
+		if (pSubject->isKindOf(AcDbLine::desc()))
 		{
-			acutPrintf(_T("\nCustomLine"));
+			acutPrintf(_T("\nAcDbLine highlight invalid..."));
+			return Acad::eInvalidInput;
 		}
 		else if (pSubject->isKindOf(AcDbCircle::desc()))
 		{
-			acutPrintf(_T("\nAcDbCircle"));
+			acutPrintf(_T("\nAcDbCircle highlight..."));
 		}
 	}
-
-	acutPrintf(_T("\n"));
 
 	return AcDbHighlightOverrule::highlight(pSubject, subId, highlightAll);
 }
@@ -33,52 +31,77 @@ Acad::ErrorStatus HighlightOverrule::unhighlight(
 	const AcDbFullSubentPath& subId /*= kNullSubent*/,
 	const Adesk::Boolean highlightAll /*= false*/)
 {
-	acutPrintf(_T("\nHighlightOverrule::unhighlight"));
-
 	if (isApplicable(pSubject))
 	{
-		if (pSubject->isKindOf(CustomLine::desc()))
+		if (pSubject->isKindOf(AcDbLine::desc()))
 		{
-			acutPrintf(_T("\nCustomLine"));
+			acutPrintf(_T("\nAcDbLine unhighlight..."));
 		}
 		else if (pSubject->isKindOf(AcDbCircle::desc()))
 		{
-			acutPrintf(_T("\nAcDbCircle"));
+			acutPrintf(_T("\nAcDbCircle unhighlight invalid..."));
+			return Acad::eInvalidInput;
 		}
 	}
-
-	acutPrintf(_T("\n"));
 
 	return AcDbHighlightOverrule::unhighlight(pSubject, subId, highlightAll);
 }
 
 bool HighlightOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
 {
-	return pOverruledSubject->isKindOf(AcDbLine::desc());
+	return pOverruledSubject->isKindOf(AcDbLine::desc()) || pOverruledSubject->isKindOf(AcDbCircle::desc());
 }
 
-static HighlightOverrule* m_HighlightOverrule;
+static HighlightOverrule* s_g_highlightOverrule = nullptr;
+ARXCMD3(HighlightOverruleTest)
+{
+	if (!s_g_highlightOverrule)
+	{
+		acutPrintf(_T("\nHighlightOverrule is ON..."));
+		s_g_highlightOverrule = new HighlightOverrule;
+		AcRxOverrule::addOverrule(AcDbLine::desc(), s_g_highlightOverrule);
+		AcRxOverrule::addOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
+		AcRxOverrule::setIsOverruling(true);
+	}
+	else
+	{
+		acutPrintf(_T("\nHighlightOverrule is OFF..."));
+		AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightOverrule);
+		AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
+		AcRxOverrule::setIsOverruling(false);
+
+		delete s_g_highlightOverrule;
+		s_g_highlightOverrule = nullptr;
+	}
+}
+
 ARXCMD3(removeHighlightOverrule)
 {
-	AcRxOverrule::removeOverrule(CustomLine::desc(), m_HighlightOverrule);
+	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightOverrule);
+	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
 	AcRxOverrule::setIsOverruling(false);
 
-	if (m_HighlightOverrule)
+	if (s_g_highlightOverrule)
 	{
-		delete m_HighlightOverrule;
-		m_HighlightOverrule = nullptr;
+		delete s_g_highlightOverrule;
+		s_g_highlightOverrule = nullptr;
 	}
+
+	acutPrintf(_T("\nHighlightOverrule is OFF..."));
 }
 ARXCMD3(addHighlightOverrule)
 {
 	removeHighlightOverrule();
 
-	m_HighlightOverrule = new HighlightOverrule;
-	AcRxOverrule::addOverrule(CustomLine::desc(), m_HighlightOverrule);
+	s_g_highlightOverrule = new HighlightOverrule;
+	AcRxOverrule::addOverrule(AcDbLine::desc(), s_g_highlightOverrule);
+	AcRxOverrule::addOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
 	AcRxOverrule::setIsOverruling(true);
-}
 
-ARXCMD3(CustomLine1)
+	acutPrintf(_T("\nHighlightOverrule is ON..."));
+}
+#endif
+ARXCMD3(CustomLineCreate)
 {
 	CustomLine *pCusLine = new CustomLine(AcGePoint3d(100, 100, 0), AcGePoint3d(600, 100, 0));
 	AcDbObjectId id;
@@ -90,12 +113,12 @@ ARXCMD3(CustomLine1)
 
 #pragma region CustomLine
 
-ACRX_DXF_DEFINE_MEMBERS(CustomLine, AcDbEntity, AcDb::kDHL_1012, AcDb::kMRelease0, 0, CustomLine, "CustomLine")
+ACRX_DXF_DEFINE_MEMBERS(CustomLine, AcDbEntity, AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent, AcDbProxyEntity::kAllAllowedBits, CustomLine, "CustomLine")
 
 CustomLine::CustomLine(const AcGePoint3d& startPoint, const AcGePoint3d& endPoint)
+	:m_ptStart(startPoint), m_ptEnd(endPoint)
 {
-	m_ptStart = startPoint;
-	m_ptEnd = endPoint;
+
 }
 
 CustomLine:: ~CustomLine()
@@ -105,6 +128,8 @@ CustomLine:: ~CustomLine()
 
 Adesk::Boolean CustomLine::subWorldDraw(AcGiWorldDraw* pWd)
 {
+	assertReadEnabled();
+
 	pWd->subEntityTraits().setColor(1);
 
 	AcGePoint3d verts[2];
@@ -124,19 +149,13 @@ Acad::ErrorStatus CustomLine::dwgInFields(AcDbDwgFiler* pFiler)
 	if (es != Acad::eOk)
 		return es;
 
-	if (pFiler->filerType() == AcDb::kWblockCloneFiler)
-	{
-		AcDbHardPointerId id;
-		pFiler->readItem(&id);
-	}
-
 	pFiler->readPoint3d(&m_ptStart);
 	pFiler->readPoint3d(&m_ptEnd);
 
 	return pFiler->filerStatus();
 }
 
-Acad::ErrorStatus CustomLine::dwgOutFields(AcDbDwgFiler* pFiler)
+Acad::ErrorStatus CustomLine::dwgOutFields(AcDbDwgFiler* pFiler) const
 {
 	assertReadEnabled();
 
@@ -144,35 +163,52 @@ Acad::ErrorStatus CustomLine::dwgOutFields(AcDbDwgFiler* pFiler)
 	if (es != Acad::eOk)
 		return es;
 
-	if (pFiler->filerType() == AcDb::kWblockCloneFiler)
-	{
-		pFiler->writeHardPointerId((AcDbHardPointerId)ownerId());
-	}
-
 	pFiler->writePoint3d(m_ptStart);
 	pFiler->writePoint3d(m_ptEnd);
 
 	return pFiler->filerStatus();
 }
+
 Acad::ErrorStatus CustomLine::subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray & osnapModes, AcDbIntArray & geomIds) const
 {
 	assertReadEnabled();
 
+	gripPoints.removeAll();
 	gripPoints.append(m_ptStart);
+	gripPoints.append((m_ptStart / 2) + (m_ptEnd / 2).asVector());
 	gripPoints.append(m_ptEnd);
 
 	return Acad::eOk;
 }
+
+// 如果未覆盖subCloneMeForDragging接口，将从dwginFileds取克隆数据
 Acad::ErrorStatus CustomLine::subMoveGripPointsAt(const AcDbIntArray & indices, const AcGeVector3d& offset)
 {
-	assertReadEnabled();
+	assertWriteEnabled();
+
+	if (indices.isEmpty())
+		return Acad::eInvalidInput;
+
+	if (offset.isZeroLength())
+		return Acad::eOk;
 
 	for (int i = 0; i < indices.length(); i++)
 	{
-		if (indices[i] == 0)
+		switch (indices[i])
+		{
+		case 0:
 			m_ptStart += offset;
-		else
+			break;
+		case 1:
+			m_ptStart += offset;
 			m_ptEnd += offset;
+			break;
+		case 2:
+			m_ptEnd += offset;
+			break;
+		default:
+			break;
+		}
 	}
 
 	return Acad::eOk;
@@ -188,32 +224,47 @@ Acad::ErrorStatus CustomLine::subGetOsnapPoints(
 {
 	assertReadEnabled();
 
+	AcGeLine3d line(m_ptStart, m_ptEnd);
+	AcGeLineSeg3d lnsg;
+	lnsg.set(m_ptStart, m_ptEnd);
+
+	switch (osnapMode)
+	{
+	case AcDb::kOsModeEnd:
+		snapPoints.append(m_ptStart);
+		snapPoints.append(m_ptEnd);
+		break;
+	case AcDb::kOsModeMid:
+		snapPoints.append(m_ptStart + (m_ptEnd - m_ptStart) / 2);
+		break;
+	case AcDb::kOsModePerp:
+		snapPoints.append(line.evalPoint(line.paramOf(lastPoint)));
+		break;
+	case AcDb::kOsModeNear:
+		if (!m_ptStart.isEqualTo(m_ptEnd))
+		{
+			//getClosestPointTo()
+			snapPoints.append(lnsg.projClosestPointTo(pickPoint, AcGeVector3d::kZAxis));
+		}
+		else
+		{
+			snapPoints.append(m_ptStart);
+		}
+		break;
+	default:
+		break;
+	}
+
 	return Acad::eOk;
 }
 Acad::ErrorStatus CustomLine::subTransformBy(const AcGeMatrix3d& xform)
 {
-	assertReadEnabled();
 	assertWriteEnabled();
 
 	m_ptStart.transformBy(xform);
 	m_ptEnd.transformBy(xform);
 
 	return Acad::eOk;
-}
-Acad::ErrorStatus CustomLine::subGetTransformedCopy(const AcGeMatrix3d& xform, AcDbEntity*& pEnt) const
-{
-	acutPrintf(_T("\nCustomLine::subGetTransformedCopy"));
-	return Acad::eOk;
-}
-Adesk::Boolean CustomLine::subCloneMeForDragging() 
-{
-	acutPrintf(_T("\nCustomLine::subCloneMeForDragging"));
-	return true;
-}
-bool CustomLine::subHideMeForDragging() const
-{
-	acutPrintf(_T("\nCustomLine::subHideMeForDragging"));
-	return true;
 }
 
 REGISTER_OBJECT(CustomLine);

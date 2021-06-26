@@ -170,6 +170,339 @@ Acad::ErrorStatus CusEntity::dwgOutFields(AcDbDwgFiler* filer) const
 
 #pragma endregion 
 
+#pragma region CusRefSymbol
+
+ACRX_DXF_DEFINE_MEMBERS(CusRefSymbol, AcDbEntity,
+	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,
+	/* AcDbProxyEntity::kTransformAllowed |
+	AcDbProxyEntity::kColorChangeAllowed |
+	AcDbProxyEntity::kLayerChangeAllowed */
+	AcDbProxyEntity::kAllAllowedBits,
+	CusRefSymbol, "CUSENTITIES"
+);
+
+//const double kCurrentVersionNumber = 1.0;
+const double CusRefSymbol::PI = 3.14159265;
+CusRefSymbol::CusRefSymbol() {}
+CusRefSymbol::CusRefSymbol(AcCusEntData *pData)
+	:m_pEntData(pData)
+{
+}
+CusRefSymbol::~CusRefSymbol()
+{
+	if (m_pEntData)
+	{
+		delete m_pEntData;
+		m_pEntData = nullptr;
+	}
+}
+
+Acad::ErrorStatus CusRefSymbol::dwgInFields(AcDbDwgFiler *filer)
+{
+	assertWriteEnabled();
+
+	// Read parent class information
+	AcDbEntity::dwgInFields(filer);
+
+	// Read version number
+	double dVersion;
+	filer->readItem(&dVersion);
+	if (dVersion > kCurrentVersionNumber)
+		return Acad::eMakeMeProxy;
+
+	// Read data
+	filer->readItem(&m_pEntData->points[0]);
+	filer->readItem(&m_pEntData->points[1]);
+	filer->readItem(&m_pEntData->points[2]);
+	filer->readItem(&m_pEntData->dAngle);
+	filer->readItem(&m_pEntData->dHeight);
+	filer->readItem(&m_pEntData->bFillTriangle);
+	filer->readString(m_pEntData->szTextContent);
+
+	return filer->filerStatus();
+}
+Acad::ErrorStatus CusRefSymbol::dwgOutFields(AcDbDwgFiler* filer) const
+{
+	assertReadEnabled();
+
+	// Save parent class information first. 
+	Acad::ErrorStatus es = AcDbEntity::dwgOutFields(filer);
+	if (es != Acad::eOk)
+		return es;
+
+	// Save data
+	filer->writeItem(kCurrentVersionNumber);
+	filer->writeItem(m_pEntData->points[0]);
+	filer->writeItem(m_pEntData->points[1]);
+	filer->writeItem(m_pEntData->points[2]);
+	filer->writeItem(m_pEntData->dAngle);
+	filer->writeItem(m_pEntData->dHeight);
+	filer->writeItem(m_pEntData->bFillTriangle);
+	filer->writeString((LPCTSTR)m_pEntData->szTextContent);
+
+	return filer->filerStatus();
+}
+Acad::ErrorStatus CusRefSymbol::dxfInFields(AcDbDxfFiler* filer)
+{
+	assertWriteEnabled();
+
+	Acad::ErrorStatus es = AcDbEntity::dxfInFields(filer);
+	if (Acad::eOk != es)
+		return es;
+
+	struct resbuf rb;
+	// Check that we are at the correct subclass data
+	if (!filer->atSubclassData(_T("CusRefSymbol")))
+		return Acad::eBadDxfSequence;
+
+	// First piece of data must be the version number
+	if (Acad::eOk != (es = filer->readItem(&rb)))
+		return es;
+	if (AcDb::kDxfReal != rb.restype)
+		return Acad::eMakeMeProxy;
+	// Check version first
+	if (rb.resval.rreal > 1.0)
+		return Acad::eMakeMeProxy;
+
+	// Set the normal default value in case it's not in the DXF information coming in
+	while (Acad::eOk == es)
+	{
+		if (Acad::eOk == (es = filer->readItem(&rb)))
+		{
+			switch (rb.restype)
+			{
+				// 从DXF中读取数据
+			case AcDb::kDxfXCoord:
+				m_pEntData->points[0] = AcGePoint3d(rb.resval.rpoint[X], rb.resval.rpoint[Y], rb.resval.rpoint[Z]);
+				break;
+			case AcDb::kDxfXCoord + 1:
+				m_pEntData->points[1] = AcGePoint3d(rb.resval.rpoint[X], rb.resval.rpoint[Y], rb.resval.rpoint[Z]);
+				break;
+			case AcDb::kDxfXCoord + 2:
+				m_pEntData->points[2] = AcGePoint3d(rb.resval.rpoint[X], rb.resval.rpoint[Y], rb.resval.rpoint[Z]);
+				break;
+			case AcDb::kDxfReal:
+				m_pEntData->dAngle = rb.resval.rreal;
+				break;
+			case  AcDb::kDxfReal + 1:
+				m_pEntData->dHeight = rb.resval.rreal;
+				break;
+			case AcDb::kDxfBool:
+				m_pEntData->bFillTriangle = rb.resval.rint;
+				break;
+			case AcDb::kDxfText:
+				m_pEntData->szTextContent = rb.resval.rstring;
+				break;
+			default:
+				filer->pushBackItem();
+				es = Acad::eEndOfFile;
+				break;
+			}
+		}
+	}
+
+	if (es != Acad::eEndOfFile)
+		return Acad::eInvalidResBuf;
+
+	return filer->filerStatus();
+}
+
+Acad::ErrorStatus CusRefSymbol::dxfOutFields(AcDbDxfFiler* filer) const
+{
+	assertReadEnabled();
+
+	AcDbEntity::dxfOutFields(filer);
+
+	filer->writeItem(AcDb::kDxfSubclass, _T("CusRefSymbol"));
+	filer->writeItem(AcDb::kDxfReal, kCurrentVersionNumber);
+	filer->writeItem(AcDb::kDxfXCoord, m_pEntData->points[0]);
+	filer->writeItem(AcDb::kDxfXCoord + 1, m_pEntData->points[1]);
+	filer->writeItem(AcDb::kDxfXCoord + 2, m_pEntData->points[2]);
+	filer->writeItem(AcDb::kDxfReal, m_pEntData->dAngle);
+	filer->writeItem(AcDb::kDxfReal + 1, m_pEntData->dHeight);
+	filer->writeItem(AcDb::kDxfBool, m_pEntData->bFillTriangle);
+	filer->writeString(AcDb::kDxfText, (LPCTSTR)m_pEntData->szTextContent);
+
+	return filer->filerStatus();
+}
+
+Adesk::Boolean CusRefSymbol::subWorldDraw(AcGiWorldDraw* wd)
+{
+	assertReadEnabled();    // Its purpose is to make sure that the object is open AcDb::kForRead.
+
+	if (m_pEntData->bFillTriangle)
+		wd->subEntityTraits().setFillType(kAcGiFillAlways);
+	else
+		wd->subEntityTraits().setFillType(kAcGiFillNever);
+	wd->subEntityTraits().setColor(3);
+
+	// The vector of triangle base 
+	AcGeVector3d vecBase = m_pEntData->points[1] - m_pEntData->points[0];
+	vecBase.normalize();
+	// The vector perpendicular to vecBase in the x-y plane, which is the height of triangle 
+	AcGeVector3d vecHeight = vecBase.crossProduct(AcGeVector3d::kZAxis);
+
+	// Draw triangle
+	AcGePoint3dArray triarray;
+	double dHalf = m_pEntData->dHeight / tan((m_pEntData->dAngle * PI) / 180.0);
+	triarray.append(m_pEntData->points[0] + vecBase * m_pEntData->dHeight);	  // vertex
+	triarray.append(m_pEntData->points[0] - vecHeight * dHalf);                // start point of base
+	triarray.append(m_pEntData->points[0] + vecHeight * dHalf);                // end point of base
+	wd->geometry().polygon(3, triarray.asArrayPtr());
+
+	wd->subEntityTraits().setFillType(kAcGiFillNever);
+	// Draw connected lines
+	AcGePoint3dArray linearray;
+	linearray.append(m_pEntData->points[0]);
+	linearray.append(m_pEntData->points[1]);
+	linearray.append(m_pEntData->points[2]);
+	wd->geometry().polyline(3, linearray.asArrayPtr(), &m_pEntData->vecNormal);
+
+	// Draw text
+	AcDbMText* pMText = new AcDbMText;
+	pMText->setDatabaseDefaults();
+	pMText->setNormal(m_pEntData->vecNormal);
+	pMText->setContents(m_pEntData->szTextContent);
+	pMText->setTextHeight(60.0);
+	pMText->setColorIndex(1);
+	pMText->setLocation(m_pEntData->points[2]);
+
+	AcGeVector3d vt = m_pEntData->points[2] - m_pEntData->points[1];
+	double dAngle = AcGeVector3d::kXAxis.angleTo(vt, AcGeVector3d::kZAxis);
+
+	if (dAngle >= PI / 4 && dAngle < PI * 3 / 4)
+		pMText->setAttachment(AcDbMText::kBottomCenter);
+	else if (dAngle >= PI * 3 / 4 && dAngle < PI * 5 / 4)
+		pMText->setAttachment(AcDbMText::kMiddleRight);
+	else if (dAngle >= PI * 5 / 4 && dAngle < PI * 7 / 4)
+		pMText->setAttachment(AcDbMText::kTopCenter);
+	else if ((dAngle >= PI * 7 / 4 && dAngle < PI * 2) || (dAngle >= 0 && dAngle < PI / 4))
+		pMText->setAttachment(AcDbMText::kMiddleLeft);
+	pMText->worldDraw(wd);
+
+	// Draw rectangle
+	wd->subEntityTraits().setColor(2);
+	AcGePoint3dArray rectArray;
+	AcDbExtents extMText;
+	pMText->getGeomExtents(extMText);
+	AcGePoint3d ptMin = extMText.minPoint(), ptMax = extMText.maxPoint();
+	rectArray.append(ptMin);
+	rectArray.append(AcGePoint3d(ptMin[X], ptMax[Y], 0));
+	rectArray.append(ptMax);
+	rectArray.append(AcGePoint3d(ptMax[X], ptMin[Y], 0));
+	wd->geometry().polygon(4, rectArray.asArrayPtr());
+
+	delete pMText;
+	pMText = nullptr;
+
+	return Adesk::kTrue;
+}
+
+Acad::ErrorStatus CusRefSymbol::subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray& osnapModes, AcDbIntArray& geomIds) const
+{
+	assertReadEnabled();
+
+	gripPoints.append(m_pEntData->points[0]);
+	gripPoints.append(m_pEntData->points[1]);
+	gripPoints.append(m_pEntData->points[2]);
+
+	return Acad::eOk;
+}
+Acad::ErrorStatus CusRefSymbol::subMoveGripPointsAt(const AcDbIntArray& indices, const AcGeVector3d& offset)
+{
+	assertWriteEnabled();
+	for (int i = 0; i < indices.length(); i++)
+	{
+		switch (indices[i])
+		{
+		case 0:
+			m_pEntData->points[0] += offset;
+			break;
+		case 1:
+			m_pEntData->points[1] += offset;
+			m_pEntData->points[2] += offset;
+			break;
+		case 2:
+			AcGePoint3d ptmp = m_pEntData->points[2] + offset;
+			AcGeVector3d vtmp = ptmp - m_pEntData->points[1];
+			double dAngle = AcGeVector3d::kXAxis.angleTo(vtmp, AcGeVector3d::kZAxis);
+			double l = m_pEntData->points[1].distanceTo(ptmp);
+
+			if (dAngle >= PI / 4 && dAngle < PI * 3 / 4)
+				m_pEntData->points[2] = m_pEntData->points[1] + l * AcGeVector3d::kYAxis;
+			else if (dAngle >= PI * 3 / 4 && dAngle < PI * 5 / 4)
+				m_pEntData->points[2] = m_pEntData->points[1] - l * AcGeVector3d::kXAxis;
+			else if (dAngle >= PI * 5 / 4 && dAngle < PI * 7 / 4)
+				m_pEntData->points[2] = m_pEntData->points[1] - l * AcGeVector3d::kYAxis;
+			else if ((dAngle >= PI * 7 / 4 && dAngle < PI * 2) || (dAngle >= 0 && dAngle < PI / 4))
+				m_pEntData->points[2] = m_pEntData->points[1] + l * AcGeVector3d::kXAxis;
+			break;
+		}
+	}
+	return Acad::eOk;
+}
+
+Acad::ErrorStatus CusRefSymbol::subGetOsnapPoints(
+	AcDb::OsnapMode       osnapMode,
+	Adesk::GsMarker       gsSelectionMark,
+	const AcGePoint3d&    pickPoint,
+	const AcGePoint3d&    lastPoint,
+	const AcGeMatrix3d&   viewXform,
+	AcGePoint3dArray&     snapPoints,
+	AcDbIntArray&         geomIds) const
+{
+	assertReadEnabled();
+#if 0
+	Acad::ErrorStatus es = Acad::eOk;
+	AcGePoint3d pt;
+	AcGeLineSeg3d lnsg;
+	AcGeVector3d viewDir(viewXform(Z, 0), viewXform(Z, 1), viewXform(Z, 2));
+	lnsg.set(AcGePoint3d(0, 0, 0), AcGePoint3d(100, 100, 0));
+	switch (osnapMode)
+	{
+	case AcDb::kOsModeEnd:
+		snapPoints.append(AcGePoint3d(0, 0, 0));
+		snapPoints.append(AcGePoint3d(100, 100, 0));
+		break;
+	case AcDb::kOsModeCen:
+		snapPoints.append(AcGePoint3d(50, 50, 0));
+		break;
+	case AcDb::kOsModeNear:
+		pt = lnsg.projClosestPointTo(pickPoint, viewDir);
+		snapPoints.append(pt);
+		break;
+	}
+#endif
+	return Acad::eOk;
+}
+
+REGISTER_OBJECT(CusRefSymbol)
+ARXCMD3(CusRefSymbolTest)
+{
+	struct AcCusEntData entData;
+	entData.points[0] = AcGePoint3d(0, 0, 0);
+	entData.points[1] = AcGePoint3d(50, 50, 0);
+	entData.points[2] = AcGePoint3d(100, 50, 0);
+	entData.dAngle = 60;
+	entData.dHeight = 24;
+	entData.bFillTriangle = true;
+	entData.szTextContent = _T("TEST");
+	entData.vecNormal = AcGeVector3d::kZAxis;
+
+	AcDbObjectId id;
+	CusRefSymbol *pEnt = new CusRefSymbol(&entData);
+	CADUtils::AppendToModalSpace(pEnt, id);
+	pEnt->close();
+
+#if ARX
+	acedCommandS(RTSTR, _T("ZOOM E"), RTNONE);
+#else
+	acedCommand(RTSTR, _T("ZOOM E"), RTNONE);
+#endif
+}
+
+#pragma endregion 
+
 #pragma region CusEntityByBlkRef
 ACRX_DXF_DEFINE_MEMBERS(CusEntityByBlkRef, AcDbEntity,
 	AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent,

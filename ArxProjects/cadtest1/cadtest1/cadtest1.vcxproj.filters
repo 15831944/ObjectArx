@@ -90,6 +90,12 @@
     <ClCompile Include="OverruleTest.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="myline.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="AcEdJigTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -135,6 +141,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="OverruleTest.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="AcEdJigTest.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

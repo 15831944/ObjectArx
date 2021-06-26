@@ -27,3 +27,4 @@ D:\DDDD\ARXTEST\ObjectArx\ArxProjects\NetOverruleTest\NetOverruleTest\bin\x64\ZR
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\NetOverruleTest\NetOverruleTest\obj\x64\ZR2021\NetOverruleTest.csproj.CopyComplete
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\NetOverruleTest\NetOverruleTest\obj\x64\ZR2021\NetOverruleTest.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\NetOverruleTest\NetOverruleTest\obj\x64\ZR2021\NetOverruleTest.pdb
+D:\DDDD\ARXTEST\ObjectArx\ArxProjects\NetOverruleTest\NetOverruleTest\obj\x64\ZR2021\NetOverruleTest.csprojAssemblyReference.cache
