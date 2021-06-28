@@ -671,8 +671,8 @@ ARXCMD3(WblockTest)
 				acutPrintf(_T("\nError: %s"), acadErrorStatusText(es));
 			}
 
-			delete pDb;
-			pDb = NULL;
+			//delete pDb;
+			//pDb = NULL;
 		}
 		
 		DelaXRefV2(curDoc()->database(), CString(result));
@@ -682,6 +682,9 @@ ARXCMD3(WblockTest)
 
 	SaveDb(acdbHostApplicationServices()->workingDatabase()/*curDoc()->database()*/);
 	acDocManager->sendStringToExecute(curDoc(), _T("zoom e "));
+
+	AcDbObjectIdArray arrId;
+	getMsEnts(curDoc()->database(), arrId);
 
 	//ExplodeNoAttributeBlock(curDoc()->database());
 

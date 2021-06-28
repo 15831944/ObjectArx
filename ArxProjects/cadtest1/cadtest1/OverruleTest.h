@@ -27,6 +27,15 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
+class HighlightStateOverrule : public AcDbHighlightStateOverrule
+{
+public:
+	virtual Acad::ErrorStatus pushHighlight(AcDbEntity* pSubject, const AcDbFullSubentPath& subId, AcGiHighlightStyle highlightStyle) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus popHighlight(AcDbEntity* pSubject, const AcDbFullSubentPath& subId) ADESK_OVERRIDE;
+	virtual AcGiHighlightStyle highlightState(AcDbEntity* pSubject, const AcDbFullSubentPath& subId) ADESK_OVERRIDE;
+	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
+};
+
 #endif
 
 #if ZRX == 2020 || ARX == 2013

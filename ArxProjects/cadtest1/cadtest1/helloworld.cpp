@@ -1738,3 +1738,14 @@ ARXCMD3(t111)
 {
 	DWORD d = GetFileAttributes(_T("d:\\test.dwg"));
 }
+
+// id.database() test
+ARXCMD3(id_database_test)
+{
+	AcDbCircle *pCircle = new AcDbCircle(AcGePoint3d(0, 0, 0), AcGeVector3d::kZAxis, 500.0);
+	AcDbObjectId id;
+	CADUtils::AppendToModalSpace(pCircle, id);
+	pCircle->close();
+
+	id.database();
+}

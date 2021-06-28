@@ -3,8 +3,10 @@
 #include "OverruleTest.h"
 
 #include "dbproxy.h"
-#pragma region  HighlightOverrule
+
 #if ARX == 2020 || ZRX == 2021
+
+#pragma region  HighlightOverrule
 Acad::ErrorStatus HighlightOverrule::highlight(
 	const AcDbEntity*      pSubject,
 	const AcDbFullSubentPath& subId/* = kNullSubent*/,
@@ -100,16 +102,61 @@ ARXCMD3(addHighlightOverrule)
 
 	acutPrintf(_T("\nHighlightOverrule is ON..."));
 }
-#endif
-ARXCMD3(CustomLineCreate)
-{
-	CustomLine *pCusLine = new CustomLine(AcGePoint3d(100, 100, 0), AcGePoint3d(600, 100, 0));
-	AcDbObjectId id;
-	CADUtils::AppendToModalSpace(pCusLine, id);
-	pCusLine->close();
-}
 
 #pragma endregion 
+
+#pragma region HighlightStateOverrule
+
+Acad::ErrorStatus HighlightStateOverrule::pushHighlight(AcDbEntity* pSubject, const AcDbFullSubentPath& subId, AcGiHighlightStyle highlightStyle)
+{
+	acutPrintf(_T("\nHighlightStateOverrule::pushHighlight"));
+	return AcDbHighlightStateOverrule::pushHighlight(pSubject, subId, highlightStyle);
+}
+Acad::ErrorStatus HighlightStateOverrule::popHighlight(AcDbEntity* pSubject, const AcDbFullSubentPath& subId)
+{
+	acutPrintf(_T("\nHighlightStateOverrule::popHighlight"));
+	return AcDbHighlightStateOverrule::popHighlight(pSubject, subId);
+}
+AcGiHighlightStyle HighlightStateOverrule::highlightState(AcDbEntity* pSubject, const AcDbFullSubentPath& subId)
+{
+	acutPrintf(_T("\nHighlightStateOverrule::highlightState"));
+	return AcDbHighlightStateOverrule::highlightState(pSubject, subId);
+}
+bool HighlightStateOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
+{
+	return pOverruledSubject->isKindOf(AcDbLine::desc()) || pOverruledSubject->isKindOf(AcDbCircle::desc());
+}
+
+static HighlightStateOverrule* s_g_highlightStateOverrule = nullptr;
+ARXCMD3(removeHighlightStateOverrule)
+{
+	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightStateOverrule);
+	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightStateOverrule);
+	AcRxOverrule::setIsOverruling(false);
+
+	if (s_g_highlightStateOverrule)
+	{
+		delete s_g_highlightStateOverrule;
+		s_g_highlightStateOverrule = nullptr;
+	}
+
+	acutPrintf(_T("\nHighlightStateOverrule is OFF..."));
+}
+ARXCMD3(addHighlightStateOverrule)
+{
+	removeHighlightStateOverrule();
+
+	s_g_highlightStateOverrule = new HighlightStateOverrule;
+	AcRxOverrule::addOverrule(AcDbLine::desc(), s_g_highlightStateOverrule);
+	AcRxOverrule::addOverrule(AcDbCircle::desc(), s_g_highlightStateOverrule);
+	AcRxOverrule::setIsOverruling(true);
+
+	acutPrintf(_T("\nHighlightStateOverrule is ON..."));
+}
+
+#pragma endregion
+
+#endif
 
 #pragma region CustomLine
 
@@ -268,4 +315,11 @@ Acad::ErrorStatus CustomLine::subTransformBy(const AcGeMatrix3d& xform)
 }
 
 REGISTER_OBJECT(CustomLine);
+ARXCMD3(CustomLineCreate)
+{
+	CustomLine *pCusLine = new CustomLine(AcGePoint3d(100, 100, 0), AcGePoint3d(600, 100, 0));
+	AcDbObjectId id;
+	CADUtils::AppendToModalSpace(pCusLine, id);
+	pCusLine->close();
+}
 #pragma endregion
