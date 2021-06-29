@@ -55,6 +55,7 @@ namespace NETCAD
             Document doc = Application.DocumentManager.MdiActiveDocument;//获取当前活动文档
             Database db = doc.Database;
             Editor ed = doc.Editor;
+
             Entity entity = null;
             DBObjectCollection entCol = new DBObjectCollection();
             PromptSelectionResult proSelRes = ed.GetSelection();//获取用户框选集合
