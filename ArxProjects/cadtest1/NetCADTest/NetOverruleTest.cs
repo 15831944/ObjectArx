@@ -21,6 +21,8 @@ using Autodesk.AutoCAD.Runtime;
 
 [assembly: CommandClass(typeof(NetOverruleTest.MyDrawOverrule))]
 [assembly: CommandClass(typeof(NetOverruleTest.GripVectorOverrule))]
+[assembly: CommandClass(typeof(NetOverruleTest.MyHighlightOverrule))]
+[assembly: CommandClass(typeof(NetOverruleTest.MyHighlightStateOverrule))]
 
 namespace NetOverruleTest
 {
@@ -106,32 +108,104 @@ namespace NetOverruleTest
     #endregion
 
 #region MyHighlightStateOverrule
-#if false
+#if true
     public class MyHighlightStateOverrule : HighlightStateOverrule
     {
-        public override void PushHighlight(Entity entity, ValueType subId, HighlightStyle highlightStyle)
+        private static MyHighlightStateOverrule g_HighlightStateOverrule;
+#if ARX
+        public override void PushHighlight(Entity entity, FullSubentityPath subId, HighlightStyle highlightStyle)
         {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            ed.WriteMessage("\n{0} PushHighlight...", entity.GetType().Name);
+
             base.PushHighlight(entity, subId, highlightStyle);
         }
 
-        //public override void PushHighlight(Entity entity, FullSubentityPath subId, HighlightStyle highlightStyle)
+        public override void PopHighlight(Entity entity, FullSubentityPath subId)
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            ed.WriteMessage("\n{0} PopHighlight...", entity.GetType().Name);
+
+            base.PopHighlight(entity, subId);
+        }
+
+        public override HighlightStyle HighlightState(Entity entity, FullSubentityPath subId)
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            ed.WriteMessage("\n{0} HighlightState...", entity.GetType().Name);
+
+            return base.HighlightState(entity, subId);
+        }
+#else
+        //public override void PushHighlight(Entity entity, ValueType subId, HighlightStyle highlightStyle)
         //{
+        //    Document doc = Application.DocumentManager.MdiActiveDocument;
+        //    Editor ed = doc.Editor;
+
+        //    ed.WriteMessage("\n{0} PushHighlight...", entity.GetType().Name);
+
         //    base.PushHighlight(entity, subId, highlightStyle);
         //}
 
         public override void PopHighlight(Entity entity, ValueType subId)
         {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            ed.WriteMessage("\n{0} PopHighlight...", entity.GetType().Name);
+
             base.PopHighlight(entity, subId);
         }
 
-        public override HighlightStyle HighlightState(Entity entity, ValueType subId)
-        {
-            return base.HighlightState(entity, subId);
-        }
+        //public override HighlightStyle HighlightState(Entity entity, ValueType subId)
+        //{
+        //    Document doc = Application.DocumentManager.MdiActiveDocument;
+        //    Editor ed = doc.Editor;
 
+        //    ed.WriteMessage("\n{0} HighlightState...", entity.GetType().Name);
+
+        //    return base.HighlightState(entity, subId);
+        //}
+#endif
         public override bool IsApplicable(RXObject overruledSubject)
         {
-            return base.IsApplicable(overruledSubject);
+            //return base.IsApplicable(overruledSubject);
+            return overruledSubject.GetType() == typeof(Line) || overruledSubject.GetType() == typeof(Circle);
+        }
+
+        [CommandMethod("ToggleHighlightStateOverrule")]
+        public static void ToggleHighlightStateOverrule()            
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            // Initialize Overrule if first time run
+            if (g_HighlightStateOverrule == null)
+            {
+                // Toggle Overruling on
+                g_HighlightStateOverrule = new MyHighlightStateOverrule();
+                Overrule.AddOverrule(RXObject.GetClass(typeof(Line)), g_HighlightStateOverrule, false);
+                Overrule.AddOverrule(RXObject.GetClass(typeof(Circle)), g_HighlightStateOverrule, false);
+                Overrule.Overruling = true;
+
+                ed.WriteMessage("\nMyHighlightStateOverrule is on...\n");
+            }
+            else
+            {
+                // Toggle Overruling off
+                Overrule.RemoveOverrule(RXObject.GetClass(typeof(Line)), g_HighlightStateOverrule);
+                Overrule.RemoveOverrule(RXObject.GetClass(typeof(Circle)), g_HighlightStateOverrule);
+                g_HighlightStateOverrule.Dispose();
+                g_HighlightStateOverrule = null;
+
+                ed.WriteMessage("\nMyHighlightStateOverrule is off...\n");
+            }
         }
     }
 #endif

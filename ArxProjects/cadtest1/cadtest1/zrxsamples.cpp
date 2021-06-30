@@ -1,14 +1,16 @@
-//
+ï»¿//
 #include "stdafx.h"
 
 #include "dbxrecrd.h"
 
-// Ìí¼ÓÊµÌåÀ©Õ¹´Êµä
+#pragma region ExtensionDictionarySample
+
+// æ·»åŠ å®žä½“æ‰©å±•è¯å…¸
 ARXCMD3(AddXRecord)
 {
 	ads_name en;
 	ads_point pt;
-	if (acedEntSel(_T("\nÑ¡ÔñÊµÌå£º"), en, pt) != RTNORM)
+	if (acedEntSel(_T("\né€‰æ‹©å®žä½“ï¼š"), en, pt) != RTNORM)
 	{
 		return;
 	}
@@ -44,7 +46,7 @@ ARXCMD3(ModXRecord)
 {
 	ads_name en;
 	ads_point pt;
-	if (acedEntSel(_T("\nÑ¡ÔñÊµÌå£º"), en, pt) != RTNORM)
+	if (acedEntSel(_T("\né€‰æ‹©å®žä½“ï¼š"), en, pt) != RTNORM)
 	{
 		return;
 	}
@@ -57,7 +59,7 @@ ARXCMD3(ModXRecord)
 	pObj->close();
 	if (dictObjId == NULL)
 	{
-		acutPrintf(_T("\n¸ÃÊµÌå²»´æÔÚÀ©Õ¹´Êµä"));
+		acutPrintf(_T("\nè¯¥å®žä½“ä¸å­˜åœ¨æ‰©å±•è¯å…¸"));
 		return;
 	}
 
@@ -85,16 +87,15 @@ ARXCMD3(ModXRecord)
 	}
 	else
 	{
-		acutPrintf(_T("\n¸ÃÊµÌåÎÞÀ©Õ¹Êý¾Ý"));
+		acutPrintf(_T("\nè¯¥å®žä½“æ— æ‰©å±•æ•°æ®"));
 	}
 	pXRecord->close();
 }
-
 ARXCMD3(DelXRecord)
 {
 	ads_name en;
 	ads_point pt;
-	if (acedEntSel(_T("\nÑ¡ÔñÊµÌå£º"), en, pt) != RTNORM)
+	if (acedEntSel(_T("\né€‰æ‹©å®žä½“ï¼š"), en, pt) != RTNORM)
 	{
 		return;
 	}
@@ -107,7 +108,7 @@ ARXCMD3(DelXRecord)
 	pObj->close();
 	if (dictObjId == NULL)
 	{
-		acutPrintf(_T("\n¸ÃÊµÌå²»´æÔÚÀ©Õ¹´Êµä"));
+		acutPrintf(_T("\nè¯¥å®žä½“ä¸å­˜åœ¨æ‰©å±•è¯å…¸"));
 		return;
 	}
 
@@ -118,17 +119,20 @@ ARXCMD3(DelXRecord)
 		if (pDict->has(_T("XRecord")))
 		{
 			pDict->remove(_T("XRecord"));
-			acutPrintf(_T("\nÒÑÉ¾³ýÀ©Õ¹´ÊµäXRecord"));
+			acutPrintf(_T("\nå·²åˆ é™¤æ‰©å±•è¯å…¸XRecord"));
 		}
 		else
 		{
-			acutPrintf(_T("\n²»´æÔÚÀ©Õ¹´ÊµäXRecord"));
+			acutPrintf(_T("\nä¸å­˜åœ¨æ‰©å±•è¯å…¸XRecord"));
 		}
 	}
 	pDict->close();
 }
 
-// ×Ô¶¨ÒåÏßÐÍ
+#pragma endregion
+
+#pragma region LinetypeSample
+// è‡ªå®šä¹‰çº¿åž‹
 //CreateLineTypeTest-->ApplyCusLineTypeTest, make sure the linetype exists.
 ARXCMD3(createLineTypeTest)
 {
@@ -145,16 +149,16 @@ ARXCMD3(createLineTypeTest)
 		pLineTypeTableRec1->setName(_T("CustomLinetype1"));
 		es = pLineTypeTableRec1->setComments(_T("TextLineType"));  //description
 
-		//¶Ì»®Ïß(Dash)£ºÊµÏß(+)£¬¿Õ¸ñ(-)£¬µã(0)
+		//çŸ­åˆ’çº¿(Dash)ï¼šå®žçº¿(+)ï¼Œç©ºæ ¼(-)ï¼Œç‚¹(0)
 		pLineTypeTableRec1->setNumDashes(2);
 		pLineTypeTableRec1->setDashLengthAt(0, 1);
 		pLineTypeTableRec1->setDashLengthAt(1, -2.25);
 
-		//Dash(1) ÉèÖÃÎªÎÄ×Ö
+		//Dash(1) è®¾ç½®ä¸ºæ–‡å­—
 		pLineTypeTableRec1->setShapeStyleAt(1, pDadabase->textstyle());
-		pLineTypeTableRec1->setTextAt(1, _T("TextLineType"));                  //ÎÄ×ÖÄÚÈÝ
-		pLineTypeTableRec1->setShapeScaleAt(1, 0.25);                          //ÎÄ×Ö±ÈÀý
-		pLineTypeTableRec1->setShapeOffsetAt(1, AcGeVector2d(-2.2, -0.125));   //ÎÄ×ÖÆ«ÒÆ,Ä¬ÈÏÎªÏÂÒ»¸ödashµÄÆðµã
+		pLineTypeTableRec1->setTextAt(1, _T("TextLineType"));                  //æ–‡å­—å†…å®¹
+		pLineTypeTableRec1->setShapeScaleAt(1, 0.25);                          //æ–‡å­—æ¯”ä¾‹
+		pLineTypeTableRec1->setShapeOffsetAt(1, AcGeVector2d(-2.2, -0.125));   //æ–‡å­—åç§»,é»˜è®¤ä¸ºä¸‹ä¸€ä¸ªdashçš„èµ·ç‚¹
 
 		pLineTypeTableRec1->setPatternLength(3);       //DashLength
 
@@ -169,7 +173,7 @@ ARXCMD3(createLineTypeTest)
 		pLineTypeTableRec2->setName(_T("CustomLinetype2"));
 		es = pLineTypeTableRec2->setComments(_T("PointLineType"));  //description
 
-		//¶Ì»®Ïß(Dash)£ºÊµÏß(+)£¬¿Õ¸ñ(-)£¬µã(0)
+		//çŸ­åˆ’çº¿(Dash)ï¼šå®žçº¿(+)ï¼Œç©ºæ ¼(-)ï¼Œç‚¹(0)
 		pLineTypeTableRec2->setNumDashes(4);
 		pLineTypeTableRec2->setDashLengthAt(0, 0.5);
 		pLineTypeTableRec2->setDashLengthAt(1, -0.25);
@@ -196,7 +200,7 @@ ARXCMD3(applyCusLineTypeTest)
 
 	AcDbLine *pLine1 = new AcDbLine(AcGePoint3d(0, 100, 0), AcGePoint3d(100, 100, 0));
 	pLine1->setLinetype(_T("CustomLinetype1"));
-	pLine1->setLinetypeScale(10);  //ÉèÖÃÏßÐÍ±ÈÀý
+	pLine1->setLinetypeScale(10);  //è®¾ç½®çº¿åž‹æ¯”ä¾‹
 	pMSBlkRec->appendAcDbEntity(pLine1);
 	pLine1->close();
 
@@ -209,3 +213,83 @@ ARXCMD3(applyCusLineTypeTest)
 	pMSBlkRec->close();
 	pBlockTable->close();
 }
+
+#pragma endregion
+
+#pragma region DatabaseSample
+
+void createDwgTest()
+{
+	//Create an empty database
+	AcDbDatabase *pDb = new AcDbDatabase(/*true, false*/);
+
+	//Append some entities
+	AcDbBlockTable *pBlockTable = NULL;
+	pDb->getBlockTable(pBlockTable, AcDb::kForRead);
+	AcDbBlockTableRecord *pBlockTableRec = NULL;
+	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRec, AcDb::kForWrite);
+	pBlockTable->close();
+	AcDbCircle *pCircle = new AcDbCircle(AcGePoint3d(0, 0, 0), AcGeVector3d(0, 0, 1), 100.0);
+	pBlockTableRec->appendAcDbEntity(pCircle);
+	pCircle->close();
+	pBlockTableRec->close();
+
+	//Save database
+	Acad::ErrorStatus es = pDb->saveAs(_T("./testDrawing1.dwg"));   //default file path(â€ªC:\Users\Admin\Documents\)
+	if (es == Acad::eOk)
+		acutPrintf(_T("\nDwg was saved successfully!"));
+	else
+		acutPrintf(_T("\nFailed to save the Dwg! es = %s."), acadErrorStatusText(es));
+
+	delete pDb;
+}
+void readDwgFileTest()
+{
+	AcDbDatabase *pDb = new AcDbDatabase(false, true);   //The new database object is completely empty.
+
+	//If there is no flag kForReadAndAllShare , 
+	//readDwgFile will return  eFileSharingViolation when the testDrawing1.dwg is opened
+	Acad::ErrorStatus es = pDb->readDwgFile(_T("./testDrawing1.dwg"), AcDbDatabase::kForReadAndAllShare);
+
+	if (es == Acad::eOk)
+	{
+		AcDbBlockTable *pBlockTable = NULL;
+		AcDbBlockTableRecord *pBlockTableRec = NULL;
+		pDb->getBlockTable(pBlockTable, AcDb::kForRead);
+		pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRec, AcDb::kForRead);
+		pBlockTable->close();
+
+		AcDbBlockTableRecordIterator *pIter = NULL;
+		pBlockTableRec->newIterator(pIter);
+		for (; !pIter->done(); pIter->step())
+		{
+			AcDbEntity *pEnt = NULL;
+			pIter->getEntity(pEnt, AcDb::kForRead);
+			acutPrintf(_T("\nClass name: %s"), pEnt->isA()->name());
+			pEnt->close();
+		}
+		delete pIter;
+
+		pBlockTableRec->close();
+	}
+	delete pDb;
+}
+void OpenDocument(void *pData)
+{
+	AcApDocument* pDoc = acDocManager->curDocument();
+	if (acDocManager->isApplicationContext())
+	{
+		acDocManager->appContextOpenDocument((const TCHAR *)pData);
+	}
+	else
+	{
+		acutPrintf(_T("\nError to open document!"));
+	}
+}
+void openDwgFileTest()
+{
+	TCHAR *pData = _T("./testDrawing1.dwg");
+	acDocManager->executeInApplicationContext(OpenDocument, (void*)pData);
+}
+
+#pragma  endregion

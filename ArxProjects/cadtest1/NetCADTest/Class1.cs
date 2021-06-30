@@ -25,6 +25,8 @@ using Autodesk.AutoCAD.Internal;
 using TransactionManager = Autodesk.AutoCAD.DatabaseServices.TransactionManager;
 #endif
 
+[assembly: CommandClass(typeof(NETCAD.Class1))]
+
 namespace NETCAD
 {
     public class Class1
@@ -1028,6 +1030,18 @@ namespace NETCAD
 
         }
 
+        [CommandMethod("testSendCmd")]
+        public void testSendCmd()
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor ed = doc.Editor;
+
+            doc.SendStringToExecute("._CIRCLE 0,0 500 ._ZOOM Extents ",true, false, false);
+#if ARX
+            //ed.Command("._CIRCLE 0,0 500 ._ZOOM Extents ");
+#endif
+            Application.ShowAlertDialog("Circle created!");
+        }
 
     }
 

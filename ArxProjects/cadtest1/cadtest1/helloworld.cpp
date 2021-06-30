@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "CADUtils.h"
 
 #include "dbapserv.h"
@@ -41,10 +41,10 @@ ARXCMD3(insertDwgTest)
 ARXCMD3(readDwg)
 {
 	AcDbDatabase *pDb = new AcDbDatabase(Adesk::kFalse);
-	Acad::ErrorStatus es = pDb->readDwgFile(_T("D:\\DDDD\\LB_InsertÍ¼Ö½²¿·ÖÊµÌå²»ÏÔÊ¾\\test.dwg"));
+	Acad::ErrorStatus es = pDb->readDwgFile(_T("D:\\DDDD\\LB_Insertå›¾çº¸éƒ¨åˆ†å®ä½“ä¸æ˜¾ç¤º\\test.dwg"));
 	printEs(es);
 
-	es = pDb->saveAs(_T("D:\\DDDD\\LB_InsertÍ¼Ö½²¿·ÖÊµÌå²»ÏÔÊ¾\\save.dwg"));
+	es = pDb->saveAs(_T("D:\\DDDD\\LB_Insertå›¾çº¸éƒ¨åˆ†å®ä½“ä¸æ˜¾ç¤º\\save.dwg"));
 	printEs(es);
 
 	delete pDb;
@@ -283,7 +283,7 @@ ARXCMD3(CmdLayer3)
 	//	//if (!sLockLay.IsEmpty())
 	//	//	sLockLay += _T(",");
 	//	CString szTemp;
-	//	szTemp.Format(_T("Í¼L%d%d%d"), i / 100, i / 10 % 10, i % 10);
+	//	szTemp.Format(_T("å›¾L%d%d%d"), i / 100, i / 10 % 10, i % 10);
 	//	sLockLay += szTemp;
 	//}
 	//sLockLay += _T(",0");
@@ -299,7 +299,7 @@ ARXCMD3(CurrentViewPortCenterTest)
 	AcDbObject *pCurVP = nullptr;
 	if (Acad::eOk == acdbOpenObject(pCurVP, curVId, AcDb::kForRead))
 	{
-		//²¼¾Ö¿Õ¼ä·µ»ØµÄÊÇ¼¤»îµÄÊÓ¿Ú»òÕßÄ¬ÈÏµÄµÚÒ»¸öAcDbViewport
+		//å¸ƒå±€ç©ºé—´è¿”å›çš„æ˜¯æ¿€æ´»çš„è§†å£æˆ–è€…é»˜è®¤çš„ç¬¬ä¸€ä¸ªAcDbViewport
 		if(pCurVP->isA() == AcDbViewport::desc())
 		acutPrintf(_T("\nCenPt(%g, %g)"), ((AcDbViewport*)pCurVP)->centerPoint().x, ((AcDbViewport*)pCurVP)->centerPoint().y);
 		else if (pCurVP->isA() == AcDbViewportTableRecord::desc())
@@ -309,7 +309,7 @@ ARXCMD3(CurrentViewPortCenterTest)
 	}
 }
 
-//Í¨¹ızrx½Ó¿Ú¶¨ÒålispÃüÁîºÍlispº¯ÊıÒÔ¼°ÈçºÎ·µ»Ø½á¹û
+//é€šè¿‡zrxæ¥å£å®šä¹‰lispå‘½ä»¤å’Œlispå‡½æ•°ä»¥åŠå¦‚ä½•è¿”å›ç»“æœ
 ADSFUNC(lispFuncTest)
 {
 	acutPrintf(_T("\n1111"));
@@ -373,8 +373,8 @@ ADSFUNC(factorial)
 }
 
 #include "dbhatch.h"
-//±ß½çÓÉ´øÓĞÄÚ²¿Ô²ĞÎ¿×µÄÍâ²¿¾ØĞÎ»·×é³É¡£Ìî³äÍ¼°¸ÊÇ¾ßÓĞµ±Ç°AutoCADÄ¬ÈÏÑÕÉ«µÄANSI31Ô¤¶¨ÒåÀàĞÍ¡£
-//ĞÂ´´½¨µÄÍ¼°¸Ìî³äÊÇ¹ØÁªµÄ£¬Äú¿ÉÒÔÔÚÆäÖĞ¸ü¸ÄÔ´±ß½ç¼¸ºÎĞÎ×´ÒÔ¸üĞÂÍ¼°¸Ìî³ä¡£
+//è¾¹ç•Œç”±å¸¦æœ‰å†…éƒ¨åœ†å½¢å­”çš„å¤–éƒ¨çŸ©å½¢ç¯ç»„æˆã€‚å¡«å……å›¾æ¡ˆæ˜¯å…·æœ‰å½“å‰AutoCADé»˜è®¤é¢œè‰²çš„ANSI31é¢„å®šä¹‰ç±»å‹ã€‚
+//æ–°åˆ›å»ºçš„å›¾æ¡ˆå¡«å……æ˜¯å…³è”çš„ï¼Œæ‚¨å¯ä»¥åœ¨å…¶ä¸­æ›´æ”¹æºè¾¹ç•Œå‡ ä½•å½¢çŠ¶ä»¥æ›´æ–°å›¾æ¡ˆå¡«å……ã€‚
 
 ARXCMD3(acqHatch2)
 {
@@ -469,7 +469,7 @@ ARXCMD3(acqHatch2)
 
 
 
-//±ß½çÓÉ´øÓĞÄÚ²¿Ô²ĞÎ¿×µÄÍâ²¿¾ØĞÎ»·×é³É¡£Ìî³äÍ¼°¸ÎªSOLID£¬µ±Ç°Ê¹ÓÃAutoCADÄ¬ÈÏÑÕÉ«¡£ĞÂ´´½¨µÄÍ¼°¸Ìî³äÃ»ÓĞ¹ØÁªĞÔ
+//è¾¹ç•Œç”±å¸¦æœ‰å†…éƒ¨åœ†å½¢å­”çš„å¤–éƒ¨çŸ©å½¢ç¯ç»„æˆã€‚å¡«å……å›¾æ¡ˆä¸ºSOLIDï¼Œå½“å‰ä½¿ç”¨AutoCADé»˜è®¤é¢œè‰²ã€‚æ–°åˆ›å»ºçš„å›¾æ¡ˆå¡«å……æ²¡æœ‰å…³è”æ€§
 ARXCMD3(acqHatch1)
 {
 	AcDbHatch* pHatch = new AcDbHatch();
@@ -610,8 +610,8 @@ int SelectEntities(AcDbObjectIdArray & entIdArray)
 	return ret;
 }
 
-// Õë¶ÔÒ»°ãÇé¿ö
-// ¶ÔÓÚÍ¬Ò»¸ö±ß½çÊ÷£¬°´Ãæ»ı´Ó´óµ½Ğ¡¹¹½¨£¬È»ºó¸ù¾İdepthÈ·¶¨style£¬0--kExternal£¬ 1--kOutermost£¬other--kDefault
+// é’ˆå¯¹ä¸€èˆ¬æƒ…å†µ
+// å¯¹äºåŒä¸€ä¸ªè¾¹ç•Œæ ‘ï¼ŒæŒ‰é¢ç§¯ä»å¤§åˆ°å°æ„å»ºï¼Œç„¶åæ ¹æ®depthç¡®å®šstyleï¼Œ0--kExternalï¼Œ 1--kOutermostï¼Œother--kDefault
 #include <map>
 #include <vector>
 //#include <algorithm>
@@ -636,7 +636,7 @@ ARXCMD3(hatch_2)
 	std::vector<std::pair<AcDbObjectId, double>> vec;
 	for (std::map<AcDbObjectId, double>::iterator iter = idsMap.begin(); iter != idsMap.end(); iter++)
 		vec.push_back(std::pair<AcDbObjectId, double>(iter->first, iter->second));
-	// Í¬Ò»ÀàĞÍ ±ß½ç°´Ãæ»ıÅÅĞò
+	// åŒä¸€ç±»å‹ è¾¹ç•ŒæŒ‰é¢ç§¯æ’åº
 	std::sort(vec.begin(), vec.end(), [](std::pair<AcDbObjectId, double>&a, std::pair<AcDbObjectId, double>&b) {return a.second < b.second; });
 
 	AcDbHatch *pHatch = new AcDbHatch();
@@ -684,8 +684,8 @@ ARXCMD3(hatch_2)
 	CADUtils::AppendToModalSpace(pHatch, newId);
 	pHatch->close();
 }
-//acedSSGetÑ¡Ôñ¼¯ÊµÌå°´¾ä±ú½µĞòÅÅÁĞ£¬AcDbSortentsTableÉıĞòÅÅÁĞ
-// ½«ÊµÌå·Ö½â³É¶ÀÁ¢µÄÔ²(»¡)¡¢Ö±Ïß -> ºÏ²¢ÖØµş¶ÔÏó(¹²Ïß¡¢ÖØµş) -> ĞÂµÄÊµÌå¸ù¾İ½»µãÔÙ·Ö½â³É¶ÀÁ¢µÄÊµÌå¶Î -> ¸ù¾İ×îÖÕµÄÕâĞ©ÊµÌå¶Î´´½¨ÃæÓò -> ÕÒµ½Ä¿±êµãËùÔÚÃæÓò´´½¨hatch -> É¾³ıÃæÓò
+//acedSSGeté€‰æ‹©é›†å®ä½“æŒ‰å¥æŸ„é™åºæ’åˆ—ï¼ŒAcDbSortentsTableå‡åºæ’åˆ—
+// å°†å®ä½“åˆ†è§£æˆç‹¬ç«‹çš„åœ†(å¼§)ã€ç›´çº¿ -> åˆå¹¶é‡å å¯¹è±¡(å…±çº¿ã€é‡å ) -> æ–°çš„å®ä½“æ ¹æ®äº¤ç‚¹å†åˆ†è§£æˆç‹¬ç«‹çš„å®ä½“æ®µ -> æ ¹æ®æœ€ç»ˆçš„è¿™äº›å®ä½“æ®µåˆ›å»ºé¢åŸŸ -> æ‰¾åˆ°ç›®æ ‡ç‚¹æ‰€åœ¨é¢åŸŸåˆ›å»ºhatch -> åˆ é™¤é¢åŸŸ
 ARXCMD3(hatch_3)
 {
 	AcDbObjectIdArray ids;
@@ -734,7 +734,7 @@ void GetAllEntity(AcDbObjectIdArray& ids)
 	AcDbEntity *pEnt = NULL;
 	for (pItr->start(); !pItr->done(); pItr->step())
 	{
-		es = pItr->getEntity(pEnt, AcDb::kForRead); //kForWrite´ò¿ªÈô²»Ëø¶¨db£¬·µ»Ø eLockViolation 
+		es = pItr->getEntity(pEnt, AcDb::kForRead); //kForWriteæ‰“å¼€è‹¥ä¸é”å®šdbï¼Œè¿”å› eLockViolation 
 		ids.append(pEnt->objectId());
 		pEnt->close();
 	}
@@ -801,7 +801,7 @@ BOOL SetViewInfo(AcGePoint3d ptTarget, AcGeVector3d viewDirection, const AcDbExt
 			pVportTableRec->close();
 		}
 
-		//ÖØĞÂ¼ÆËãÆÁÄ»×ø±êÖĞĞÄ
+		//é‡æ–°è®¡ç®—å±å¹•åæ ‡ä¸­å¿ƒ
 		es = pVportTable->getAt(ACRX_T("*Active"), pVportTableRec, AcDb::kForWrite);
 		//if(Acad::eOk == act.OpenObject(pVT, idViewRecord, AcDb::kForWrite))
 		AcGePoint3d ptMin, ptMax;
@@ -827,7 +827,7 @@ BOOL SetViewInfo(AcGePoint3d ptTarget, AcGeVector3d viewDirection, const AcDbExt
 			pVportTableRec->close();
 		}
 
-		//Ë¢ĞÂ½çÃæ
+		//åˆ·æ–°ç•Œé¢
 		if (bUpdateScreen)
 			acedVportTableRecords2Vports();
 
@@ -844,10 +844,10 @@ BOOL SetCurrentVisualStyle(AcDbDatabase* pDb, CString visualStyleName)
 	es = pDb->getViewportTable(pVportTable, AcDb::kForRead);
 	if (es == Acad::eOk)
 	{
-		//»ñÈ¡ÑùÊ½±í
+		//è·å–æ ·å¼è¡¨
 		AcDbDictionary* pVisualStyleDic;
 		es = pDb->getVisualStyleDictionary(pVisualStyleDic, AcDb::kForRead);
-		//»ñÈ¡ÊÓ¿ÚÑùÊ½
+		//è·å–è§†å£æ ·å¼
 		AcDbObjectId idVisualStyle;
 		es = pVisualStyleDic->getAt(visualStyleName, idVisualStyle);
 		pVisualStyleDic->close();
@@ -875,7 +875,7 @@ BOOL SetCurrentVisualStyle(AcDbDatabase* pDb, CString visualStyleName)
 	return bOk;
 }
 
-//°üÎ§ºĞÖĞĞÄÎªtarget£¬camera position = target +¡¡viewDirection
+//åŒ…å›´ç›’ä¸­å¿ƒä¸ºtargetï¼Œcamera position = target +ã€€viewDirection
 void SetViewTo(AcGsView *pView, AcDbDatabase *pDb, AcGeVector3d viewDirection, AcGeMatrix3d& viewMat, AcGePoint3d extMax, AcGePoint3d extMin)
 {
 	if (extMin.distanceTo(extMax) > 1e20)
@@ -916,7 +916,7 @@ void SetViewTo(AcGsView *pView, AcDbDatabase *pDb, AcGeVector3d viewDirection, A
 }
 ARXCMD3(Test_Viewport)
 {
-	//ÉèÖÃÊÓ½Ç
+	//è®¾ç½®è§†è§’
 	//ViewportFun::SetViewInfo(ptTarget, AcGeVector3d(1,-1,1), extAll, FALSE);
 	AcDbObjectIdArray ids;
 	GetAllEntity(ids);
@@ -933,10 +933,10 @@ ARXCMD3(Test_Viewport)
 	//ptTarget = asPnt3d(rb.resval.rpoint);
 	SetViewInfo(ptTarget, AcGeVector3d(1, -1, 1), extAll, FALSE);
 
-	//ÏÔÊ¾ÊÓ¾õÑùÊ½---3DÕæÊµ
+	//æ˜¾ç¤ºè§†è§‰æ ·å¼---3DçœŸå®
 	//ViewportFun::SetVisibleStyle_3DRealistic();
 	SetCurrentVisualStyle(pDb, _T("Realistic"));
-	//Ëõ·Åµ½Ö¸¶¨·¶Î§
+	//ç¼©æ”¾åˆ°æŒ‡å®šèŒƒå›´
 	//CProjectShowModelView::Zoom_Extents(m_idsGiToGal);
 
 	AcGsView* pGsView = GetCurrentGsView();
@@ -944,7 +944,7 @@ ARXCMD3(Test_Viewport)
 	refreshView(pGsView);
 
 #ifdef ARX
-	//AcadÖĞrefreshÎ´ÉúĞ§£¬ÊÖ¶¯Ë¢ĞÂÆÁÄ»ºÍËõ·Å£¿
+	//Acadä¸­refreshæœªç”Ÿæ•ˆï¼Œæ‰‹åŠ¨åˆ·æ–°å±å¹•å’Œç¼©æ”¾ï¼Ÿ
 	acedVportTableRecords2Vports();
 	acedCommand(RTSTR, L"ZOOM", RTSTR, L"e", RTNONE);
 #endif
@@ -1001,7 +1001,7 @@ ARXCMD3(Test_AcDbVisualStyle)
 	AcDbDictionary* pVisualStyleDic;
 	AcDbDatabase *pDb = curDoc()->database();
 	Acad::ErrorStatus es = pDb->getVisualStyleDictionary(pVisualStyleDic, AcDb::kForRead);
-	//»ñÈ¡ÊÓ¿ÚÑùÊ½
+	//è·å–è§†å£æ ·å¼
 	AcDbObjectId idVisualStyle;
 	es = pVisualStyleDic->getAt(_T("Hidden"), idVisualStyle);
 	pVisualStyleDic->close();
@@ -1018,7 +1018,7 @@ ARXCMD3(Test_AcDbVisualStyle)
 	pVportTable->close();
 }
 
-// ¸Ä±ääÖÈ¾Ä£Ê½
+// æ”¹å˜æ¸²æŸ“æ¨¡å¼
 ARXCMD3(Test_rendermode)
 {
 	Acad::ErrorStatus es;
@@ -1096,7 +1096,7 @@ ARXCMD3(test_arxZoom)
 		{
 			AcGePoint2d ptLow(ptMin.x + i * dXSlice, ptMin.y + j * dYSlice), ptUp(ptMin.x + dYSlice * (i + 1), ptMin.y + dYSlice * (j + 1));
 			arxZoom(ptLow, ptUp);
-			// wÑ¡Ôñ
+			// wé€‰æ‹©
 		}
 	}
 }
@@ -1146,7 +1146,7 @@ ARXCMD3(Test_Xref)
 	}
 
 	AcAxDocLock dolock(pDb1);
-	//·µ»ØeWrongObjectType£¿
+	//è¿”å›eWrongObjectTypeï¼Ÿ
 	es = acdbXBindXrefs(pDb1, ids, true);
 	acutPrintf(_T("\nes = %s"), acadErrorStatusText(es));
 	if (es == Acad::eOk)
@@ -1186,7 +1186,7 @@ ARXCMD3(XrefReload)
 	AcDbObjectIdArray XrefBTRids;
 	AcDbDatabase *pDb = curDoc()->database();
 	XrefBTRids.removeAll();
-	acedXrefReload(_T("Å¯Í¨ÅàÑµÍ¼Ö½"), true, pDb);
+	acedXrefReload(_T("æš–é€šåŸ¹è®­å›¾çº¸"), true, pDb);
 }
 
 #if ZRX == 2021
@@ -1229,19 +1229,19 @@ ARXCMD3(CusSaveAs)
 
 ARXCMD3(CMemFileTest)
 {
-	//´ò¿ªÒ»¸öÎÄ¼ş£¬¶ÁÈë ÄÚ´æbufferÖĞ
+	//æ‰“å¼€ä¸€ä¸ªæ–‡ä»¶ï¼Œè¯»å…¥ å†…å­˜bufferä¸­
 	CFile file;
 	file.Open(_T("D:\\test.txt"), CFile::modeReadWrite, NULL);
 	ULONGLONG ulLen = file.GetLength();
 	BYTE* buffer = (BYTE*)malloc(file.GetLength());
 	file.Read(buffer, (UINT)file.GetLength());
 
-	//½«bufferÓë memfile¹ØÁªÆğÀ´
+	//å°†bufferä¸ memfileå…³è”èµ·æ¥
 	CMemFile memfile;
 	memfile.Attach(buffer, (UINT)file.GetLength(), 1024);
 	memfile.SetLength(file.GetLength());
 
-	//½«Í·200µÄÊı¾İ ¼ÓÈëµÄÄ©Î²£¬ÖØ¸´100´Î
+	//å°†å¤´200çš„æ•°æ® åŠ å…¥çš„æœ«å°¾ï¼Œé‡å¤100æ¬¡
 	byte tempbuffer[200];
 	for (int i = 0; i < 1; i++)
 	{
@@ -1252,7 +1252,7 @@ ARXCMD3(CMemFileTest)
 	}
 	// testover
 
-	//´æ»ØÎÄ¼ş
+	//å­˜å›æ–‡ä»¶
 	UINT size = (UINT)memfile.GetLength();
 	//memfile.Detach();
 	file.Seek(0, CFile::begin);
@@ -1282,7 +1282,7 @@ ARXCMD3(testGetExtents)
 ARXCMD3(test_insertDwgWithXref)
 {
 	resbuf* rb = acutNewRb(RTSTR);
-	if (RTNORM != acedGetFileNavDialog(_T("Ñ¡ÔñDWGÎÄ¼ş"), NULL, _T("dwg"), NULL, 0, &rb))
+	if (RTNORM != acedGetFileNavDialog(_T("é€‰æ‹©DWGæ–‡ä»¶"), NULL, _T("dwg"), NULL, 0, &rb))
 		return;
 	ACHAR result[MAX_PATH];
 	if (RTNORM != acedFindFile(rb->resval.rstring, result))
@@ -1321,7 +1321,7 @@ ARXCMD3(test_insertDwgWithXref)
 	//	{
 	//		continue;
 	//	}
-	//	// ¼ì²éÊÇ·ñÊÇÍâ²¿²ÎÕÕµÄ¿é±í¼ÇÂ¼
+	//	// æ£€æŸ¥æ˜¯å¦æ˜¯å¤–éƒ¨å‚ç…§çš„å—è¡¨è®°å½•
 	//	if (!pBlkTabRcd->isFromExternalReference())
 	//	{
 	//		pBlkTabRcd->close();
@@ -1353,7 +1353,7 @@ ARXCMD3(delExtensionDicOfLineType)
 		pLineTypeRec->close();
 		if (dictObjId == NULL)
 		{
-			acutPrintf(_T("\n¸ÃÊµÌå²»´æÔÚÀ©Õ¹´Êµä"));
+			acutPrintf(_T("\nè¯¥å®ä½“ä¸å­˜åœ¨æ‰©å±•è¯å…¸"));
 			return;
 		}
 
@@ -1364,11 +1364,11 @@ ARXCMD3(delExtensionDicOfLineType)
 			if (pDict->has(_T("DGNLSDEF")))
 			{
 				pDict->remove(_T("DGNLSDEF"));
-				acutPrintf(_T("\nÒÑÉ¾³ıÀ©Õ¹´ÊµäDGNLSDEF"));
+				acutPrintf(_T("\nå·²åˆ é™¤æ‰©å±•è¯å…¸DGNLSDEF"));
 			}
 			else
 			{
-				acutPrintf(_T("\n²»´æÔÚÀ©Õ¹´ÊµäDGNLSDEF"));
+				acutPrintf(_T("\nä¸å­˜åœ¨æ‰©å±•è¯å…¸DGNLSDEF"));
 			}
 		}
 		pDict->close();
@@ -1380,7 +1380,7 @@ ARXCMD3(CusFilter)
 {
 	Adesk::Int32 len = 0;
 	ads_name selSet;
-	resbuf *rb = acutBuildList(RTDXF0, _T("LINE,ARC"), 8, _T("Í¼²ã1"), 62, 1, -3, 1001, _T("XData"), -3, 1000, _T("ASCII"), RTNONE);
+	resbuf *rb = acutBuildList(RTDXF0, _T("LINE,ARC"), 8, _T("å›¾å±‚1"), 62, 1, -3, 1001, _T("XData"), -3, 1000, _T("ASCII"), RTNONE);
 
 	if (RTNORM == ads_ssget(_T("A"), NULL, NULL, rb, selSet))
 	{
@@ -1395,8 +1395,8 @@ ARXCMD3(transformTest)
 {
 	resbuf* rb = acutNewRb(RTSTR);
 
-	if (RTNORM != acedGetFileNavDialog(_T("Ñ¡ÔñDWGÎÄ¼ş"), NULL, _T("dwg"), NULL, 0, &rb))
-		//if (RTNORM != acedGetFileD(_T("Ñ¡ÔñDWGÎÄ¼ş"), NULL, _T("dwg"), 0, rb))
+	if (RTNORM != acedGetFileNavDialog(_T("é€‰æ‹©DWGæ–‡ä»¶"), NULL, _T("dwg"), NULL, 0, &rb))
+		//if (RTNORM != acedGetFileD(_T("é€‰æ‹©DWGæ–‡ä»¶"), NULL, _T("dwg"), 0, rb))
 	{
 		return;
 	}
@@ -1439,7 +1439,7 @@ ARXCMD3(transformTest)
 		return;
 	}
 
-	//±éÀúÄ£ĞÍ¿Õ¼äµÄÊµÌå
+	//éå†æ¨¡å‹ç©ºé—´çš„å®ä½“
 	AcDbBlockTableRecordIterator *it(NULL);
 	pBlkTblRcd->newIterator(it);
 	for (it->start(); !it->done(); it->step())
@@ -1463,8 +1463,8 @@ ARXCMD3(transformTest)
 
 #include "geplin2d.h"
 /*
-	ÆäÖĞ ptOutÎªextÍâÒ»µã,
-	´íÎó: ptSide½á¹û×ÜÊÇ(0,0,0)
+	å…¶ä¸­ ptOutä¸ºextå¤–ä¸€ç‚¹,
+	é”™è¯¯: ptSideç»“æœæ€»æ˜¯(0,0,0)
 */
 ARXCMD3(GePLine2dClosestPointTo)
 {
@@ -1504,11 +1504,11 @@ void Test_plot()
 	AcDbPlotSettingsValidator* PlotSettingsValidator = NULL;
 	Acad::ErrorStatus es = Acad::eOk;
 	AcDbObjectId ObjectId = AcDbObjectId::kNull;
-	//´´½¨´òÓ¡ÒıÇæ
+	//åˆ›å»ºæ‰“å°å¼•æ“
 	es = AcPlPlotFactory::createPublishEngine(PlotEngine);
 	if (es == Acad::eOk)
 	{
-		//»ñÈ¡µ±Ç°»î¶¯µÄLayoutºÍ´òÓ¡ÉèÖÃ
+		//è·å–å½“å‰æ´»åŠ¨çš„Layoutå’Œæ‰“å°è®¾ç½®
 		AcPlPlotPageInfo PlotPageInfo;
 		AcPlPlotInfo PlotInfo;
 		AcDbLayout* Layout = NULL;
@@ -1523,23 +1523,23 @@ void Test_plot()
 		PlotSettings->copyFrom(Layout);
 		Layout->close();
 		BlockTableRecord->close();
-		//»ñÈ¡´òÓ¡»úÑéÖ¤Æ÷¶ÔÏó
+		//è·å–æ‰“å°æœºéªŒè¯å™¨å¯¹è±¡
 		PlotSettingsValidator = (AcDbPlotSettingsValidator*)acdbHostApplicationServices()->plotSettingsValidator();
-		//ÉèÖÃ´òÓ¡»ú(Õâ¸ö´òÓ¡»úÎªzwcad¿ª·ÅµÄ¸ßDPIµÄ´òÓ¡»ú)
+		//è®¾ç½®æ‰“å°æœº(è¿™ä¸ªæ‰“å°æœºä¸ºzwcadå¼€æ”¾çš„é«˜DPIçš„æ‰“å°æœº)
 		PlotSettingsValidator->setPlotCfgName(PlotSettings, _T("ZWCAD PDF(High Quality Print).pc5"));
 		PlotSettingsValidator->refreshLists(PlotSettings);
-		//ÉèÖÃÖ½ÕÅ
+		//è®¾ç½®çº¸å¼ 
 		es = PlotSettingsValidator->setCanonicalMediaName(PlotSettings, _T("ISO_A4(210.00_x_297.00_MM)"));
-		//ÉèÖÃ´òÓ¡±ÈÀıÎª±ê×¼²¼Âú
+		//è®¾ç½®æ‰“å°æ¯”ä¾‹ä¸ºæ ‡å‡†å¸ƒæ»¡
 		es = PlotSettingsValidator->setUseStandardScale(PlotSettings, Adesk::kTrue);
 		es = PlotSettingsValidator->setStdScaleType(PlotSettings, AcDbPlotSettings::kScaleToFit);
-		//´òÓ¡ÇøÓòÎª°´ÏÔÊ¾·¶Î§(µ±Ç°ÆÁÄ»ÏÔÊ¾·¶Î§)
+		//æ‰“å°åŒºåŸŸä¸ºæŒ‰æ˜¾ç¤ºèŒƒå›´(å½“å‰å±å¹•æ˜¾ç¤ºèŒƒå›´)
 		PlotSettingsValidator->setPlotType(PlotSettings, AcDbPlotSettings::kDisplay);
-		//¾ÓÖĞ´òÓ¡
+		//å±…ä¸­æ‰“å°
 		PlotSettingsValidator->setPlotCentered(PlotSettings, true);
-		//È¡Ïû´òÓ¡Ïß¿í£¨ÓÉÓÚÍ¼Ö½×ÖÌåµÄ¾«¶ÈÎÊÌâ£¬´òÓ¡Ïß¿í»áµ¼ÖÂ¾«¶ÈÉÏµÄËğÊ§£¬ÏÔµÃÊ®·ÖÄ£ºı£©
+		//å–æ¶ˆæ‰“å°çº¿å®½ï¼ˆç”±äºå›¾çº¸å­—ä½“çš„ç²¾åº¦é—®é¢˜ï¼Œæ‰“å°çº¿å®½ä¼šå¯¼è‡´ç²¾åº¦ä¸Šçš„æŸå¤±ï¼Œæ˜¾å¾—ååˆ†æ¨¡ç³Šï¼‰
 		PlotSettings->setPrintLineweights(false);
-		//¿ªÊ¼´òÓ¡
+		//å¼€å§‹æ‰“å°
 		PlotInfo.setLayout(ObjectId);
 		PlotInfo.setOverrideSettings(PlotSettings);
 		AcPlPlotInfoValidator validator;
@@ -1567,13 +1567,13 @@ void Test_plot()
 }
 ARXCMD3(createProcessTest)
 {
-	// ½ø³ÌĞÅÏ¢½á¹¹
+	// è¿›ç¨‹ä¿¡æ¯ç»“æ„
 	PROCESS_INFORMATION ProInfo;    
 
 	STARTUPINFO    StartInfo;
 	ZeroMemory(&StartInfo, sizeof(StartInfo));
 
-	// ÃüÁîĞĞÃüÁî¼°²ÎÊı
+	// å‘½ä»¤è¡Œå‘½ä»¤åŠå‚æ•°
 	//LPTSTR   szPrameter = TEXT("\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\" www.baidu.com");
 	LPTSTR   szPrameter = TEXT("\"C:\\Program Files\\ZWSOFT\\ZWCAD 2020\\zwcad.exe\" /p default /nologo");
 	TCHAR szCmdLine[2048] = { 0 };
@@ -1582,23 +1582,23 @@ ARXCMD3(createProcessTest)
 	ZeroMemory(&ProInfo, sizeof(ProInfo));
 
 	if (!CreateProcess(
-		NULL,                    // Ö´ĞĞµÄ³ÌĞòÃû
-		szCmdLine,               // ÃüÁîĞĞÖ¸¶¨
-		NULL,                    // ½ø³Ì°²È«ÊôĞÔ, NULLÊ±Ê¹ÓÃÄ¬ÈÏ°²È«ÊôĞÔ
-		NULL,                    // Ïß³Ì°²È«ÊôĞÔ, NULLÊ±Ê¹ÓÃÄ¬ÈÏ°²È«ÊôĞÔ
-		FALSE,                   // ²»¼Ì³Ğ¾ä±ú
-		0,                       // ½ø³Ì´´½¨±êÖ¾
-		NULL,                    // »·¾³±äÁ¿¿é, NULLÊ±Ê¹ÓÃ¸¸½ø³Ì»·¾³±äÁ¿
-		NULL,                    // ĞÂ½ø³ÌÄ¿Â¼
-		&StartInfo,              // Æô¶¯ĞÅÏ¢½á¹¹
-		&ProInfo)                // ½ø³ÌĞÅÏ¢½á¹¹
+		NULL,                    // æ‰§è¡Œçš„ç¨‹åºå
+		szCmdLine,               // å‘½ä»¤è¡ŒæŒ‡å®š
+		NULL,                    // è¿›ç¨‹å®‰å…¨å±æ€§, NULLæ—¶ä½¿ç”¨é»˜è®¤å®‰å…¨å±æ€§
+		NULL,                    // çº¿ç¨‹å®‰å…¨å±æ€§, NULLæ—¶ä½¿ç”¨é»˜è®¤å®‰å…¨å±æ€§
+		FALSE,                   // ä¸ç»§æ‰¿å¥æŸ„
+		0,                       // è¿›ç¨‹åˆ›å»ºæ ‡å¿—
+		NULL,                    // ç¯å¢ƒå˜é‡å—, NULLæ—¶ä½¿ç”¨çˆ¶è¿›ç¨‹ç¯å¢ƒå˜é‡
+		NULL,                    // æ–°è¿›ç¨‹ç›®å½•
+		&StartInfo,              // å¯åŠ¨ä¿¡æ¯ç»“æ„
+		&ProInfo)                // è¿›ç¨‹ä¿¡æ¯ç»“æ„
 		) 
 	{
 		acutPrintf(TEXT("CreateProcess failed : %d\n"), GetLastError());
 		return ;
 	}
 
-	// µÈ´ı×Ó½ø³Ì½áÊø
+	// ç­‰å¾…å­è¿›ç¨‹ç»“æŸ
 	WaitForSingleObject(ProInfo.hProcess, INFINITE);
 
 	CloseHandle(ProInfo.hProcess);
@@ -1632,13 +1632,13 @@ int ChangeSS2ID(ads_name ssname, AcDbObjectIdArray & objs)
 ARXCMD3(Test_QueueForRegen)
 {
 	CString strLayerName(_T("nolock"));
-	//»ñÈ¡É¸Ñ¡·¶Î§
+	//è·å–ç­›é€‰èŒƒå›´
 	struct resbuf eb1;
 	eb1.restype = 8; // Layer
 	eb1.resval.rstring = strLayerName.GetBuffer(0); // Layer name
 	eb1.rbnext = NULL;
 
-	//»ñÈ¡²ãÉÏµÄËùÓĞ¶ÔÏó
+	//è·å–å±‚ä¸Šçš„æ‰€æœ‰å¯¹è±¡
 	ads_name ssname;
 	int rc = acedSSGet(_T("X"), NULL, NULL, &eb1, ssname);
 	if (rc == RTNORM)
@@ -1696,7 +1696,7 @@ ARXCMD3(GetTextOfClipboard)
 #pragma endregion
 
 /**
-   @brief: Ëæ»úÊı²âÊÔ(Ã¿´ÎÆô¶¯ZUXXXXXXXX.zw$ÏàÍ¬)
+   @brief: éšæœºæ•°æµ‹è¯•(æ¯æ¬¡å¯åŠ¨ZUXXXXXXXX.zw$ç›¸åŒ)
    @param: void
    @ret: void
    @birth: created by ... on ...
@@ -1748,4 +1748,59 @@ ARXCMD3(id_database_test)
 	pCircle->close();
 
 	id.database();
+}
+
+// zcadæš‚ä¸æ”¯æŒåŒæ­¥å‘é€å‘½ä»¤ï¼›æ˜¯å¼‚æ­¥çš„ï¼Œå°†å‘½ä»¤å‘é€ç»™cadï¼Œä¸ä¼šç­‰å‘½ä»¤æ‰§è¡Œï¼Œè€Œæ˜¯è¿›è¡Œåé¢çš„æ­¥éª¤ï¼Œç›´åˆ°ä»£ç æ‰§è¡Œå®Œï¼Œæ‰æ‰§è¡Œå‘½ä»¤ã€‚
+ARXCMD3(Test_nanfang1)
+{
+	ads_point pt1;
+	int rc = acedGetPoint(NULL, _T("é€‰æ‹©ä¸€ä¸ªç‚¹"), pt1);
+
+#ifdef _ARX
+	acedCommandS(RTSTR, _T("circle"), RTSTR, _T("3p"), RT3DPOINT, asPnt3d(pt1), 0);
+#else
+	acedCommand(RTSTR, _T("circle"), RTSTR, _T("3p"), RT3DPOINT, asPnt3d(pt1), 0);
+#endif // _ARX
+	ads_name entname;
+	AcDbObjectId id;
+	if (ads_entlast(entname) == RTNORM)
+	{
+		if (acdbGetObjectId(id, entname) == Acad::eOk)
+		{
+			AcDbEntity* pEnt = nullptr;
+			if (Acad::eOk != acdbOpenObject(pEnt, id, AcDb::kForWrite))
+			{
+				return;
+			}
+			AcDbCircle* circle = (AcDbCircle*)pEnt;
+			circle->setColorIndex(1);
+			pEnt->close();
+		}
+	}
+}
+
+ARXCMD3(testIdPageErr)
+{
+	AcDbDatabase *pDb = new AcDbDatabase(/*true, false*/);
+
+	AcDbCircle *pCircle = new AcDbCircle(AcGePoint3d(0, 0, 0), AcGeVector3d(0, 0, 1), 100.0);
+	AcDbObjectId id;
+	CADUtils::AppendToModalSpace(pDb, pCircle, id);
+	pCircle->close();
+
+	Acad::ErrorStatus es = pDb->saveAs(_T("D:\\testIdPageErr.dwg")/*, false, AcDb::kDHL_1027*/);;  //default file path(â€ªC:\Users\Admin\Documents\)
+	if (es == Acad::eOk)
+		acutPrintf(_T("\nDwg was saved successfully!"));
+	else
+		acutPrintf(_T("\nFailed to save the Dwg! es = %s."), acadErrorStatusText(es));
+
+	delete pDb;
+	pDb = nullptr;
+
+	AcDbEntity *pEnt = nullptr;
+	if (id.isValid())
+		acutPrintf(_T("\n111"));
+	es = acdbOpenAcDbEntity(pEnt, id, AcDb::kForWrite);
+	pEnt->close();
+	acutPrintf(_T("\nes = %s."), acadErrorStatusText(es));
 }
