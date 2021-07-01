@@ -3,6 +3,14 @@
 
 #include "dbxrecrd.h"
 
+#ifdef ARX 
+#include "acedCmdNF.h"
+#undef  acedCommand
+#undef  ads_command
+#define acedCommand acedCommandS
+#define ads_command acedCommandS
+#endif
+
 #pragma region ExtensionDictionarySample
 
 // 添加实体扩展词典
@@ -293,3 +301,22 @@ void openDwgFileTest()
 }
 
 #pragma  endregion
+
+#pragma region CommandSample
+
+ARXCMD3(acedcommandTest)
+{
+#if 1
+	acedCommand(RTSTR, _T("LINE"), RT3DPOINT, AcGePoint3d(0, 0, 0), RT3DPOINT, AcGePoint3d(100, 100, 0), RTSTR, _T(""), RTNONE);
+#else //另一种方法
+	acedCommand(RTSTR, _T("LINE"), RTSTR, _T("0, 0"), RTSTR, _T("100, 100"), RTSTR, _T(""), RTNONE);
+#endif
+	acedCommand(RTSTR, _T("ZOOM"), RTSTR, "E", RTNONE);
+}
+ARXCMD3(acedcommandPauseTest)
+{
+	acedCommand(RTSTR, _T("CIRCLE"), RTSTR, _T("0, 0"), RTSTR, PAUSE, RTNONE);
+	acedCommand(RTSTR, _T("CIRCLE"), RTSTR, PAUSE, RTSTR, _T("100"), RTNONE);
+}
+
+#pragma endregion

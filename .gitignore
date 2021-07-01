@@ -36,4 +36,5 @@ tmp/
 *.obj
 *.pch
 *.cur
+obj/
 

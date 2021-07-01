@@ -36,7 +36,37 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
+class GeometryOverrule : public AcDbGeometryOverrule
+{
+public:
+	virtual  Acad::ErrorStatus intersectWith(
+		const AcDbEntity* pSubject,
+		const AcDbEntity* pEnt,
+		AcDb::Intersect intType,
+		AcGePoint3dArray& points,
+		Adesk::GsMarker thisGsMarker = 0,
+		Adesk::GsMarker otherGsMarker = 0) ADESK_OVERRIDE;
+	virtual  Acad::ErrorStatus intersectWith(
+		const AcDbEntity* pSubject,
+		const AcDbEntity* pEnt,
+		AcDb::Intersect intType,
+		const AcGePlane& projPlane,
+		AcGePoint3dArray& points,
+		Adesk::GsMarker thisGsMarker = 0,
+		Adesk::GsMarker otherGsMarker = 0) ADESK_OVERRIDE;
+	virtual  Acad::ErrorStatus getGeomExtents(const AcDbEntity* pSubject, AcDbExtents& extents) ADESK_OVERRIDE;
+	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
+};
+
+class VisibilityOverrule : public AcDbVisibilityOverrule
+{
+public:
+	virtual AcDb::Visibility visibility(const AcDbEntity* pSubject) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus setVisibility(AcDbEntity* pSubject, AcDb::Visibility newVal, Adesk::Boolean doSubents = true) ADESK_OVERRIDE;
+	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
+};
 #endif
+
 
 #if ZRX == 2020 || ARX == 2013
 #define subWorldDraw worldDraw

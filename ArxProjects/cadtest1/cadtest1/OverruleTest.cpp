@@ -112,16 +112,19 @@ Acad::ErrorStatus HighlightStateOverrule::pushHighlight(AcDbEntity* pSubject, co
 	acutPrintf(_T("\nHighlightStateOverrule::pushHighlight"));
 	return AcDbHighlightStateOverrule::pushHighlight(pSubject, subId, highlightStyle);
 }
+
 Acad::ErrorStatus HighlightStateOverrule::popHighlight(AcDbEntity* pSubject, const AcDbFullSubentPath& subId)
 {
 	acutPrintf(_T("\nHighlightStateOverrule::popHighlight"));
 	return AcDbHighlightStateOverrule::popHighlight(pSubject, subId);
 }
+
 AcGiHighlightStyle HighlightStateOverrule::highlightState(AcDbEntity* pSubject, const AcDbFullSubentPath& subId)
 {
 	acutPrintf(_T("\nHighlightStateOverrule::highlightState"));
 	return AcDbHighlightStateOverrule::highlightState(pSubject, subId);
 }
+
 bool HighlightStateOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
 {
 	return pOverruledSubject->isKindOf(AcDbLine::desc()) || pOverruledSubject->isKindOf(AcDbCircle::desc());
@@ -152,6 +155,60 @@ ARXCMD3(addHighlightStateOverrule)
 	AcRxOverrule::setIsOverruling(true);
 
 	acutPrintf(_T("\nHighlightStateOverrule is ON..."));
+}
+
+#pragma endregion
+
+#pragma region VisibilityOverrule
+
+AcDb::Visibility VisibilityOverrule::visibility(const AcDbEntity* pSubject)
+{
+	acutPrintf(_T("\nVisibilityOverrule::visibility..."));
+	return AcDbVisibilityOverrule::visibility(pSubject);
+}
+
+Acad::ErrorStatus VisibilityOverrule::setVisibility(AcDbEntity* pSubject, AcDb::Visibility newVal, Adesk::Boolean doSubents/* = true*/)
+{
+	acutPrintf(_T("\nVisibilityOverrule::setVisibility..."));
+
+	// ½«Ô²ÉèÖÃÎªkInvisible
+	if (pSubject->isKindOf(AcDbCircle::desc()) || pSubject->isKindOf(CustomLine::desc()))
+		return AcDbVisibilityOverrule::setVisibility(pSubject, AcDb::kInvisible, doSubents);
+
+	return AcDbVisibilityOverrule::setVisibility(pSubject, newVal, doSubents);
+}
+
+bool VisibilityOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
+{
+	return pOverruledSubject->isKindOf(AcDbLine::desc()) || pOverruledSubject->isKindOf(AcDbCircle::desc()) || pOverruledSubject->isKindOf(CustomLine::desc());
+}
+
+static VisibilityOverrule* s_g_visibilityOverrule = nullptr;
+ARXCMD3(removeVisibilityOverrule)
+{
+	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_visibilityOverrule);
+	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_visibilityOverrule);
+	AcRxOverrule::setIsOverruling(false);
+
+	if (s_g_visibilityOverrule)
+	{
+		delete s_g_visibilityOverrule;
+		s_g_visibilityOverrule = nullptr;
+	}
+
+	acutPrintf(_T("\nVisibilityOverrule is OFF..."));
+}
+
+ARXCMD3(addVisibilityOverrule)
+{
+	removeVisibilityOverrule();
+
+	s_g_visibilityOverrule = new VisibilityOverrule;
+	AcRxOverrule::addOverrule(AcDbLine::desc(), s_g_visibilityOverrule);
+	AcRxOverrule::addOverrule(AcDbCircle::desc(), s_g_visibilityOverrule);
+	AcRxOverrule::setIsOverruling(true);
+
+	acutPrintf(_T("\nVisibilityOverrule is ON..."));
 }
 
 #pragma endregion
@@ -317,9 +374,17 @@ Acad::ErrorStatus CustomLine::subTransformBy(const AcGeMatrix3d& xform)
 REGISTER_OBJECT(CustomLine);
 ARXCMD3(CustomLineCreate)
 {
-	CustomLine *pCusLine = new CustomLine(AcGePoint3d(100, 100, 0), AcGePoint3d(600, 100, 0));
-	AcDbObjectId id;
-	CADUtils::AppendToModalSpace(pCusLine, id);
-	pCusLine->close();
+	ads_point pt1, pt2;
+	if (RTNORM == acedGetPoint(NULL, L"Start Point:", pt1))
+	{
+		if (RTNORM == acedGetPoint(pt1, L"End Point:", pt2))
+		{
+			//CustomLine *pCusLine = new CustomLine(AcGePoint3d(100, 100, 0), AcGePoint3d(600, 100, 0));
+			CustomLine *pCusLine = new CustomLine(AcGePoint3d(pt1[X], pt1[Y], 0), AcGePoint3d(pt2[X], pt2[Y], 0));
+			AcDbObjectId id;
+			CADUtils::AppendToModalSpace(pCusLine, id);
+			pCusLine->close();
+		}
+	}
 }
 #pragma endregion

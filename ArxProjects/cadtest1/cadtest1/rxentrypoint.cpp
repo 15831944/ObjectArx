@@ -22,8 +22,14 @@ void initapp()
 	}
 }
 
+extern void removeHighlightStateOverrule();
+extern void removeHighlightOverrule();
+extern void removeVisibilityOverrule();
 void unloadapp()
 {
+	removeHighlightStateOverrule();
+	removeHighlightOverrule();
+	removeVisibilityOverrule();
     acedRegCmds->removeGroup(cmd_group_name);
 }
 

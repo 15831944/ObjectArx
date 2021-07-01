@@ -4,6 +4,7 @@
 #include "dbapserv.h"
 #include "migrtion.h"
 #include "acestext.h"
+#include "dbidmap.h"
 
 #ifdef ARX 
 #include "acedCmdNF.h"
@@ -1794,13 +1795,141 @@ ARXCMD3(testIdPageErr)
 	else
 		acutPrintf(_T("\nFailed to save the Dwg! es = %s."), acadErrorStatusText(es));
 
-	delete pDb;
-	pDb = nullptr;
-
 	AcDbEntity *pEnt = nullptr;
 	if (id.isValid())
 		acutPrintf(_T("\n111"));
 	es = acdbOpenAcDbEntity(pEnt, id, AcDb::kForWrite);
+	AcDbObjectId idCur;
+	CADUtils::AppendToModalSpace(pEnt, idCur);
 	pEnt->close();
+	acutPrintf(_T("\n222"));
+
+	delete pDb;
+	pDb = nullptr;
+
+	curDoc()->database()->saveAs(_T("D:\\testIdPageErr1.dwg"));
+
 	acutPrintf(_T("\nes = %s."), acadErrorStatusText(es));
+}
+
+void newSyncDocHelper(void *pData)
+{
+	AcApDocument* pDoc = acDocManager->curDocument();
+	if (acDocManager->isApplicationContext()) {
+		acutPrintf(L"\nSucessfully Switched to App. Context\n");
+		acDocManager->appContextNewDocument((const wchar_t *)pData);
+		acutPrintf(L"\nOpened a new document synchronously.\n");
+	}
+	else
+		acutPrintf(L"\nERROR: in Document context : %s\n", pDoc->fileName());
+}
+ARXCMD3(newSyncDoc)
+{
+#if ARX
+	static char pData[] = /*NOXLATE*/"acad.dwt";
+#else
+	static char pData[] = /*NOXLATE*/"zwcad.dwt";
+#endif
+
+	AcApDocument* pDoc = acDocManager->curDocument();
+	if (pDoc) {
+		acutPrintf(L"\nCurrently in Document context : %s, Switching to App.\n", pDoc->fileName());
+		acDocManager->executeInApplicationContext(newSyncDocHelper, (void *)pData);
+	}
+}
+ARXCMD3(testExeInApp1)
+{
+	acedCommand(RTSTR, L"circle", RTSTR, L"0,0", RTSTR, L"10", RTSTR, L"", RTNONE);
+	newSyncDoc();
+}
+ARXCMD3(testExeInApp2)
+{
+	acedCommand(RTSTR, L"circle", RTSTR, L"0,0", RTSTR, L"15", RTSTR, L"", RTNONE);
+	testExeInApp1();
+}
+
+/**
+	@ref CQGD 2021.07.01
+*/
+AcDbVoidPtrArray GetDbObjColl(AcDbDatabase* sourceDb, AcDbDatabase* db, bool isCommit, AcDbObjectIdArray *oids)
+{
+	AcDbVoidPtrArray array;
+	AcDbBlockTable *pBlockTable;
+	db->getSymbolTable(pBlockTable, AcDb::kForRead);
+
+	AcDbBlockTableRecord *pBlockTableRecord;
+	pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord, AcDb::kForWrite);
+	if (oids == NULL)
+	{
+		// 新建块表记录存储源数据库中的记录
+		CString name = L"DRDATA";
+		int nIndex = 0;
+		//while (pBlockTable->has(QSTR2ZTCHAR(QString("%1%2").arg(name).arg(nIndex))))
+		while (pBlockTable->has(name))
+		{
+			nIndex++;
+		}
+		//name = name + QString::number(nIndex);
+		name.Format(_T("DRDATA%d"), nIndex);
+		AcDbObjectId idBTR;
+		Acad::ErrorStatus status = db->insert(idBTR, name, sourceDb, false);
+		if (status == Acad::eOk)
+		{
+			if (isCommit)
+			{
+				AcDbBlockReference* bref = new AcDbBlockReference(AcGePoint3d(0, 0, 0), idBTR);
+				Acad::ErrorStatus es = pBlockTableRecord->appendAcDbEntity(bref);
+				bref->explodeToOwnerSpace();
+				bref->erase();
+				bref->close();
+			}
+			AcDbBlockReference* bref = new AcDbBlockReference(AcGePoint3d(0, 0, 0), idBTR);
+			bref->explode(array);
+			bref->close();
+		}
+	}
+	else
+	{
+		long pos = 0;
+		AcDbIdMapping acIdMap;
+		sourceDb->wblockCloneObjects(*oids, pBlockTableRecord->objectId(), acIdMap, AcDb::kDrcIgnore, false);
+		AcDbBlockTableRecordIterator *it = NULL;
+		pBlockTableRecord->newIterator(it);
+		for (it->start(); !it->done(); it->step())
+		{
+			AcDbEntity *pEnt = NULL;
+			Acad::ErrorStatus es = it->getEntity(pEnt, AcDb::kForRead);
+			if (es == Acad::eOk)
+			{
+				AcDbHandle handle;
+				pEnt->getAcDbHandle(handle);
+				if (pEnt && ((long)handle) > pos)
+				{
+					if (!isCommit)
+					{
+						pEnt->erase();
+					}
+					array.append(pEnt->clone());
+				}
+				pEnt->close();
+			}
+		}
+		delete it;
+	}
+	pBlockTable->close();
+	pBlockTableRecord->close();
+	return array;
+}
+
+ARXCMD3(Test_readBlockToCurDb)
+{
+	AcDbDatabase* pDb = new AcDbDatabase(Adesk::kFalse, true);
+	CString path = _T("D:\\aaa.dwg");
+	if (Acad::eOk != pDb->readDwgFile(path, AcDbDatabase::OpenMode::kForReadAndAllShare, true))
+	{
+		return;
+	}
+	acDocManager->lockDocument(acDocManager->mdiActiveDocument());
+	AcDbVoidPtrArray dbObj = GetDbObjColl(pDb, acDocManager->mdiActiveDocument()->database(), true, NULL);
+	delete pDb;
 }
