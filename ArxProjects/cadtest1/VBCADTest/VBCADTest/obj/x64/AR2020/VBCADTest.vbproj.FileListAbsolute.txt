@@ -1,7 +1,6 @@
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\bin\x64\AR2020\VBCADTest.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\bin\x64\AR2020\VBCADTest.pdb
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\bin\x64\AR2020\VBCADTest.xml
-D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\AR2020\VBCADTest.vbprojAssemblyReference.cache
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\AR2020\VBCADTest.Resources.resources
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\AR2020\VBCADTest.vbproj.GenerateResource.cache
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\AR2020\VBCADTest.vbproj.CoreCompileInputs.cache

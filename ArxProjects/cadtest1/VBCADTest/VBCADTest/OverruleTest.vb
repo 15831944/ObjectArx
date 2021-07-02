@@ -91,6 +91,41 @@ Namespace OverruleTest
         End Function
     End Class
 
+    Public Class MyVisibilityOverrule
+        Inherits VisibilityOverrule
+
+        Public Overrides Function Visibility(entity As Entity) As Visibility
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            ed.WriteMessage(vbLf + "MyVisibilityOverrule::visibility()<pSubject: {0}>...", entity.GetType().Name)
+
+            Return MyBase.Visibility(entity)
+        End Function
+
+        Public Overrides Sub SetVisibility(entity As Entity, newVal As Visibility, doSubents As Boolean)
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            ed.WriteMessage("\nMyVisibilityOverrule::SetVisibility()<pSubject: {0}>...", entity.GetType().Name)
+            If (entity.GetType() = GetType(Circle)) Then
+#If ARX Then
+                MyBase.SetVisibility(entity, Autodesk.AutoCAD.DatabaseServices.Visibility.Invisible, doSubents)
+#Else
+                MyBase.SetVisibility(entity, ZwSoft.ZwCAD.DatabaseServices.Visibility.Invisible, doSubents)
+#End If
+                Return
+            End If
+
+            MyBase.SetVisibility(entity, newVal, doSubents)
+        End Sub
+
+        Public Overrides Function IsApplicable(overruledSubject As RXObject) As Boolean
+            'Return MyBase.IsApplicable(overruledSubject)
+            Return True
+        End Function
+    End Class
+
     Public Class Commands
 
         Shared g_highlightOverrule As MyHighlightOverrule
@@ -138,6 +173,30 @@ Namespace OverruleTest
                 g_highlightStateOverrule = Nothing
 
                 ed.WriteMessage(vbLf + "HighlightStateOverrule is OFF...")
+            End If
+        End Sub
+
+        Shared g_visibilityOverrule As MyVisibilityOverrule
+        <CommandMethod("TestVBGroup", "VisibilityOverruleTest", CommandFlags.Modal)>
+        Public Sub VisibilityOverruleTest()
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            If g_visibilityOverrule Is Nothing Then
+                g_visibilityOverrule = New MyVisibilityOverrule()
+
+                Overrule.AddOverrule(RXObject.GetClass(GetType(Line)), g_visibilityOverrule, False)
+                Overrule.AddOverrule(RXObject.GetClass(GetType(Circle)), g_visibilityOverrule, False)
+                Overrule.Overruling = True
+
+                ed.WriteMessage(vbLf + "VisibilityOverrule is ON...")
+            Else
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(Line)), g_visibilityOverrule)
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(Circle)), g_visibilityOverrule)
+                Overrule.Overruling = False
+                g_visibilityOverrule = Nothing
+
+                ed.WriteMessage(vbLf + "VisibilityOverrule is OFF...")
             End If
         End Sub
 

@@ -36,6 +36,14 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
+class VisibilityOverrule : public AcDbVisibilityOverrule
+{
+public:
+	virtual AcDb::Visibility visibility(const AcDbEntity* pSubject) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus setVisibility(AcDbEntity* pSubject, AcDb::Visibility newVal, Adesk::Boolean doSubents = true) ADESK_OVERRIDE;
+	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
+};
+
 class GeometryOverrule : public AcDbGeometryOverrule
 {
 public:
@@ -58,13 +66,6 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
-class VisibilityOverrule : public AcDbVisibilityOverrule
-{
-public:
-	virtual AcDb::Visibility visibility(const AcDbEntity* pSubject) ADESK_OVERRIDE;
-	virtual Acad::ErrorStatus setVisibility(AcDbEntity* pSubject, AcDb::Visibility newVal, Adesk::Boolean doSubents = true) ADESK_OVERRIDE;
-	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
-};
 #endif
 
 

@@ -24,7 +24,6 @@ D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\bin\x64\ARX2020\zh-CN\
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\bin\x64\ARX2020\zh-CN\AdWindows.resources.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\bin\x64\ARX2020\zh-CN\AcMr.resources.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\bin\x64\ARX2020\zh-CN\AcWindows.resources.dll
-D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NetCADTest.csprojAssemblyReference.cache
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\Interop.ZWCAD.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NetCADTest.csproj.ResolveComReference.cache
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NETCAD.Form1.resources
@@ -33,3 +32,4 @@ D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NetCADT
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NetCADTest.csproj.CopyComplete
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NETCAD.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NETCAD.pdb
+D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\NetCADTest\obj\x64\AR2020\NetCADTest.csprojAssemblyReference.cache

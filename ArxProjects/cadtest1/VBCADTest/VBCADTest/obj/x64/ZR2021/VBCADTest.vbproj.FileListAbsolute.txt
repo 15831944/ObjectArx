@@ -29,3 +29,4 @@ D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\ZR202
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\ZR2021\VBCADTest.dll
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\ZR2021\VBCADTest.xml
 D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\ZR2021\VBCADTest.pdb
+D:\DDDD\ARXTEST\ObjectArx\ArxProjects\cadtest1\VBCADTest\VBCADTest\obj\x64\ZR2021\VBCADTest.vbprojAssemblyReference.cache

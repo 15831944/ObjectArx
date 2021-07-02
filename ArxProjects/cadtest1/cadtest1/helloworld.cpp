@@ -952,27 +952,6 @@ ARXCMD3(Test_Viewport)
 
 }
 
-ARXCMD3(test_getInteraction)
-{
-	AcDbObjectId id1, id2;
-	CADUtils::SelectEntity(_T("ent1:"), id1);
-	CADUtils::SelectEntity(_T("ent2:"), id2);
-
-	AcDbEntity* ent1 = nullptr, *ent2 = nullptr;
-	Acad::ErrorStatus es;
-	AcGePoint3dArray points;
-	es = acdbOpenAcDbEntity(ent1, id1, AcDb::kForRead);
-	es = acdbOpenAcDbEntity(ent2, id2, AcDb::kForRead);
-	ent1->intersectWith(ent2, AcDb::kOnBothOperands, points);
-	acutPrintf(_T("\npoints1 length: %d"), points.length());
-	for (int i = 0; i < points.length(); i++)
-	{
-		acutPrintf(_T("\nptInc[%d]: (%g, %g, %g)"), i, points[i].x, points[i].y, points[i].z);
-	}
-	ent1->close();
-	ent2->close();
-}
-
 ARXCMD3(test_AcCmColor)
 {
 	AcCmColor color;
@@ -1851,6 +1830,7 @@ ARXCMD3(testExeInApp2)
 /**
 	@ref CQGD 2021.07.01
 */
+#if ZRX != 2020
 AcDbVoidPtrArray GetDbObjColl(AcDbDatabase* sourceDb, AcDbDatabase* db, bool isCommit, AcDbObjectIdArray *oids)
 {
 	AcDbVoidPtrArray array;
@@ -1933,3 +1913,4 @@ ARXCMD3(Test_readBlockToCurDb)
 	AcDbVoidPtrArray dbObj = GetDbObjColl(pDb, acDocManager->mdiActiveDocument()->database(), true, NULL);
 	delete pDb;
 }
+#endif

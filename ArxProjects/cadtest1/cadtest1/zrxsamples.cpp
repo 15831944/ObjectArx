@@ -320,3 +320,34 @@ ARXCMD3(acedcommandPauseTest)
 }
 
 #pragma endregion
+
+#pragma region EntSelSample
+
+ARXCMD3(entSelSampe)
+{
+	ads_name entName;
+	ads_point adsPt;
+	int nRet = acedEntSel(_T("\nSelect a Entity:"), entName, adsPt);
+	if (nRet == RTNORM)
+	{
+		AcDbObjectId objId;
+		Acad::ErrorStatus es = Acad::eOk;
+		if ((es = acdbGetObjectId(objId, entName)) != Acad::eOk)
+		{
+			acutPrintf(_T("\nErrorStatus = %s"), acadErrorStatusText(es));
+			return;
+		}
+
+		AcDbEntity* pEnt = nullptr;
+		if ((es = acdbOpenAcDbEntity(pEnt, objId, AcDb::kForRead)) != Acad::eOk)
+		{
+			acutPrintf(_T("\nErrorStatus = %s"), acadErrorStatusText(es));
+			return;
+		}
+
+		acutPrintf(_T("\nThe Entity you select is %s"), pEnt->isA()->name());
+		pEnt->close();
+	}
+}
+
+#pragma endregion

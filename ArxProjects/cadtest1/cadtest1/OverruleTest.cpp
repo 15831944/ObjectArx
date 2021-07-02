@@ -79,17 +79,17 @@ ARXCMD3(HighlightOverruleTest)
 
 ARXCMD3(removeHighlightOverrule)
 {
-	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightOverrule);
-	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
-	AcRxOverrule::setIsOverruling(false);
-
 	if (s_g_highlightOverrule)
 	{
+		AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightOverrule);
+		AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightOverrule);
+		AcRxOverrule::setIsOverruling(false);
+
 		delete s_g_highlightOverrule;
 		s_g_highlightOverrule = nullptr;
-	}
 
-	acutPrintf(_T("\nHighlightOverrule is OFF..."));
+		acutPrintf(_T("\nHighlightOverrule is OFF..."));
+	}
 }
 ARXCMD3(addHighlightOverrule)
 {
@@ -133,17 +133,17 @@ bool HighlightStateOverrule::isApplicable(const AcRxObject* pOverruledSubject) c
 static HighlightStateOverrule* s_g_highlightStateOverrule = nullptr;
 ARXCMD3(removeHighlightStateOverrule)
 {
-	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightStateOverrule);
-	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightStateOverrule);
-	AcRxOverrule::setIsOverruling(false);
-
 	if (s_g_highlightStateOverrule)
 	{
+		AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_highlightStateOverrule);
+		AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_highlightStateOverrule);
+		AcRxOverrule::setIsOverruling(false);
+
 		delete s_g_highlightStateOverrule;
 		s_g_highlightStateOverrule = nullptr;
-	}
 
-	acutPrintf(_T("\nHighlightStateOverrule is OFF..."));
+		acutPrintf(_T("\nHighlightStateOverrule is OFF..."));
+	}
 }
 ARXCMD3(addHighlightStateOverrule)
 {
@@ -163,13 +163,13 @@ ARXCMD3(addHighlightStateOverrule)
 
 AcDb::Visibility VisibilityOverrule::visibility(const AcDbEntity* pSubject)
 {
-	acutPrintf(_T("\nVisibilityOverrule::visibility..."));
+	acutPrintf(_T("\nVisibilityOverrule::visibility<pSubject: %s>..."), pSubject->isA()->name());
 	return AcDbVisibilityOverrule::visibility(pSubject);
 }
 
 Acad::ErrorStatus VisibilityOverrule::setVisibility(AcDbEntity* pSubject, AcDb::Visibility newVal, Adesk::Boolean doSubents/* = true*/)
 {
-	acutPrintf(_T("\nVisibilityOverrule::setVisibility..."));
+	acutPrintf(_T("\nVisibilityOverrule::setVisibility<pSubject: %s>..."), pSubject->isA()->name());
 
 	// ½«Ô²ÉèÖÃÎªkInvisible
 	if (pSubject->isKindOf(AcDbCircle::desc()) || pSubject->isKindOf(CustomLine::desc()))
@@ -180,23 +180,23 @@ Acad::ErrorStatus VisibilityOverrule::setVisibility(AcDbEntity* pSubject, AcDb::
 
 bool VisibilityOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
 {
-	return pOverruledSubject->isKindOf(AcDbLine::desc()) || pOverruledSubject->isKindOf(AcDbCircle::desc()) || pOverruledSubject->isKindOf(CustomLine::desc());
+	return true;
 }
 
 static VisibilityOverrule* s_g_visibilityOverrule = nullptr;
 ARXCMD3(removeVisibilityOverrule)
 {
-	AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_visibilityOverrule);
-	AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_visibilityOverrule);
-	AcRxOverrule::setIsOverruling(false);
-
 	if (s_g_visibilityOverrule)
 	{
+		AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_visibilityOverrule);
+		AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_visibilityOverrule);
+		AcRxOverrule::setIsOverruling(false);
+
 		delete s_g_visibilityOverrule;
 		s_g_visibilityOverrule = nullptr;
-	}
 
-	acutPrintf(_T("\nVisibilityOverrule is OFF..."));
+		acutPrintf(_T("\nVisibilityOverrule is OFF..."));
+	}
 }
 
 ARXCMD3(addVisibilityOverrule)
@@ -209,6 +209,141 @@ ARXCMD3(addVisibilityOverrule)
 	AcRxOverrule::setIsOverruling(true);
 
 	acutPrintf(_T("\nVisibilityOverrule is ON..."));
+}
+
+#pragma endregion
+
+#pragma region GeometryOverrule
+
+Acad::ErrorStatus GeometryOverrule::intersectWith(
+	const AcDbEntity* pSubject,
+	const AcDbEntity* pEnt,
+	AcDb::Intersect intType,
+	AcGePoint3dArray& points,
+	Adesk::GsMarker thisGsMarker/* = 0*/,
+	Adesk::GsMarker otherGsMarker/* = 0*/)
+{
+	acutPrintf(_T("\nGeometryOverrule::intersectWith()<pSubject: %s>..."), pSubject->isA()->name());
+	AcGePoint3dArray tmpPoints;
+	Acad::ErrorStatus es/* = AcDbGeometryOverrule::intersectWith(pSubject, pEnt, intType, tmpPoints, thisGsMarker, otherGsMarker)*/;
+	if (pSubject->isKindOf(AcDbLine::desc()))
+	{
+		AcGePoint3d pt1(50, 50, 0), pt2(100, 100, 0);
+		points.append(pt1);
+		points.append(pt2);
+		acutPrintf(_T("\n<AcDbLine> Find %d Points"), points.length());
+	}
+	else if (pSubject->isKindOf(AcDbCircle::desc()))
+	{
+		AcGePoint3d pt(1, 1, 0);
+		points.append(pt);
+		acutPrintf(_T("\n<AcDbCircle> Find %d Points"), points.length());
+	}
+	else
+	{
+		AcGePoint3d pt(2, 2, 0);
+		points.append(pt);
+		acutPrintf(_T("\n<OtherType> Find %d Points"), points.length());
+	}
+
+	//return AcDbGeometryOverrule::intersectWith(pSubject, pEnt, intType, points, thisGsMarker, otherGsMarker);  // include real intersection and all intersection of the two entities
+	return AcDbGeometryOverrule::intersectWith(pSubject, pEnt, intType, tmpPoints, thisGsMarker, otherGsMarker); 
+}
+Acad::ErrorStatus GeometryOverrule::intersectWith(
+	const AcDbEntity* pSubject,
+	const AcDbEntity* pEnt,
+	AcDb::Intersect intType,
+	const AcGePlane& projPlane,
+	AcGePoint3dArray& points,
+	Adesk::GsMarker thisGsMarker/* = 0*/,
+	Adesk::GsMarker otherGsMarker/* = 0*/)
+{
+	acutPrintf(_T("\nGeometryOverrule::intersectWith(AcGePlane)<pSubject: %s>..."), pSubject->isA()->name());
+	AcGePoint3dArray tmpPoints;
+
+	if (pSubject->isKindOf(AcDbLine::desc()))
+	{
+		AcGePoint3d pt1(50, 50, 0), pt2(100, 100, 0);
+		points.append(pt1);
+		points.append(pt2);
+		acutPrintf(_T("\n<AcDbLine> Find %d Points"), points.length());
+	}
+	else if (pSubject->isKindOf(AcDbCircle::desc()))
+	{
+		AcGePoint3d pt(1, 1, 0);
+		points.append(pt);
+		acutPrintf(_T("\n<AcDbCircle> Find %d Points"), points.length());
+	}
+	else
+	{
+		AcGePoint3d pt(2, 2, 0);
+		points.append(pt);
+		acutPrintf(_T("\n<OtherType> Find %d Points"), points.length());
+	}
+
+	return AcDbGeometryOverrule::intersectWith(pSubject, pEnt, intType, projPlane, tmpPoints, thisGsMarker, otherGsMarker);
+}
+Acad::ErrorStatus GeometryOverrule::getGeomExtents(const AcDbEntity* pSubject, AcDbExtents& extents)
+{
+	acutPrintf(_T("\nGeometryOverrule::getGeomExtents()<pSubject: %s>..."), pSubject->isA()->name());
+	AcDbExtents extTemp; 
+
+	if (pSubject->isKindOf(AcDbLine::desc()))
+	{
+		AcGePoint3d ptMax(100, 100, 0), ptMin(5, 5, 0);
+		extents.addPoint(ptMax);
+		extents.addPoint(ptMin);
+		acutPrintf(_T("\nAcDbLine extents: (%g, %g)-->(%g, %g)"), ptMin.x, ptMin.y, ptMax.x, ptMax.y);
+	}
+	else if (pSubject->isKindOf(AcDbCircle::desc()))
+	{
+		AcGePoint3d ptMax(50, 50, 0), ptMin(0, 0, 0);
+		extents.addPoint(ptMax);
+		extents.addPoint(ptMin);
+		acutPrintf(_T("\nAcDbCircle extents: (%g, %g)-->(%g, %g)"), ptMin.x, ptMin.y, ptMax.x, ptMax.y);
+	}
+	else
+	{
+		AcGePoint3d ptMax(20, 20, 0), ptMin(0, 0, 0);
+		extents.addPoint(ptMax);
+		extents.addPoint(ptMin);
+		acutPrintf(_T("\nOtherType extents: (%g, %g)-->(%g, %g)"), ptMin.x, ptMin.y, ptMax.x, ptMax.y);
+	}
+
+	return AcDbGeometryOverrule::getGeomExtents(pSubject, extTemp);
+}
+bool GeometryOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
+{
+	return true;
+}
+
+static GeometryOverrule* s_g_geometryOverrule = nullptr;
+ARXCMD3(removeGeometryOverrule)
+{
+	if (s_g_geometryOverrule)
+	{
+		AcRxOverrule::removeOverrule(AcDbLine::desc(), s_g_geometryOverrule);
+		AcRxOverrule::removeOverrule(AcDbCircle::desc(), s_g_geometryOverrule);
+		AcRxOverrule::removeOverrule(AcDbPolyline::desc(), s_g_geometryOverrule);
+		AcRxOverrule::setIsOverruling(false);
+
+		delete s_g_geometryOverrule;
+		s_g_geometryOverrule = nullptr;
+
+		acutPrintf(_T("\nGeometryOverrule is OFF..."));
+	}
+}
+ARXCMD3(addGeometryOverrule)
+{
+	removeGeometryOverrule();
+
+	s_g_geometryOverrule = new GeometryOverrule;
+	AcRxOverrule::addOverrule(AcDbLine::desc(), s_g_geometryOverrule);
+	AcRxOverrule::addOverrule(AcDbCircle::desc(), s_g_geometryOverrule);
+	AcRxOverrule::addOverrule(AcDbPolyline::desc(), s_g_geometryOverrule);
+	AcRxOverrule::setIsOverruling(true);
+
+	acutPrintf(_T("\nGeometryOverrule is ON..."));
 }
 
 #pragma endregion

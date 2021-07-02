@@ -21,15 +21,21 @@ void initapp()
 		}
 	}
 }
-
+#if ARX == 2020 || ZRX ==2021
 extern void removeHighlightStateOverrule();
 extern void removeHighlightOverrule();
 extern void removeVisibilityOverrule();
+extern void removeGeometryOverrule();
+#endif
 void unloadapp()
 {
+#if ARX == 2020 || ZRX ==2021
 	removeHighlightStateOverrule();
 	removeHighlightOverrule();
 	removeVisibilityOverrule();
+	removeGeometryOverrule();
+#endif
+
     acedRegCmds->removeGroup(cmd_group_name);
 }
 

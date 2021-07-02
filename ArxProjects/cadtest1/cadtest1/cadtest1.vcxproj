@@ -650,9 +650,7 @@
     <ClCompile Include="myline.cpp" />
     <ClCompile Include="OverruleTest.cpp" />
     <ClCompile Include="PmDbLinetmpJig.cpp" />
-    <ClCompile Include="PMTestWblock0603.cpp" />
-    <ClCompile Include="PMTestWblock0604.cpp" />
-    <ClCompile Include="PMTestWblock0617.cpp" />
+    <ClCompile Include="PMTestWblock_lst.cpp" />
     <ClCompile Include="PM_WBlockClone.cpp" />
     <ClCompile Include="rxentrypoint.cpp" />
     <ClCompile Include="SelEntOnUnLockLayer.cpp" />

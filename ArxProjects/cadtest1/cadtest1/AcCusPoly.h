@@ -1,6 +1,6 @@
 // AcCuspoly.h
 
-#if _MSC_VER > 1000
+#if _MSC_VER > 1000 /* MSVC++ 4.0   _MSC_VER == 1000 (Developer Studio 4.0) */
 #pragma once
 #endif
 

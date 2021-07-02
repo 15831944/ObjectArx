@@ -75,16 +75,7 @@
     <ClCompile Include="DragMultiEntities.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="PMTestWblock0603.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="PMTestWblock0604.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="AcCusPoly.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="PMTestWblock0617.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="OverruleTest.cpp">
@@ -94,6 +85,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="AcEdJigTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="PMTestWblock_lst.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
