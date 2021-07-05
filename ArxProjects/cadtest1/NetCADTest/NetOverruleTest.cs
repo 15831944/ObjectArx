@@ -365,7 +365,7 @@ namespace NetOverruleTest
                 Point3d ptMax = new Point3d(100, 100, 0), ptMin = new Point3d(5, 5, 0);
                 extents.AddPoint(ptMax);
                 extents.AddPoint(ptMin);
-                ed.WriteMessage("\nAcDbLine extents: (%{0}, %{1})-->(%{2}, %{3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
+                ed.WriteMessage("\nAcDbLine extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
 
                 return extents;
             }
@@ -374,7 +374,7 @@ namespace NetOverruleTest
                 Point3d ptMax = new Point3d(50, 50, 0), ptMin = new Point3d(0, 0, 0);
                 extents.AddPoint(ptMax);
                 extents.AddPoint(ptMin);
-                ed.WriteMessage("\nAcDbCircle extents: (%{0}, %{1})-->(%{2}, %{3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
+                ed.WriteMessage("\nAcDbCircle extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
 
                 return extents;
             }
@@ -383,7 +383,7 @@ namespace NetOverruleTest
                Point3d ptMax = new Point3d(20, 20, 0), ptMin = new Point3d(0, 0, 0);
                 extents.AddPoint(ptMax);
                 extents.AddPoint(ptMin);
-                ed.WriteMessage("\nOtherType extents: (%{0}, %{1})-->(%{2}, %{3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
+                ed.WriteMessage("\nOtherType extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y);
 
                 return extents;
             }
@@ -413,7 +413,7 @@ namespace NetOverruleTest
 #if ARX 
                 Overrule.AddOverrule(RXObject.GetClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule, false);
 #else
-                Overrule.AddOverrule(RXObject.GetClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule, false);
+                Overrule.AddOverrule(RXObject.GetClass(typeof(ZwSoft.ZwCAD.DatabaseServices.Polyline)), g_geometryOverrule, false);
 #endif
                 Overrule.Overruling = true;
 
@@ -426,7 +426,7 @@ namespace NetOverruleTest
 #if ARX
                 Overrule.RemoveOverrule(RXObject.GetClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule);
 #else
-                Overrule.RemoveOverrule(RXObject.GetClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule);
+                Overrule.RemoveOverrule(RXObject.GetClass(typeof(ZwSoft.ZwCAD.DatabaseServices.Polyline)), g_geometryOverrule);
 #endif
                 Overrule.Overruling = false;
                 g_geometryOverrule = null;

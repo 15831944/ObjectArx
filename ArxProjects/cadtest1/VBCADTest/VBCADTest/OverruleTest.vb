@@ -124,6 +124,102 @@ Namespace OverruleTest
             'Return MyBase.IsApplicable(overruledSubject)
             Return True
         End Function
+
+    End Class
+
+    Public Class MyGeometryOverrule
+        Inherits GeometryOverrule
+
+        Public Overrides Sub IntersectWith(entity As Entity, ent As Entity, intType As Intersect, points As Point3dCollection, thisGsMarker As IntPtr, otherGsMarker As IntPtr)
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            ed.WriteMessage(vbLf + "MyGeometryOverrule::intersectWith()<pSubject: {0}>...", entity.GetType().Name)
+            Dim tmpPoints As Point3dCollection = New Point3dCollection()
+
+            If entity.GetType() = GetType(Line) Then
+                Dim pt1 As Point3d = New Point3d(50, 50, 0), pt2 = New Point3d(100, 100, 0)
+                points.Add(pt1)
+                points.Add(pt2)
+                ed.WriteMessage(vbLf + "<AcDbLine> Find {0} Points", points.Count)
+            ElseIf entity.GetType() = GetType(Circle) Then
+                Dim pt As Point3d = New Point3d(1, 1, 0)
+                points.Add(pt)
+                ed.WriteMessage(vbLf + "<AcDbCircle> Find {0} Points", points.Count)
+            Else
+                Dim pt As Point3d = New Point3d(2, 2, 0)
+                points.Add(pt)
+                ed.WriteMessage(vbLf + "<OtherType> Find {0} Points", points.Count)
+            End If
+
+            MyBase.IntersectWith(entity, ent, intType, tmpPoints, thisGsMarker, otherGsMarker)
+        End Sub
+
+        Public Overrides Sub IntersectWith(entity As Entity, ent As Entity, intType As Intersect, projPlane As Plane, points As Point3dCollection, thisGsMarker As IntPtr, otherGsMarker As IntPtr)
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            ed.WriteMessage(vbLf + "MyGeometryOverrule::intersectWith()<pSubject: {0}>...", entity.GetType().Name)
+            Dim tmpPoints As Point3dCollection = New Point3dCollection()
+
+            If entity.GetType() = GetType(Line) Then
+                Dim pt1 As Point3d = New Point3d(50, 50, 0), pt2 = New Point3d(100, 100, 0)
+                points.Add(pt1)
+                points.Add(pt2)
+                ed.WriteMessage(vbLf + "<AcDbLine> Find {0} Points", points.Count)
+            ElseIf entity.GetType() = GetType(Circle) Then
+                Dim pt As Point3d = New Point3d(1, 1, 0)
+                points.Add(pt)
+                ed.WriteMessage(vbLf + "<AcDbCircle> Find {0} Points", points.Count)
+            Else
+                Dim pt As Point3d = New Point3d(2, 2, 0)
+                points.Add(pt)
+                ed.WriteMessage(vbLf + "<OtherType> Find {0} Points", points.Count)
+            End If
+
+            MyBase.IntersectWith(entity, ent, intType, projPlane, tmpPoints, thisGsMarker, otherGsMarker)
+        End Sub
+
+        Public Overrides Function GetGeomExtents(entity As Entity) As Extents3d
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            ed.WriteMessage(vbLf + "MyGeometryOverrule::getGeomExtents()<pSubject: {0}>...", entity.GetType().Name)
+            Dim extents As Extents3d = New Extents3d()
+
+            If entity.GetType() = GetType(Line) Then
+                Dim ptMax As Point3d = New Point3d(100, 100, 0), ptMin = New Point3d(5, 5, 0)
+
+                extents.AddPoint(ptMax)
+                extents.AddPoint(ptMin)
+                ed.WriteMessage(vbLf + "AcDbLine extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y)
+
+                Return extents
+            ElseIf entity.GetType() = GetType(Circle) Then
+                Dim ptMax As Point3d = New Point3d(50, 50, 0), ptMin = New Point3d(0, 0, 0)
+
+                extents.AddPoint(ptMax)
+                extents.AddPoint(ptMin)
+                ed.WriteMessage(vbLf + "AcDbCircle extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y)
+
+                Return extents
+            Else
+                Dim ptMax As Point3d = New Point3d(20, 20, 0), ptMin = New Point3d(0, 0, 0)
+
+                extents.AddPoint(ptMax)
+                extents.AddPoint(ptMin)
+                ed.WriteMessage(vbLf + "OtherType extents: ({0}, {1})-->({2}, {3})", ptMin.X, ptMin.Y, ptMax.X, ptMax.Y)
+
+                Return extents
+            End If
+            'Return MyBase.GetGeomExtents(entity)
+        End Function
+
+        Public Overrides Function IsApplicable(overruledSubject As RXObject) As Boolean
+            'Return MyBase.IsApplicable(overruledSubject)
+            Return True
+        End Function
+
     End Class
 
     Public Class Commands
@@ -197,6 +293,40 @@ Namespace OverruleTest
                 g_visibilityOverrule = Nothing
 
                 ed.WriteMessage(vbLf + "VisibilityOverrule is OFF...")
+            End If
+        End Sub
+
+        Shared g_geometryOverrule As MyGeometryOverrule
+        <CommandMethod("TestVBGroup", "GeometryOverruleTest", CommandFlags.Modal)>
+        Public Sub GeometryOverruleTest()
+            Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+            Dim ed As Editor = doc.Editor
+
+            If g_geometryOverrule Is Nothing Then
+                g_geometryOverrule = New MyGeometryOverrule()
+
+                Overrule.AddOverrule(RXObject.GetClass(GetType(Line)), g_geometryOverrule, False)
+                Overrule.AddOverrule(RXObject.GetClass(GetType(Circle)), g_geometryOverrule, False)
+#If ARX Then
+                Overrule.AddOverrule(RXObject.GetClass(GetType(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule, False)
+#Else
+                Overrule.AddOverrule(RXObject.GetClass(GetType(ZwSoft.ZwCAD.DatabaseServices.Polyline)), g_geometryOverrule, False)
+#End If
+                Overrule.Overruling = True
+
+                ed.WriteMessage(vbLf + "GeometryOverrule is ON...")
+            Else
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(Line)), g_geometryOverrule)
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(Circle)), g_geometryOverrule)
+#If ARX Then
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(Autodesk.AutoCAD.DatabaseServices.Polyline)), g_geometryOverrule)
+#Else
+                Overrule.RemoveOverrule(RXObject.GetClass(GetType(ZwSoft.ZwCAD.DatabaseServices.Polyline)), g_geometryOverrule)
+#End If
+                Overrule.Overruling = False
+                g_geometryOverrule = Nothing
+
+                ed.WriteMessage(vbLf + "GeometryOverrule is OFF...")
             End If
         End Sub
 

@@ -26,7 +26,7 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Windows;
 #endif
 
-namespace NETCAD
+namespace NetCADTest
 {
     public partial class Form1 : Form
     {

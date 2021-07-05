@@ -67,7 +67,7 @@ ARXCMD3(getGeoExtentsOfThisEntity)
 {
 	ads_name sname;
 	ads_point ptRes;
-	if (RTNORM == acedEntSel(_T("选择对象"), sname, ptRes))
+	if (RTNORM == acedEntSel(_T("选择对象："), sname, ptRes))
 	{
 		AcDbObjectId id;
 		acdbGetObjectId(id, sname);

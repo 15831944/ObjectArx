@@ -24,9 +24,9 @@ using Autodesk.AutoCAD.Internal;
 using TransactionManager = Autodesk.AutoCAD.DatabaseServices.TransactionManager;
 #endif
 
-[assembly: CommandClass(typeof(NETCAD.Tools))]
+[assembly: CommandClass(typeof(NetCADTest.Tools))]
 
-namespace NETCAD
+namespace NetCADTest
 {
     public class Tools
     {

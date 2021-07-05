@@ -1,4 +1,4 @@
-﻿namespace NETCAD
+﻿namespace NetCADTest
 {
     partial class Form1
     {

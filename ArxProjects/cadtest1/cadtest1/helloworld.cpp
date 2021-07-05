@@ -1914,3 +1914,117 @@ ARXCMD3(Test_readBlockToCurDb)
 	delete pDb;
 }
 #endif
+
+/**
+* PM_禁止回退问题
+*/
+#ifdef hasDefinedinTestWblockCPP
+AcDbBlockTableRecord* openCurrentSpaceBlock(AcDb::OpenMode mode, AcDbDatabase* db)
+{
+	ASSERT(db != NULL);
+
+	AcDbBlockTableRecord* blkRec;
+
+	Acad::ErrorStatus es = acdbOpenObject(blkRec, db->currentSpaceId(), mode);
+	if (es != Acad::eOk)
+		return NULL;
+	else
+		return blkRec;
+}
+
+Acad::ErrorStatus addToCurrentSpace(AcDbEntity* newEnt, AcDbDatabase* db, AcDbObjectId &retId)
+{
+	ASSERT(newEnt != NULL);
+	ASSERT(db != NULL);
+
+	AcDbBlockTableRecord* blkRec = openCurrentSpaceBlock(AcDb::kForWrite, db);
+
+	ASSERT(blkRec != NULL);
+
+	if (blkRec == NULL)
+		return Acad::eInvalidInput;
+
+	// append new entity to current space block
+	Acad::ErrorStatus es = blkRec->appendAcDbEntity(retId, newEnt);
+	if (es != Acad::eOk)
+	{
+		//PmAcutPrintfErrMsg(_T("\nERROR: could not add entity to current space "), ArxDbgUtils::rxErrorStr(es));
+	}
+
+	blkRec->close();
+	return es;
+}
+
+BOOL AddToDb(AcDbEntity * pEntity, AcDbObjectId& id)
+{
+	try
+	{
+		BOOL function_return = FALSE;
+		//parameter	
+		if (pEntity == NULL)
+		{
+			return FALSE;
+		}
+		//end parameter
+		AcDbDatabase* pDb = acdbHostApplicationServices()->workingDatabase();
+		if (pDb == NULL) {
+			acedAlert(_T("No database!"));
+			return Adesk::kFalse;
+		}
+		Acad::ErrorStatus es = addToCurrentSpace(pEntity, pDb, id);
+		if (es == Acad::eOk)
+		{
+			pEntity->close();
+			pEntity = NULL;
+
+			function_return = TRUE;
+		}
+		else
+		{
+			//			delete pEntity;
+			delete pEntity;
+			pEntity = NULL;
+		}
+		return function_return;
+	}
+	catch (...)
+	{
+		return FALSE;
+	}
+}
+#endif
+
+extern BOOL AddToDb(AcDbEntity * pEntity, AcDbObjectId& id);
+ARXCMD3(TestDisableUndo)
+{
+	//AcDbDatabase* pWorkDb = curDoc()->database();
+	//pWorkDb->disableUndoRecording(true);
+
+	AcGePoint3d ptStart(0.0, 0.0, 0.0);
+	AcGePoint3d ptEnd(9999.0, 9999.0, 9999.0);
+
+	AcDbLine* pLine = new AcDbLine;
+	pLine->setStartPoint(ptStart);
+	pLine->setEndPoint(ptEnd);
+	pLine->setColorIndex(2);
+
+	AcDbObjectId idLine(AcDbObjectId::kNull);
+	BOOL bAdd = AddToDb(pLine, idLine);
+	if (bAdd)
+	{
+		acutPrintf(_T("添加了一条(0,0,0)到(9999,9999,9999)的直线"));
+	}
+
+	//pWorkDb->disableUndoRecording(false);
+}
+ARXCMD3(TestDisableUndotrue)
+{
+	AcDbDatabase* pWorkDb = curDoc()->database();
+	pWorkDb->disableUndoRecording(true);
+}
+ARXCMD3(TestDisableUndofalse)
+{
+	AcDbDatabase* pWorkDb = curDoc()->database();
+	pWorkDb->disableUndoRecording(false);
+
+}

@@ -25,9 +25,9 @@ using Autodesk.AutoCAD.Internal;
 using TransactionManager = Autodesk.AutoCAD.DatabaseServices.TransactionManager;
 #endif
 
-[assembly: CommandClass(typeof(NETCAD.Class1))]
+[assembly: CommandClass(typeof(NetCADTest.Class1))]
 
-namespace NETCAD
+namespace NetCADTest
 {
     public class Class1
     {
@@ -1056,13 +1056,14 @@ namespace NETCAD
 }
 
 
-namespace NETCAD
+namespace NetCADTest
 {
     public class PlugInApplication : IExtensionApplication
     {
         public void Initialize()
         {
             // Add your initialize code here.
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("\nNetCADTest.dll is loaded!");
         }
 
         public void Terminate()

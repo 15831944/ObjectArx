@@ -22,6 +22,7 @@ Namespace VBCADTest
 
         Public Sub Initialize() Implements IExtensionApplication.Initialize
             'Add your initialize code here.
+            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage(vbLf + "VBCADTest.dll is loaded!")
 
         End Sub
 
