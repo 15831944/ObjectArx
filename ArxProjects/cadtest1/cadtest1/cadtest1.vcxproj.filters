@@ -90,6 +90,15 @@
     <ClCompile Include="PMTestWblock_lst.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="TestCpp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="ZcDbCustomNurbsCurve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawingRefDlg.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -138,6 +147,12 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="AcEdJigTest.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="ZcDbCustomNurbsCurve.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingRefDlg.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

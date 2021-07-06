@@ -348,6 +348,99 @@ ARXCMD3(addGeometryOverrule)
 
 #pragma endregion
 
+#pragma region SubentityOverrule
+
+Acad::ErrorStatus SubentityOverrule::addSubentPaths(AcDbEntity* pSubject, const AcDbFullSubentPathArray& newPaths)
+{
+	return AcDbSubentityOverrule::addSubentPaths(pSubject, newPaths);
+}
+
+Acad::ErrorStatus SubentityOverrule::deleteSubentPaths(AcDbEntity* pSubject, const AcDbFullSubentPathArray& paths)
+{
+	return AcDbSubentityOverrule::deleteSubentPaths(pSubject, paths);
+}
+
+Acad::ErrorStatus SubentityOverrule::transformSubentPathsBy(AcDbEntity* pSubject, const AcDbFullSubentPathArray& paths, const AcGeMatrix3d& xform)
+{
+	return AcDbSubentityOverrule::transformSubentPathsBy(pSubject, paths, xform);
+}
+
+Acad::ErrorStatus SubentityOverrule::getGripPointsAtSubentPath(
+	const AcDbEntity* pSubject,
+	const AcDbFullSubentPath& path,
+	AcDbGripDataPtrArray& grips,
+	const double curViewUnitSize,
+	const int gripSize,
+	const AcGeVector3d& curViewDir,
+	const int bitflags)
+{
+	return AcDbSubentityOverrule::getGripPointsAtSubentPath(pSubject, path, grips, curViewUnitSize, gripSize, curViewDir, bitflags);
+}
+
+Acad::ErrorStatus SubentityOverrule::moveGripPointsAtSubentPaths(
+	AcDbEntity* pSubject,
+	const AcDbFullSubentPathArray& paths,
+	const AcDbVoidPtrArray& gripAppData,
+	const AcGeVector3d& offset,
+	const int bitflags)
+{
+	return AcDbSubentityOverrule::moveGripPointsAtSubentPaths(pSubject, paths, gripAppData, offset, bitflags);
+}
+
+Acad::ErrorStatus SubentityOverrule::getSubentPathsAtGsMarker(
+	const AcDbEntity* pSubject,
+	AcDb::SubentType type,
+	Adesk::GsMarker gsMark,
+	const AcGePoint3d& pickPoint,
+	const AcGeMatrix3d& viewXform,
+	int& numPaths, 
+	AcDbFullSubentPath*& subentPaths,
+	int numInserts/* = 0*/,
+	AcDbObjectId* entAndInsertStack/* = NULL*/)
+{
+	return AcDbSubentityOverrule::getSubentPathsAtGsMarker(pSubject, type, gsMark, pickPoint, viewXform, numPaths, subentPaths, numInserts, entAndInsertStack);
+}
+
+Acad::ErrorStatus SubentityOverrule::getGsMarkersAtSubentPath(
+	const AcDbEntity* pSubject,
+	const AcDbFullSubentPath& subPath,
+	AcArray<Adesk::GsMarker>& gsMarkers)
+{
+	return AcDbSubentityOverrule::getGsMarkersAtSubentPath(pSubject, subPath, gsMarkers);
+}
+
+AcDbEntity* SubentityOverrule::subentPtr(const AcDbEntity* pSubject, const AcDbFullSubentPath& id)
+{
+	return AcDbSubentityOverrule::subentPtr(pSubject, id);
+}
+
+void SubentityOverrule::subentGripStatus(AcDbEntity* pSubject, const AcDb::GripStat status, const AcDbFullSubentPath& subentity)
+{
+	return AcDbSubentityOverrule::subentGripStatus(pSubject, status, subentity);
+}
+
+Acad::ErrorStatus SubentityOverrule::getCompoundObjectTransform(const AcDbEntity* pSubject, AcGeMatrix3d & xMat)
+{
+	return AcDbSubentityOverrule::getCompoundObjectTransform(pSubject, xMat);
+}
+
+Acad::ErrorStatus SubentityOverrule::getSubentPathGeomExtents(const AcDbEntity* pSubject, const AcDbFullSubentPath& path, AcDbExtents& extents)
+{
+	return AcDbSubentityOverrule::getSubentPathGeomExtents(pSubject, path, extents);
+}
+
+Acad::ErrorStatus SubentityOverrule::getSubentClassId(const AcDbEntity* pSubject, const AcDbFullSubentPath& path, CLSID* clsId)
+{
+	return AcDbSubentityOverrule::getSubentClassId(pSubject, path, clsId);
+}
+
+bool SubentityOverrule::isApplicable(const AcRxObject* pOverruledSubject) const
+{
+	return true;
+}
+
+#pragma endregion
+
 #endif
 
 #pragma region CustomLine

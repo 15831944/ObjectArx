@@ -193,3 +193,10 @@ extern "C" {
 //》Coudn't find any installed languages!提示框 语言包没安装上，重装一次
 //》defualt下有customresfile导致闪退。平台以哪个profile启动，就在哪个profile下面读取customresfile
 //》命令不识别，看看相应模块是否加载
+
+//》saveas基本流程 
+//1.代码调用saveas（当前图纸为1.dwg），
+//2.将即将保存的数据生成一个zw开头的tmp文件（该文件就是最后保存的dwg）. ZWCAD-19638
+//3.如果存在1.dwg，将1.dwg改名字为一个不带后缀的tmp文件，不存在没有这一步
+//4.将2生成tmp修改为1.dwg。
+//5.如果进行了3则删除3改名后的文件。

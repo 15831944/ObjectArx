@@ -66,6 +66,47 @@ public:
 	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
 };
 
+class SubentityOverrule : public AcDbSubentityOverrule
+{
+public:
+	virtual Acad::ErrorStatus addSubentPaths(AcDbEntity* pSubject, const AcDbFullSubentPathArray& newPaths) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus deleteSubentPaths(AcDbEntity* pSubject, const AcDbFullSubentPathArray& paths) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus transformSubentPathsBy(AcDbEntity* pSubject, const AcDbFullSubentPathArray& paths, const AcGeMatrix3d& xform) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getGripPointsAtSubentPath(
+		const AcDbEntity* pSubject,
+		const AcDbFullSubentPath& path,
+		AcDbGripDataPtrArray& grips,
+		const double curViewUnitSize,
+		const int gripSize,
+		const AcGeVector3d& curViewDir,
+		const int bitflags) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus moveGripPointsAtSubentPaths(
+		AcDbEntity* pSubject,
+		const AcDbFullSubentPathArray& paths,
+		const AcDbVoidPtrArray& gripAppData,
+		const AcGeVector3d& offset,
+		const int bitflags) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getSubentPathsAtGsMarker(
+		const AcDbEntity* pSubject,
+		AcDb::SubentType type,
+		Adesk::GsMarker gsMark,
+		const AcGePoint3d& pickPoint,
+		const AcGeMatrix3d& viewXform,
+		int& numPaths, AcDbFullSubentPath*& subentPaths,
+		int numInserts = 0,
+		AcDbObjectId* entAndInsertStack = NULL) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getGsMarkersAtSubentPath(
+		const AcDbEntity* pSubject,
+		const AcDbFullSubentPath& subPath,
+		AcArray<Adesk::GsMarker>& gsMarkers) ADESK_OVERRIDE;
+	virtual AcDbEntity* subentPtr(const AcDbEntity* pSubject, const AcDbFullSubentPath& id) ADESK_OVERRIDE;
+	virtual void subentGripStatus(AcDbEntity* pSubject, const AcDb::GripStat status, const AcDbFullSubentPath& subentity) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getCompoundObjectTransform(const AcDbEntity* pSubject, AcGeMatrix3d & xMat) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getSubentPathGeomExtents(const AcDbEntity* pSubject, const AcDbFullSubentPath& path, AcDbExtents& extents) ADESK_OVERRIDE;
+	virtual Acad::ErrorStatus getSubentClassId(const AcDbEntity* pSubject, const AcDbFullSubentPath& path, CLSID* clsId) ADESK_OVERRIDE;
+	virtual bool isApplicable(const AcRxObject* pOverruledSubject) const ADESK_OVERRIDE;
+};
+
 #endif
 
 

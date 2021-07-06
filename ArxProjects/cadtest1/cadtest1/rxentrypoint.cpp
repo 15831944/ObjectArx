@@ -21,12 +21,15 @@ void initapp()
 		}
 	}
 }
+
 #if ARX == 2020 || ZRX ==2021
 extern void removeHighlightStateOverrule();
 extern void removeHighlightOverrule();
 extern void removeVisibilityOverrule();
 extern void removeGeometryOverrule();
 #endif
+#include "DrawingRefDlg.h"
+extern DrawingRefDlg* pDrawingRefDlg;
 void unloadapp()
 {
 #if ARX == 2020 || ZRX ==2021
@@ -35,6 +38,12 @@ void unloadapp()
 	removeVisibilityOverrule();
 	removeGeometryOverrule();
 #endif
+
+	if (pDrawingRefDlg)
+	{
+		delete pDrawingRefDlg;
+		pDrawingRefDlg = nullptr;
+	}
 
     acedRegCmds->removeGroup(cmd_group_name);
 }
@@ -140,6 +149,39 @@ void unregisterRxClasses()
 #define AppMsgSwitchEnd() }
 
 
+#if 1
+#ifdef _USRDLL
+#undef _USRDLL
+#endif
+
+#include "AcExtensionModule.h"
+// Define the sole extension module object.
+AC_IMPLEMENT_EXTENSION_MODULE(theArxDLL);
+HINSTANCE _hdllInstance = NULL;
+
+extern "C" int APIENTRY
+DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+{
+	// Remove this if you use lpReserved
+	UNREFERENCED_PARAMETER(lpReserved);
+
+	if (dwReason == DLL_PROCESS_ATTACH)
+	{
+		// Extension DLL one time initialization
+		//theArxDLL.AttachInstance(hInstance);
+		_hdllInstance = hInstance;
+	}
+	else if (dwReason == DLL_PROCESS_DETACH)
+	{
+		// Terminate the library before destructors are called
+		//theArxDLL.DetachInstance();
+	}
+	return 1;   // ok
+}
+#endif
+
+
+
 AcRx::AppRetCode cadtest_rxEntryPoint(AcRx::AppMsgCode msg, void* appId);
 
 #ifdef ARX
@@ -148,86 +190,86 @@ extern "C" AcRx::AppRetCode acrxEntryPoint(AcRx::AppMsgCode msg, void* appId)
 extern "C" AcRx::AppRetCode zcrxEntryPoint(AcRx::AppMsgCode msg, void* appId)
 #endif
 {
-    return cadtest_rxEntryPoint(msg, appId);
+	return cadtest_rxEntryPoint(msg, appId);
 }
 
 AcRx::AppRetCode cadtest_rxEntryPoint(AcRx::AppMsgCode msg, void* appId)
 {
-    AppMsgSwitchBegin(msg)
-        AppMsgCaseBegin(kNullMsg)
-        AppMsgCaseEnd()
+	AppMsgSwitchBegin(msg)
+		AppMsgCaseBegin(kNullMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kInitAppMsg)
-            AFX_MODULE_STATE* pState = AfxGetStaticModuleState();
-            AfxSetResourceHandle(pState->m_hCurrentInstanceHandle);
+		AppMsgCaseBegin(kInitAppMsg)
+		AFX_MODULE_STATE* pState = AfxGetStaticModuleState();
+	AfxSetResourceHandle(pState->m_hCurrentInstanceHandle);
 
-            acrxDynamicLinker->unlockApplication(appId);
-            acrxDynamicLinker->registerAppMDIAware(appId);
-            initapp();
-            registerRxClasses();
-        AppMsgCaseEnd()
+	acrxDynamicLinker->unlockApplication(appId);
+	acrxDynamicLinker->registerAppMDIAware(appId);
+	initapp();
+	registerRxClasses();
+	AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kUnloadAppMsg)
-            unregisterRxClasses();
-            unloadapp();
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kUnloadAppMsg)
+		unregisterRxClasses();
+	unloadapp();
+	AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kLoadDwgMsg)
-            funcload();
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kLoadDwgMsg)
+		funcload();
+	AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kUnloadDwgMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kUnloadDwgMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kInvkSubrMsg)
-            dofunc();
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kInvkSubrMsg)
+		dofunc();
+	AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kCfgMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kCfgMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kEndMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kEndMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kQuitMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kQuitMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kSaveMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kSaveMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kDependencyMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kDependencyMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kNoDependencyMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kNoDependencyMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kOleUnloadAppMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kOleUnloadAppMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kPreQuitMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kPreQuitMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kInitDialogMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kInitDialogMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kEndDialogMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kEndDialogMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kSuspendMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kSuspendMsg)
+		AppMsgCaseEnd()
 
 #ifdef ARX
-        AppMsgCaseBegin(kInitTabGroupMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kInitTabGroupMsg)
+		AppMsgCaseEnd()
 
-        AppMsgCaseBegin(kEndTabGroupMsg)
-        AppMsgCaseEnd()
+		AppMsgCaseBegin(kEndTabGroupMsg)
+		AppMsgCaseEnd()
 #endif
-        AppMsgCaseDefaultBegin(msg)
-        AppMsgCaseDefaultEnd()
-    AppMsgSwitchEnd();
+		AppMsgCaseDefaultBegin(msg)
+		AppMsgCaseDefaultEnd()
+		AppMsgSwitchEnd();
 
-    return AcRx::kRetOK;
+	return AcRx::kRetOK;
 }
 
 
