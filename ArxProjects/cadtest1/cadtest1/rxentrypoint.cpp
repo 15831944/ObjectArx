@@ -27,9 +27,9 @@ extern void removeHighlightStateOverrule();
 extern void removeHighlightOverrule();
 extern void removeVisibilityOverrule();
 extern void removeGeometryOverrule();
-#endif
 #include "DrawingRefDlg.h"
 extern DrawingRefDlg* pDrawingRefDlg;
+#endif
 void unloadapp()
 {
 #if ARX == 2020 || ZRX ==2021
@@ -37,13 +37,14 @@ void unloadapp()
 	removeHighlightOverrule();
 	removeVisibilityOverrule();
 	removeGeometryOverrule();
-#endif
 
 	if (pDrawingRefDlg)
 	{
 		delete pDrawingRefDlg;
 		pDrawingRefDlg = nullptr;
 	}
+
+#endif
 
     acedRegCmds->removeGroup(cmd_group_name);
 }
@@ -149,7 +150,7 @@ void unregisterRxClasses()
 #define AppMsgSwitchEnd() }
 
 
-#if 1
+#if 0
 #ifdef _USRDLL
 #undef _USRDLL
 #endif

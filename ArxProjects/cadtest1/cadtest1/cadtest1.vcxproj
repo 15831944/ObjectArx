@@ -564,7 +564,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);CADTEST_EXPORT</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_USRDLL___;%(PreprocessorDefinitions);CADTEST_EXPORT</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -577,6 +577,8 @@
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/verbose:lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -646,6 +648,10 @@
     <ClCompile Include="addCmd_try_catch.cpp" />
     <ClCompile Include="cadtest.cpp" />
     <ClCompile Include="CustEntities.cpp" />
+    <ClCompile Include="DialogTest.cpp" />
+    <ClCompile Include="dllmain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ZR2021|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="DocManReactor.cpp" />
     <ClCompile Include="DragMultiEntities.cpp" />
     <ClCompile Include="DrawingRefDlg.cpp" />
@@ -689,6 +695,7 @@
     <ClInclude Include="AcEdJigTest.h" />
     <ClInclude Include="cadtest.h" />
     <ClInclude Include="CustEntities.h" />
+    <ClInclude Include="DialogTest.h" />
     <ClInclude Include="DocManReactor.h" />
     <ClInclude Include="DragMultiEntities.h" />
     <ClInclude Include="DrawingRefDlg.h" />

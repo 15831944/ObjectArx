@@ -360,7 +360,7 @@ void CreatePNG(const AcDbObjectId& idBlkTabRcd)
 
 	AcGsManager *gsManager = acgsGetGsManager();
 	
-#if ARX == 2020
+#if ARX == 2020 /*|| ZRX*/
 	AcGsKernelDescriptor keyDescriptor;
 	keyDescriptor.addRequirement(AcGsKernelDescriptor::k3DDrawing);
 	//keyDescriptor.addSupport(AcGsKernelDescriptor::k2DDrawing);

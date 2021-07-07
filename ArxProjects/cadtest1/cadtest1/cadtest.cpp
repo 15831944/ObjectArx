@@ -54,7 +54,6 @@ CcadtestApp::CcadtestApp()
 
 CcadtestApp theApp;
 
-
 // CcadtestApp ≥ı ºªØ
 
 BOOL CcadtestApp::InitInstance()

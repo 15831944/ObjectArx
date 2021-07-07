@@ -1,7 +1,9 @@
 // 
 #include "stdafx.h"
-#include "DrawingRefDlg.h"
 
+#if ARX == 2020 || ZRX ==2021
+
+#include "DrawingRefDlg.h"
 #include "AcGsManager.h"
 #include "AcExtensionModule.h"
 
@@ -382,3 +384,6 @@ AcDbObjectId SetViewTo(AcGsView *pView, AcDbDatabase *pDb, AcGeMatrix3d& viewMat
 
 	return currentVsId;
 }
+
+
+#endif

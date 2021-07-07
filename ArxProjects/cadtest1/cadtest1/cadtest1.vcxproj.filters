@@ -99,6 +99,12 @@
     <ClCompile Include="DrawingRefDlg.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -153,6 +159,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="DrawingRefDlg.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogTest.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

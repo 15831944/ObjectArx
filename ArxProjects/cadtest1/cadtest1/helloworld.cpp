@@ -2028,3 +2028,76 @@ ARXCMD3(TestDisableUndofalse)
 	pWorkDb->disableUndoRecording(false);
 
 }
+
+ARXCMD3(testGetString)
+{
+	TCHAR ret[10] = { 0 };
+  	int nRet = acedGetString(1, L"input:", ret);
+
+	//if (_tcscmp(ret, L"y"))
+	{
+		CString strCmd = L"_3dorbit\n";
+
+		COPYDATASTRUCT cmdMsg;
+		cmdMsg.dwData = (DWORD)1;
+		cmdMsg.cbData = (DWORD)(_tcslen(strCmd) + 1) * sizeof(TCHAR);
+		cmdMsg.lpData = (void*)(LPCTSTR)strCmd;
+
+		SendMessage(adsw_acadMainWnd(), WM_COPYDATA, (WPARAM)adsw_acadMainWnd(), (LPARAM)&cmdMsg);
+	}
+}
+
+#if ZRX == 2020
+BOOL FilterWinMsg01(MSG*)
+#else
+bool FilterWinMsg01(MSG*)
+#endif
+{
+	return false;
+}
+void WatchWinMsg01(const MSG* msg)
+{
+	HWND g_hMDIHwnd = acedGetAcadFrame()->m_hWndMDIClient;
+
+	switch (msg->message)
+	{
+	case WM_LBUTTONDOWN:
+		//CPoint cpt(msg->lParam);
+		//ClientToScreen(g_hMDIHwnd, &cpt);
+		//acutPrintf(_T("\nMouse point (%d, %d)"), cpt.x, cpt.y);
+		break;
+	case WM_SIZE:
+		acutPrintf(L"\nWM_SIZE");
+	break;
+	case SIZE_MAXIMIZED:
+		acutPrintf(L"\nSIZE_MAXIMIZED");
+	break;	
+	case SIZE_MINIMIZED:
+		acutPrintf(L"\nSIZE_MINIMIZED");
+	break;	
+	case SIZE_RESTORED:
+	acutPrintf(L"\nSIZE_RESTORED");	
+	case WM_GETMINMAXINFO:   // lParam返回一个指向MINMAXINFO结构的指针  
+		acutPrintf(L"\nWM_GETMINMAXINFO");
+		break;
+	default:
+		break;
+	}
+}
+//AddWatchWinMsg
+ARXCMD3(Test_AddWatchWinMsg01)
+{
+	acedRegisterWatchWinMsg(WatchWinMsg01);
+	acedRegisterFilterWinMsg(FilterWinMsg01);
+}
+//RemoveWatchWinMsg
+ARXCMD3(Test_RemoveWatchWinMsg01)
+{
+	acedRemoveWatchWinMsg(WatchWinMsg01);
+	acedRemoveFilterWinMsg(FilterWinMsg01);
+}
+/**
+ acedRegisterFilterWinMsg函数注册的回调函数是用来过滤windows消息的，通过敲击键盘输入在这里应该可以检测到wm_key相关的消息，wm_char也应该可以。但是如果是中文输入法，可能会不同;
+ 如果只是检测不是改变，建议使用acedRegisterWatchWinMsg
+*/
+

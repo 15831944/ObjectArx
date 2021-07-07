@@ -198,7 +198,6 @@ ARXCMD3(createLineTypeTest)
 }
 ARXCMD3(applyCusLineTypeTest)
 {
-	Acad::ErrorStatus es;
 	AcDbDatabase *pDatabase = acdbHostApplicationServices()->workingDatabase();
 	AcDbBlockTable *pBlockTable = NULL;
 	AcDbBlockTableRecord *pMSBlkRec = NULL;

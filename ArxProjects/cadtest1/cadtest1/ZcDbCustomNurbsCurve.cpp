@@ -2,6 +2,9 @@
 #include "stdafx.h"
 #include "ZcDbCustomNurbsCurve.h"
 
+#include "rxboiler.h"
+#include "dbproxy.h"
+
 #define GRIP_PTS_ARE_CTRL_PTS 0
 
 class ZcGeCustomPoint4d
@@ -70,7 +73,7 @@ bool _appendEntToDb(AcDbEntity* pEnt)
 	return (Acad::eOk == es);
 }
 
-ACRX_DEFINE_MEMBERS(ZcDbCustomNurbsCurve, AcDbEntity, AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent, AcDbProxyEntity::kAllAllowedBits, ZcDbCustomNurbsCurve, ZWCAD);
+ACRX_DXF_DEFINE_MEMBERS(ZcDbCustomNurbsCurve, AcDbEntity, AcDb::kDHL_CURRENT, AcDb::kMReleaseCurrent, AcDbProxyEntity::kAllAllowedBits, ZcDbCustomNurbsCurve, ZWCAD);
 
 ZcDbCustomNurbsCurve::ZcDbCustomNurbsCurve() 
 	: m_iP(0), m_iM(0)
@@ -88,22 +91,91 @@ ZcDbCustomNurbsCurve::~ZcDbCustomNurbsCurve()
 
 Acad::ErrorStatus ZcDbCustomNurbsCurve::dwgInFields(AcDbDwgFiler* pFiler)
 {
-	return Acad::eNotImplementedYet;
+	assertWriteEnabled();
+
+	if (AcDbEntity::dwgInFields(pFiler) != Acad::eOk)
+		return pFiler->filerStatus();
+
+#if ZRX != 2020
+	pFiler->readInt32(&m_iP);
+	pFiler->readInt32(&m_iM);
+#endif
+	m_arrKnotVec.setLogicalLength(m_iM + 1);
+	double dKnot = 0.0;
+	for (int i = 0; i < m_iM + 1; i++)
+	{
+		pFiler->readDouble(&dKnot);
+		m_arrKnotVec[i] = dKnot;
+	}
+
+	int iCtrlPtCnt = m_iM - m_iP;
+	m_arrCtrlPt.setLogicalLength(iCtrlPtCnt);
+	m_arrWei.setLogicalLength(iCtrlPtCnt);
+	AcGePoint3d ctrlPt;
+	double dWei = 0.0;
+	for (int i = 0; i < iCtrlPtCnt; i++)
+	{
+		pFiler->readPoint3d(&ctrlPt);
+		m_arrCtrlPt[i] = ctrlPt;
+		pFiler->readDouble(&dWei);
+		m_arrWei[i] = dWei;
+	}
+
+	return pFiler->filerStatus();
 }
 
 Acad::ErrorStatus ZcDbCustomNurbsCurve::dwgOutFields(AcDbDwgFiler* pFiler) const
 {
-	return Acad::eNotImplementedYet;
+	assertReadEnabled();
+
+	if (AcDbEntity::dwgOutFields(pFiler) != Acad::eOk)
+		return pFiler->filerStatus();
+
+	pFiler->writeInt32(m_iP);
+	pFiler->writeInt32(m_iM);
+	for (int i = 0; i < m_iM + 1; i++)
+	{
+		pFiler->writeDouble(m_arrKnotVec[i]);
+	}
+	for (int i = 0; i < m_iM - m_iP; i++)
+	{
+		pFiler->writePoint3d(m_arrCtrlPt[i]);
+		pFiler->writeDouble(m_arrWei[i]);
+	}
+
+	return pFiler->filerStatus();
 }
 
 Acad::ErrorStatus ZcDbCustomNurbsCurve::copyFrom(const AcRxObject* pSrc)
 {
-	return Acad::eNotImplementedYet;
+	Acad::ErrorStatus es = AcDbEntity::copyFrom(pSrc);
+	if (Acad::eOk == es)
+	{
+		es = Acad::eWrongObjectType;
+		ZcDbCustomNurbsCurve* pCrv = ZcDbCustomNurbsCurve::cast(pSrc);
+		if (!pCrv)
+		{
+			es = Acad::eOk;
+			if (!pCrv->m_arrKnotPt.isEmpty())
+				m_arrKnotPt = pCrv->m_arrKnotPt;
+		}
+	}
+
+	return es;
 }
 
 Adesk::Boolean ZcDbCustomNurbsCurve::subWorldDraw(AcGiWorldDraw* pWd)
 {
-	return Adesk::kFalse;
+	assertReadEnabled();
+
+	AcArray<AcGePoint3d> arrSampPt;
+	sampling(arrSampPt);
+	pWd->geometry().polyline(arrSampPt.length(), arrSampPt.asArrayPtr());
+
+	pWd->subEntityTraits().setColor(1);
+	pWd->geometry().polyline(m_iM - m_iP, m_arrCtrlPt.asArrayPtr());
+
+	return Adesk::kTrue;
 }
 
 Acad::ErrorStatus ZcDbCustomNurbsCurve::subGetGripPoints(AcGePoint3dArray& gripPoints, AcDbIntArray & osnapModes, AcDbIntArray & geomIds) const
@@ -124,4 +196,51 @@ void ZcDbCustomNurbsCurve::getPointAtParam(double dU, AcGePoint3d& pt) const
 void ZcDbCustomNurbsCurve::sampling(AcArray<AcGePoint3d>& arrSampPt)
 {
 
+}
+
+REGISTER_OBJECT(ZcDbCustomNurbsCurve)
+ARXCMD3(CreateCustomNurbsCurve)
+{
+	int iP = 3;
+	AcArray<double> arrKnotVec;
+	AcArray<AcGePoint3d> arrCtrlPt;
+	AcArray<double> arrWei;
+
+	arrKnotVec.append(0.0);
+	arrKnotVec.append(0.0);
+	arrKnotVec.append(0.0);
+	arrKnotVec.append(0.0);    // iP + 1¸ö0.0
+	arrKnotVec.append(0.25);
+	arrKnotVec.append(0.5);
+	arrKnotVec.append(0.75);
+	arrKnotVec.append(1.0);    // iP + 1¸ö1.0
+	arrKnotVec.append(1.0);
+	arrKnotVec.append(1.0);
+	arrKnotVec.append(1.0);  
+
+	// n = m - p - 1
+	arrCtrlPt.append(AcGePoint3d(0.0, 0.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(10.0, 10.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(20.0, -10.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(30.0, 10.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(40.0, -10.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(50.0, 10.0, 0.0));
+	arrCtrlPt.append(AcGePoint3d(60.0, 0.0, 0.0));
+
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+	arrWei.append(1.0);
+
+	ZcDbCustomNurbsCurve* pCrv = new ZcDbCustomNurbsCurve(iP, arrKnotVec, arrCtrlPt, arrWei);
+	if (_appendEntToDb(pCrv))
+		pCrv->close();
+	else
+	{
+		delete pCrv;
+		pCrv = nullptr;
+	}
 }

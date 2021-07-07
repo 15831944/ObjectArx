@@ -73,6 +73,8 @@ public:
 };
 
 
+#if ARX == 2020 || ZRX == 2021
+
 class GsPreViewCtrl : public CStatic
 {
 public:
@@ -127,5 +129,7 @@ private:
 	AcDbDatabase *m_CurrentDwg;
 	AcGeMatrix3d m_viewMatrix;
 };
+
+#endif
 
 #endif	// _DRAWINGREFDLG_H_
