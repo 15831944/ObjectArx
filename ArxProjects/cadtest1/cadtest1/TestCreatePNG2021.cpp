@@ -679,3 +679,4 @@ ARXCMD3(TestCreatePNG)
 	CreatePNG(idBlkRcd);
 }
 #endif
+

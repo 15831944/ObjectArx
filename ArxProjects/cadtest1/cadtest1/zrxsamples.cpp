@@ -350,3 +350,34 @@ ARXCMD3(entSelSampe)
 }
 
 #pragma endregion
+
+#pragma region Interacton
+
+ARXCMD3(getKWordTest)
+{
+	TCHAR keyWord[10] = { 0 };
+	// local keywords_global keywords
+	//acedInitGet(0, _T("ALL B C D_A B C D"));
+	//acedInitGet(0, _T("ALL AN B C D"));  // 如果compare "A"，没有关键词A, 输入A不识别
+	acedInitGet(0, _T("ALL AN B C D")); 
+	int retVal = acedGetKword(_T("Input KeyWord [Branch A(CLL)/Branch B(B)/Branch C(C)/Branch D(D)]: "), keyWord);
+	if (retVal == RTNORM)
+	{
+		if (_tcscmp(keyWord, _T("ALL")) == 0)
+			acutPrintf(_T("\nThis is Branch ALL"));
+		else if (_tcscmp(keyWord, _T("AN")) == 0)
+			acutPrintf(_T("\nThis is Branch AN"));
+		else if (_tcscmp(keyWord, _T("B")) == 0)
+			acutPrintf(_T("\nThis is Branch B"));
+		else if (_tcscmp(keyWord, _T("CD")) == 0)
+			acutPrintf(_T("\nThis is Branch C"));
+		else if (_tcscmp(keyWord, _T("D")) == 0)
+			acutPrintf(_T("\nThis is Branch D"));
+	}
+	else if (retVal == RTCAN)
+		acutPrintf(_T("\nYou have cancelled!"));
+	else if (retVal == RTNONE)
+		acutPrintf(_T("\nYou Have not input, and the default is Branch D"));
+}
+
+#pragma endregion

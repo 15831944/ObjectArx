@@ -35,6 +35,8 @@
 //		请参阅 MFC 技术说明 33 和 58。
 //
 
+#if 0
+
 // CcadtestApp
 
 BEGIN_MESSAGE_MAP(CcadtestApp, CWinApp)
@@ -71,6 +73,6 @@ int CcadtestApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
-
+#endif
 
 

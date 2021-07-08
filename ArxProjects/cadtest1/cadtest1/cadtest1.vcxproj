@@ -652,7 +652,7 @@
     <ClCompile Include="dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ZR2021|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DocManReactor.cpp" />
+    <ClCompile Include="DocManagerReactor.cpp" />
     <ClCompile Include="DragMultiEntities.cpp" />
     <ClCompile Include="DrawingRefDlg.cpp" />
     <ClCompile Include="EditorReactor.cpp" />
@@ -687,6 +687,7 @@
     <ClCompile Include="testDrawOrderCtl.cpp" />
     <ClCompile Include="testheaders.cpp" />
     <ClCompile Include="tools.cpp" />
+    <ClCompile Include="z20toz21.cpp" />
     <ClCompile Include="ZcDbCustomNurbsCurve.cpp" />
     <ClCompile Include="zrxsamples.cpp" />
   </ItemGroup>
@@ -696,7 +697,7 @@
     <ClInclude Include="cadtest.h" />
     <ClInclude Include="CustEntities.h" />
     <ClInclude Include="DialogTest.h" />
-    <ClInclude Include="DocManReactor.h" />
+    <ClInclude Include="DocManagerReactor.h" />
     <ClInclude Include="DragMultiEntities.h" />
     <ClInclude Include="DrawingRefDlg.h" />
     <ClInclude Include="EditorReactor.h" />

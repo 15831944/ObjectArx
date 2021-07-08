@@ -2,13 +2,13 @@
 #include "stdafx.h"
 #include "acdocman.h"
 
-class DocManReactor : public AcApDocManagerReactor
+class DocManagerReactor : public AcApDocManagerReactor
 {
 public:
-	ACRX_DECLARE_MEMBERS(DocManReactor);
+	ACRX_DECLARE_MEMBERS(DocManagerReactor);
 
-	DocManReactor();
-	~DocManReactor();
+	DocManagerReactor();
+	~DocManagerReactor();
 
 	virtual void              documentCreateStarted(AcApDocument* pDocCreating);
 

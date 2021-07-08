@@ -8,10 +8,6 @@
 
 AC_IMPLEMENT_EXTENSION_MODULE(theArxDLL);
 
-//#ifdef _USRDLL
-//#pragma comment(linker, "/include:__afxForceUSRDLL") 
-//#endif
-
 //#ifdef _X86_
 //extern "C" { int _afxForceUSRDLL; }
 //#else

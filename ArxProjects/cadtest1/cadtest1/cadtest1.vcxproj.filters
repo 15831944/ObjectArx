@@ -48,9 +48,6 @@
     <ClCompile Include="SelEntOnUnLockLayer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="DocManReactor.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="EditorReactor.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -105,6 +102,12 @@
     <ClCompile Include="DialogTest.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="z20toz21.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DocManagerReactor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -134,9 +137,6 @@
     <ClInclude Include="PmDbLinetmpJig.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="DocManReactor.h">
-      <Filter>inc</Filter>
-    </ClInclude>
     <ClInclude Include="EditorReactor.h">
       <Filter>inc</Filter>
     </ClInclude>
@@ -162,6 +162,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="DialogTest.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DocManagerReactor.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2055,6 +2055,186 @@ bool FilterWinMsg01(MSG*)
 {
 	return false;
 }
+
+#if ZRX == 2020
+BOOL toCaps(MSG* pMsg)
+#else
+bool toCaps(MSG* pMsg)
+#endif
+{
+	if (pMsg->message == WM_LBUTTONDOWN)
+	{
+		CWnd *pWnd = acedGetAcadDockCmdLine();
+		HWND hwnd = ::FindWindowEx(pWnd->m_hWnd, NULL, NULL, _T("CommandLine"));//借助spy++查看
+		//点击了命令行
+		if (pMsg->hwnd == hwnd)
+		{
+			CPoint ptLeftClk = pMsg->pt;;
+			CString sCmdText;
+			CWnd *pCmdWnd = CWnd::FromHandle(hwnd);
+			pCmdWnd->GetWindowTextW(sCmdText);
+
+			HDC hDC = ::GetDC(hwnd);
+			CDC dc;
+			dc.Attach(hDC);
+			int index = sCmdText.Find(_T("/"));
+			std::map<CString, CPoint> mapOptions;
+
+			int size1 = 0;
+			int size2;
+			CString sOption;
+			while (index != -1)
+			{
+				size2 = dc.GetOutputTextExtent(sCmdText.Left(index/* + 4*/)).cx;
+				sOption = sCmdText.GetAt(index - 2);
+				mapOptions[sOption] = CPoint(size1, size2);
+				size1 = size2;
+				index = sCmdText.Find(_T("/"), index + 1);
+			}
+			size2 = dc.GetOutputTextExtent(sCmdText).cx;
+			if (sCmdText.Find(L"[") != -1)
+			{
+				sOption = sCmdText.GetAt(sCmdText.ReverseFind(_T(']')) - 2);
+				mapOptions[sOption] = CPoint(size1, size2);
+			}
+
+			dc.Detach();
+
+			CRect rc;
+			::GetWindowRect(hwnd, rc);
+			rc.right = rc.left + size2;
+
+			if (rc.PtInRect(ptLeftClk))
+			{
+				int nResult = ptLeftClk.x - rc.left;
+				std::map<CString, CPoint>::iterator iter;
+				for (iter = mapOptions.begin(); iter != mapOptions.end(); iter++)
+				{
+					if (nResult >= (iter->second.x) && nResult <= (iter->second.y))
+					{
+						acutPrintf(L"\ncmdStr:%s.", iter->first);  // Add for test
+						acDocManager->sendStringToExecute(curDoc(), iter->first + L" ");
+						break;
+					}
+				}
+			}
+		}
+	}
+	return FALSE;
+}
+
+
+/**
+ * func(cmdStr, map)
+	   # [xxx()/  xxx()/ xxx()]
+       get startIdx<find("[")>, endInx<find("]")>
+
+	   for 
+	       get leftBracketIdx rightBrackedIdx
+		   get keyStr<between "(" and ")">
+
+		   get divideIdx<"/">
+		   get interval<between "/" and "/">
+
+		   map.append(keyStr, interval)
+	   end for
+
+	   if inputPoint is in some interval
+	       send keyword to execute
+	   end if
+   end func
+ */
+
+#if ZRX == 2020
+BOOL cmdTipDivide(MSG* pMsg)
+#else
+bool cmdTipDivide(MSG* pMsg)
+#endif
+{
+	if (pMsg->message == WM_LBUTTONDOWN)
+	{
+		CWnd *pWnd = acedGetAcadDockCmdLine();
+		HWND hwnd = ::FindWindowEx(pWnd->m_hWnd, NULL, NULL, _T("CommandLine"));//借助spy++查看
+		//点击了命令行
+		if (pMsg->hwnd == hwnd)
+		{
+			// 鼠标点击的点，后续用于确定位置区间
+			CPoint ptLeftClk = pMsg->pt;;
+
+			// 命令行文本
+			CString sCmdText;
+			CWnd *pCmdWnd = CWnd::FromHandle(hwnd);
+			pCmdWnd->GetWindowTextW(sCmdText);
+
+			HDC hDC = ::GetDC(hwnd);
+			CDC dc;
+			dc.Attach(hDC);
+
+			// 第一个"/"
+			int index = sCmdText.Find(_T("/"));
+
+			std::map<CString, CPoint> mapOptions;
+
+			//int size1 = 0;
+			// 区间起点
+			int size1 = dc.GetOutputTextExtent(sCmdText.Left(sCmdText.Find(_T("[")))).cx;
+			int size2;
+			CString sOption;
+			while (index != -1)
+			{
+				int nLeftBracket = sCmdText.Find(_T("("), size1);
+				int nRightBracket = sCmdText.Find(_T(")"), nLeftBracket);
+
+				//size2 = dc.GetOutputTextExtent(sCmdText.Left(index + 4)).cx;
+				size2 = dc.GetOutputTextExtent(sCmdText.Left(index+4)).cx;
+
+				// 获取关键词
+				//sOption = sCmdText.GetAt(index - 2);
+				sOption = sCmdText.Mid(nLeftBracket, nRightBracket - nLeftBracket + 1);
+
+				mapOptions[sOption] = CPoint(size1, size2);
+				size1 = size2;
+				index = sCmdText.Find(_T("/"), index + 1);
+			}
+
+			size2 = dc.GetOutputTextExtent(sCmdText).cx;
+
+			//if (sCmdText.Find(L"[") != -1)
+			if (sCmdText.Find(L"[") != -1 && sCmdText.Find(L"]") != -1)
+			{
+				int nLeftBracket = sCmdText.Find(_T("("), size1);
+				int nRightBracket = sCmdText.Find(_T(")"), nLeftBracket);
+
+				//sOption = sCmdText.GetAt(sCmdText.ReverseFind(_T(']')) - 2);
+				sOption = sCmdText.Mid(nLeftBracket, nRightBracket - nLeftBracket + 1);
+				mapOptions[sOption] = CPoint(size1, size2);
+			}
+
+			dc.Detach();
+
+			CRect rc;
+			::GetWindowRect(hwnd, rc);
+			rc.right = rc.left + size2;
+
+			if (rc.PtInRect(ptLeftClk))
+			{
+				int nResult = ptLeftClk.x - rc.left;
+				std::map<CString, CPoint>::iterator iter;
+				for (iter = mapOptions.begin(); iter != mapOptions.end(); iter++)
+				{
+					if (nResult >= (iter->second.x) && nResult <= (iter->second.y))
+					{
+						acutPrintf(L"\ncmdStr:%s.", iter->first);  // Add for test
+						acDocManager->sendStringToExecute(curDoc(), iter->first + L" ");
+						break;
+					}
+				}
+			}
+		}
+	}
+	return FALSE;
+}
+
 void WatchWinMsg01(const MSG* msg)
 {
 	HWND g_hMDIHwnd = acedGetAcadFrame()->m_hWndMDIClient;
@@ -2088,16 +2268,57 @@ void WatchWinMsg01(const MSG* msg)
 ARXCMD3(Test_AddWatchWinMsg01)
 {
 	acedRegisterWatchWinMsg(WatchWinMsg01);
-	acedRegisterFilterWinMsg(FilterWinMsg01);
 }
 //RemoveWatchWinMsg
 ARXCMD3(Test_RemoveWatchWinMsg01)
 {
 	acedRemoveWatchWinMsg(WatchWinMsg01);
-	acedRemoveFilterWinMsg(FilterWinMsg01);
+}
+
+ARXCMD3(commandLineBntOn)
+{
+	acedRegisterFilterWinMsg(toCaps);
+}
+ARXCMD3(commandLineBntOff)
+{
+	acedRemoveFilterWinMsg(toCaps);
 }
 /**
  acedRegisterFilterWinMsg函数注册的回调函数是用来过滤windows消息的，通过敲击键盘输入在这里应该可以检测到wm_key相关的消息，wm_char也应该可以。但是如果是中文输入法，可能会不同;
  如果只是检测不是改变，建议使用acedRegisterWatchWinMsg
 */
 
+
+
+
+/**
+ * 屏蔽视图窗口左上角最大化、最小化、关闭按钮(关闭可通过veto来实现), 仅屏蔽了窗口化后的窗口
+ */
+ARXCMD3(vetoMaxAndMin)
+{
+	// 获取视图窗口
+	CView* pView = acedGetAcadDwgView();
+	CFrameWnd* pWnd = pView->GetParentFrame();
+
+	//HWND hWnd = pWnd->m_hWnd;
+	HWND hWnd = acedGetAcadFrame()->m_hWndMDIClient;
+
+	//获取窗口风格
+	LONG style = ::GetWindowLong(hWnd, GWL_STYLE);
+
+	//设置新的风格
+	style &= ~(WS_MAXIMIZEBOX);
+	style &= ~(WS_MINIMIZEBOX);   // 同时禁用最小化按钮，则会导致最大化和最小化按钮均不显示
+	::SetWindowLong(hWnd, GWL_STYLE, style);
+
+	CRect rc;
+	GetWindowRect(hWnd, &rc);
+	::SetWindowPos(hWnd, HWND_NOTOPMOST, rc.left, rc.top, rc.Width(), rc.Height(), SWP_DRAWFRAME);
+}
+
+// acrxEntryPoint 的AcRx::kInitAppMsg消息中执行
+ARXCMD3(DynLinkerLoadModule)
+{
+	CString strFile = _T("D:\\test.zrx");
+	bool bRet = acrxDynamicLinker->loadModule(strFile, 0);
+}

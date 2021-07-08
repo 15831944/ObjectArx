@@ -47,8 +47,8 @@ void MyTestDlg::OnBnClickedButton1()
 	//else if (retVal == RTNONE)
 	//	AfxMessageBox(_T("\nYou Have not input, and the default is Branch D"));
 
-	TCHAR ret[10] = { 0 };
-	int nRet = acedGetString(1, L"input:", ret);
+	//TCHAR ret[10] = { 0 };
+	//int nRet = acedGetString(1, L"input:", ret);
 
 	//if (_tcscmp(ret, L"y"))
 	{

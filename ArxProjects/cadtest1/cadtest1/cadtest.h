@@ -14,6 +14,8 @@
 // 有关此类实现的信息，请参阅 cadtest.cpp
 //
 
+#if 0
+
 class CcadtestApp : public CWinApp
 {
 public:
@@ -27,5 +29,5 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-
+#endif
 
