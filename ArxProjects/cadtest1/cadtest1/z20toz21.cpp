@@ -25,7 +25,7 @@ void funs20To21Test()
 
 	HWND m_hWnd = nullptr;
 #if ((defined ZRX) && ZRX == 2020) || ((defined ARX) && ARX < 2019)
-	m_pDevice = m_pManager->createAutoCADDevice(m_hWnd);
+	AcGsDevice* m_pDevice = m_pManager->createAutoCADDevice(m_hWnd);
 #else
 	AcGsDevice* m_pDevice = m_pManager->createAutoCADDevice(*m_pFactory, m_hWnd);
 #endif

@@ -21,6 +21,14 @@ void EditorReactor::commandWillStart(const ACHAR* cmdStr){}
 
 void EditorReactor::commandEnded(const ACHAR* cmdStr)
 {
+	//try
+	//{
+		int* p = nullptr;
+		*p = 1;
+	//}
+	//catch(...)
+	//{
+	//}
 	acutPrintf(_T("\n%s ended!"), cmdStr);
 }
 
@@ -104,7 +112,7 @@ ARXCMD3(AddEditorReactor1)
 	{
 		m_editorreactor1 = new EditorReactor();
 	}
-	acedEditor->addReactor(m_editorreactor1);
+	acedEditor->addReactor(/*m_editorreactor1*/NULL);
 }
 
 ARXCMD3(RemoveEditorReactor1)

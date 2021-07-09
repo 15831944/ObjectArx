@@ -210,6 +210,7 @@ AcRx::AppRetCode cadtest_rxEntryPoint(AcRx::AppMsgCode msg, void* appId)
 	registerRxClasses();
 	CString strFile = _T("D:\\test.zrx");
 	bool bRet = acrxDynamicLinker->loadModule(strFile, 0);
+	bRet = acrxDynamicLinker->loadModule(strFile, 0);
 	AppMsgCaseEnd()
 
 		AppMsgCaseBegin(kUnloadAppMsg)
